@@ -53,6 +53,13 @@ fn get_simple_intrinsic<'gcc, 'tcx>(cx: &CodegenCx<'gcc, 'tcx>, name: Symbol) ->
         sym::minnumf64 => "fmin",
         sym::maxnumf32 => "fmaxf",
         sym::maxnumf64 => "fmax",
+        // FIXME: GCC currently doens't seems to have builtins that propagate NaN
+        // as required by the {min,max}imum instrinsics. For the mean time
+        // use the builtins that doens't propagate the NaN
+        sym::minimumf32 => "fminf",
+        sym::minimumf64 => "fmin",
+        sym::maximumf32 => "fmaxf",
+        sym::maximumf64 => "fmax",
         sym::copysignf32 => "copysignf",
         sym::copysignf64 => "copysign",
         sym::floorf32 => "floorf",

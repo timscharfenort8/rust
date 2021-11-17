@@ -1406,6 +1406,39 @@ extern "rust-intrinsic" {
     /// [`f64::max`]
     pub fn maxnumf64(x: f64, y: f64) -> f64;
 
+    /// Returns the minimum of two `f32` values.
+    ///
+    /// Note that, unlike most intrinsics, this is safe to call;
+    /// it does not require an `unsafe` block.
+    /// Therefore, implementations must not require the user to uphold
+    /// any safety invariants.
+    #[cfg(not(bootstrap))]
+    pub fn minimumf32(x: f32, y: f32) -> f32;
+    /// Returns the minimum of two `f64` values.
+    ///
+    /// Note that, unlike most intrinsics, this is safe to call;
+    /// it does not require an `unsafe` block.
+    /// Therefore, implementations must not require the user to uphold
+    /// any safety invariants.
+    #[cfg(not(bootstrap))]
+    pub fn minimumf64(x: f64, y: f64) -> f64;
+    /// Returns the maximum of two `f32` values.
+    ///
+    /// Note that, unlike most intrinsics, this is safe to call;
+    /// it does not require an `unsafe` block.
+    /// Therefore, implementations must not require the user to uphold
+    /// any safety invariants.
+    #[cfg(not(bootstrap))]
+    pub fn maximumf32(x: f32, y: f32) -> f32;
+    /// Returns the maximum of two `f64` values.
+    ///
+    /// Note that, unlike most intrinsics, this is safe to call;
+    /// it does not require an `unsafe` block.
+    /// Therefore, implementations must not require the user to uphold
+    /// any safety invariants.
+    #[cfg(not(bootstrap))]
+    pub fn maximumf64(x: f64, y: f64) -> f64;
+
     /// Copies the sign from `y` to `x` for `f32` values.
     ///
     /// The stabilized version of this intrinsic is

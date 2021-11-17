@@ -1064,6 +1064,27 @@ pub(crate) fn codegen_intrinsic_call<'tcx>(
             ret.write_cvalue(fx, val);
         };
 
+        minimumf32, (v a, v b) {
+            let val = fx.bcx.ins().fmin(a, b);
+            let val = CValue::by_val(val, fx.layout_of(fx.tcx.types.f32));
+            ret.write_cvalue(fx, val);
+        };
+        minimumf64, (v a, v b) {
+            let val = fx.bcx.ins().fmin(a, b);
+            let val = CValue::by_val(val, fx.layout_of(fx.tcx.types.f64));
+            ret.write_cvalue(fx, val);
+        };
+        maximumf32, (v a, v b) {
+            let val = fx.bcx.ins().fmax(a, b);
+            let val = CValue::by_val(val, fx.layout_of(fx.tcx.types.f32));
+            ret.write_cvalue(fx, val);
+        };
+        maximumf64, (v a, v b) {
+            let val = fx.bcx.ins().fmax(a, b);
+            let val = CValue::by_val(val, fx.layout_of(fx.tcx.types.f64));
+            ret.write_cvalue(fx, val);
+        };
+
         kw.Try, (v f, v data, v _catch_fn) {
             // FIXME once unwinding is supported, change this to actually catch panics
             let f_sig = fx.bcx.func.import_signature(Signature {

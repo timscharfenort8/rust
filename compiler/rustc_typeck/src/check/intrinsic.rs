@@ -98,8 +98,12 @@ pub fn intrinsic_operation_unsafety(intrinsic: Symbol) -> hir::Unsafety {
         | sym::minnumf32
         | sym::minnumf64
         | sym::maxnumf32
-        | sym::rustc_peek
         | sym::maxnumf64
+        | sym::minimumf32
+        | sym::minimumf64
+        | sym::maximumf32
+        | sym::maximumf64
+        | sym::rustc_peek
         | sym::type_name
         | sym::forget
         | sym::black_box
@@ -256,6 +260,10 @@ pub fn check_intrinsic_type(tcx: TyCtxt<'_>, it: &hir::ForeignItem<'_>) {
             sym::minnumf64 => (0, vec![tcx.types.f64, tcx.types.f64], tcx.types.f64),
             sym::maxnumf32 => (0, vec![tcx.types.f32, tcx.types.f32], tcx.types.f32),
             sym::maxnumf64 => (0, vec![tcx.types.f64, tcx.types.f64], tcx.types.f64),
+            sym::minimumf32 => (0, vec![tcx.types.f32, tcx.types.f32], tcx.types.f32),
+            sym::minimumf64 => (0, vec![tcx.types.f64, tcx.types.f64], tcx.types.f64),
+            sym::maximumf32 => (0, vec![tcx.types.f32, tcx.types.f32], tcx.types.f32),
+            sym::maximumf64 => (0, vec![tcx.types.f64, tcx.types.f64], tcx.types.f64),
             sym::copysignf32 => (0, vec![tcx.types.f32, tcx.types.f32], tcx.types.f32),
             sym::copysignf64 => (0, vec![tcx.types.f64, tcx.types.f64], tcx.types.f64),
             sym::floorf32 => (0, vec![tcx.types.f32], tcx.types.f32),
