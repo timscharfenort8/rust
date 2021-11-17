@@ -287,6 +287,7 @@
 #![feature(exhaustive_patterns)]
 #![feature(extend_one)]
 #![feature(fn_traits)]
+#![cfg_attr(not(bootstrap), feature(float_minmax_nan))]
 #![feature(format_args_nl)]
 #![feature(gen_future)]
 #![feature(generator_trait)]

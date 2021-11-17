@@ -703,6 +703,47 @@ impl f32 {
         intrinsics::minnumf32(self, other)
     }
 
+    /// Returns the maximum of the two numbers.
+    ///
+    /// ```
+    /// #![feature(float_minmax_nan)]
+    /// let x = 1.0f32;
+    /// let y = 2.0f32;
+    ///
+    /// assert_eq!(x.maxnan(y), y);
+    /// assert!(x.maxnan(f32::NAN).is_nan());
+    /// ```
+    ///
+    /// If one of the arguments is NaN, then NaN is returned. Otherwise this returns the greater
+    /// of the two numbers. -0.0 is considered to be less than +0.0. Note that this follow the
+    /// semantics specified in IEEE 754-2019 for the maximum function.
+    #[cfg(not(bootstrap))]
+    #[unstable(feature = "float_minmax_nan", issue = "none")]
+    #[inline]
+    pub fn maxnan(self, other: f32) -> f32 {
+        intrinsics::maximumf32(self, other)
+    }
+
+    /// Returns the minimum of the two numbers.
+    ///
+    /// ```
+    /// #![feature(float_minmax_nan)]
+    /// let x = 1.0f32;
+    /// let y = 2.0f32;
+    ///
+    /// assert_eq!(x.minnan(y), x);
+    /// ```
+    ///
+    /// If one of the arguments is NaN, then NaN is returned. Otherwise this returns the lesser
+    /// of the two numbers. -0.0 is considered to be less than +0.0. Note that this follow the
+    /// semantics specified in IEEE 754-2019 for the minimum function.
+    #[cfg(not(bootstrap))]
+    #[unstable(feature = "float_minmax_nan", issue = "none")]
+    #[inline]
+    pub fn minnan(self, other: f32) -> f32 {
+        intrinsics::minimumf32(self, other)
+    }
+
     /// Rounds toward zero and converts to any primitive integer type,
     /// assuming that the value is finite and fits in that type.
     ///

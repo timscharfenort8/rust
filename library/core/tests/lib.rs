@@ -27,6 +27,7 @@
 #![feature(extern_types)]
 #![feature(flt2dec)]
 #![feature(fmt_internals)]
+#![cfg_attr(not(bootstrap), feature(float_minmax_nan))]
 #![feature(array_from_fn)]
 #![feature(hashmap_internals)]
 #![feature(try_find)]

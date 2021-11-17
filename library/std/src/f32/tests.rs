@@ -20,6 +20,18 @@ fn test_max_nan() {
 }
 
 #[test]
+fn test_minnan_nan() {
+    assert!(f32::NAN.minnan(2.0).is_nan());
+    assert!(2.0f32.minnan(f32::NAN).is_nan());
+}
+
+#[test]
+fn test_maxnan_nan() {
+    assert!(f32::NAN.maxnan(2.0).is_nan());
+    assert!(2.0f32.maxnan(f32::NAN).is_nan());
+}
+
+#[test]
 fn test_nan() {
     let nan: f32 = f32::NAN;
     assert!(nan.is_nan());
