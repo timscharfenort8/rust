@@ -1,0 +1,64 @@
+name: Bug Report
+description: Create a bug report for Rust.
+labels: [C-bug]
+body:
+- type: markdown
+  attributes:
+    value: |
+      ### Is there an existing issue for this?
+      Please search to see if an issue already exists for the bug you encountered.
+- type: textarea
+  id: "code"
+  attributes:
+    label: Code Tried
+    description: If possible an MCVE of the code your tried.
+    render: rust
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Expected Behavior
+    description: A concise description of what you expected to happen.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Current Behavior
+    description: A concise description of what you're experiencing.
+  validations:
+    required: true
+- type: textarea
+  id: "version"
+  attributes:
+    label: Rust Compiler Version
+    description: |
+      The rustc version you're experiencing the problem.
+      E.g. `rustc --version --verbose`.
+    placeholder: "<version>"
+    render: text
+  validations:
+    required: true
+- type: textarea
+  id: "backtrace"
+  attributes:
+    label: Backtrace
+    description: |
+        Include a backtrace in the code block by setting `RUST_BACKTRACE=1` in your
+        environment. E.g. `RUST_BACKTRACE=1 cargo build`.
+    placeholder: "<backtrace>"
+    render: text
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Anything else?
+    description: |
+      Links? References? Anything that will give us more context about the issue you are encountering!
+
+      Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+  validations:
+    required: false
+- type: markdown
+  attributes:
+    value: |
+      Thanks for taking the time to fill out this bug report.
