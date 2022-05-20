@@ -443,9 +443,7 @@ impl<'a> ResolverExpand for Resolver<'a> {
                 PathResult::NonModule(partial_res) if partial_res.unresolved_segments() == 0 => {
                     return Ok(true);
                 }
-                PathResult::NonModule(..) |
-                // HACK(Urgau): This shouldn't be necessary 
-                PathResult::Failed { is_error_from_last_segment: false, .. } => {
+                PathResult::NonModule(..) => {
                     self.session
                         .struct_span_err(span, "not sure whether the path is accessible or not")
                         .note("the type may have associated items, but we are currently not checking them")
@@ -456,8 +454,8 @@ impl<'a> ResolverExpand for Resolver<'a> {
                     return Ok(false);
                 }
                 PathResult::Indeterminate => indeterminate = true,
-                // We can only be sure that a path doesn't exist after having tested all the
-                // posibilities, only at that time we can return false.
+                // We can only be sure that a path doesn't exist after having tested posibilities.
+                // We only return false at the end of the function.
                 PathResult::Failed { .. } => {}
                 PathResult::Module(_) => panic!("unexpected path resolution"),
             }
