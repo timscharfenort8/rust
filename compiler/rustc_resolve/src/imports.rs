@@ -648,11 +648,27 @@ impl<'a, 'b> ImportResolver<'a, 'b> {
                 }
                 return None;
             }
-            PathResult::NonModule(_) => {
+            PathResult::NonModule(partial_res) => {
                 if no_ambiguity {
                     assert!(import.imported_module.get().is_none());
+
+                    let ident = import
+                        .module_path
+                        .iter()
+                        .nth(import.module_path.len() - partial_res.unresolved_segments() - 1)
+                        .expect("unable to get unresolved segment of path")
+                        .ident;
+                    let res = partial_res.base_res();
+                    let label =
+                        format!("`{ident}` is {} {}, not a module", res.article(), res.descr());
+
+                    return Some(UnresolvedImportError {
+                        span: ident.span,
+                        label: Some(label),
+                        note: Vec::new(),
+                        suggestion: None,
+                    });
                 }
-                // The error was already reported earlier.
                 return None;
             }
             PathResult::Indeterminate => unreachable!(),

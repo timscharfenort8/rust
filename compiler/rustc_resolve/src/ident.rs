@@ -1500,21 +1500,14 @@ impl<'a> Resolver<'a> {
                         return PathResult::NonModule(PartialRes::new(res));
                     } else if res == Res::Err {
                         return PathResult::NonModule(PartialRes::new(Res::Err));
-                    } else if opt_ns.is_some() && (is_last || maybe_assoc) {
-                        self.lint_if_path_starts_with_module(finalize, path, second_binding);
+                    } else {
+                        if opt_ns.is_some() && (is_last || maybe_assoc) {
+                            self.lint_if_path_starts_with_module(finalize, path, second_binding);
+                        }
                         return PathResult::NonModule(PartialRes::with_unresolved_segments(
                             res,
                             path.len() - i - 1,
                         ));
-                    } else {
-                        return PathResult::failed(ident.span, is_last, finalize.is_some(), || {
-                            let label = format!(
-                                "`{ident}` is {} {}, not a module",
-                                res.article(),
-                                res.descr()
-                            );
-                            (label, None)
-                        });
                     }
                 }
                 Err(Undetermined) => return PathResult::Indeterminate,

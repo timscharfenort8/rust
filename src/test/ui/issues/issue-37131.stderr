@@ -4,8 +4,11 @@ error[E0463]: can't find crate for `std`
    = help: consider downloading the target with `rustup target add thumbv6m-none-eabi`
    = help: consider building the standard library from source with `cargo build -Zbuild-std`
 
+error[E0432]: unresolved import `std`
+
 error: requires `sized` lang_item
 
-error: aborting due to 2 previous errors
+error: aborting due to 3 previous errors
 
-For more information about this error, try `rustc --explain E0463`.
+Some errors have detailed explanations: E0432, E0463.
+For more information about an error, try `rustc --explain E0432`.
