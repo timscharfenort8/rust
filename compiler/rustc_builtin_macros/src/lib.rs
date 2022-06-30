@@ -23,6 +23,7 @@ use rustc_expand::proc_macro::BangProcMacro;
 use rustc_span::symbol::sym;
 
 mod assert;
+mod cfg;
 mod cfg_bang;
 mod cfg_accessible;
 mod cfg_eval;
@@ -64,6 +65,7 @@ pub fn register_builtin_macros(resolver: &mut dyn ResolverExpand) {
     register_bang! {
         asm: asm::expand_asm,
         assert: assert::expand_assert,
+        // The cfg! macro
         cfg: cfg_bang::expand_cfg,
         column: source_util::expand_column,
         compile_error: compile_error::expand_compile_error,
@@ -92,6 +94,8 @@ pub fn register_builtin_macros(resolver: &mut dyn ResolverExpand) {
 
     register_attr! {
         bench: test::expand_bench,
+        // The cfg attr-macro, will conflict with the above !!!
+        cfg: cfg::Expander,
         cfg_accessible: cfg_accessible::Expander,
         cfg_eval: cfg_eval::expand,
         derive: derive::Expander,

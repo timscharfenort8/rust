@@ -446,11 +446,15 @@ impl<'a> StripUnconfigured<'a> {
         attr
     }
 
+    // TODO: What to do about this ?
+    // Called multiple times here
     /// Determines if a node with the given attributes should be included in this configuration.
     fn in_cfg(&self, attrs: &[Attribute]) -> bool {
         attrs.iter().all(|attr| !is_cfg(attr) || self.cfg_true(attr))
     }
 
+    // TODO: What to do about this ?
+    // Called in `flat_map_node` and `visit_node` in rustc_expand/expand.rs
     pub(crate) fn cfg_true(&self, attr: &Attribute) -> bool {
         let meta_item = match validate_attr::parse_meta(&self.sess.parse_sess, attr) {
             Ok(meta_item) => meta_item,

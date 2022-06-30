@@ -851,15 +851,17 @@ impl<'a> Resolver<'a> {
     pub(crate) fn check_reserved_macro_name(&mut self, ident: Ident, res: Res) {
         // Reserve some names that are not quite covered by the general check
         // performed on `Resolver::builtin_attrs`.
-        if ident.name == sym::cfg || ident.name == sym::cfg_attr {
-            let macro_kind = self.get_macro(res).map(|macro_data| macro_data.ext.macro_kind());
-            if macro_kind.is_some() && sub_namespace_match(macro_kind, Some(MacroKind::Attr)) {
-                self.session.span_err(
-                    ident.span,
-                    &format!("name `{}` is reserved in attribute namespace", ident),
-                );
-            }
-        }
+        let _ = ident;
+        let _ = res;
+        // if ident.name == sym::cfg || ident.name == sym::cfg_attr {
+        //     let macro_kind = self.get_macro(res).map(|macro_data| macro_data.ext.macro_kind());
+        //     if macro_kind.is_some() && sub_namespace_match(macro_kind, Some(MacroKind::Attr)) {
+        //         self.session.span_err(
+        //             ident.span,
+        //             &format!("name `{}` is reserved in attribute namespace", ident),
+        //         );
+        //     }
+        // }
     }
 
     /// Compile the macro into a `SyntaxExtension` and its rule spans.
