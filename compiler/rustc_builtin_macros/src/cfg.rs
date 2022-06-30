@@ -51,7 +51,7 @@ impl MultiItemModifier for Expander {
         let attr = &ecx.attribute(meta_item.clone());
         validate_attr::check_builtin_attribute(&ecx.sess.parse_sess, attr, sym::cfg, template);
 
-        dbg!(&meta_item, &item);
+        // dbg!(&meta_item, &item);
         let Some(mi) = parse_cfg(meta_item, &ecx.sess) else {
             return ExpandResult::Ready(Vec::new());
         };
@@ -63,13 +63,13 @@ impl MultiItemModifier for Expander {
         // }
 
         // Extanded version (ie with accessible support)
-        match rustc_attr::cfg_matches_extanded(
+        match dbg!(rustc_attr::cfg_matches_extanded(
             &mi,
             &ecx.sess.parse_sess,
             ecx.current_expansion.lint_node_id,
             ecx.ecfg.features,
             &mut |path| ecx.resolver.cfg_accessible(ecx.current_expansion.id, path),
-        ) {
+        )) {
             Ok(true) => ExpandResult::Ready(vec![item]),
             Ok(false) => ExpandResult::Ready(Vec::new()),
             Err(Indeterminate) if ecx.force_mode => {

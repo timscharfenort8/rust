@@ -304,6 +304,13 @@ pub struct Invocation {
     pub expansion_data: ExpansionData,
 }
 
+impl core::fmt::Debug for Invocation {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Invocation").field("kind", &self.kind).finish()
+    }
+}
+
+#[derive(Debug)]
 pub enum InvocationKind {
     Bang {
         mac: ast::MacCall,
@@ -1610,7 +1617,7 @@ impl<'a, 'b> InvocationCollector<'a, 'b> {
                 let attr_name = attr.ident().unwrap().name;
                 // `#[cfg]` and `#[cfg_attr]` are special - they are
                 // eagerly evaluated.
-                if attr_name != sym::cfg && attr_name != sym::cfg_attr {
+                // if attr_name != sym::cfg && attr_name != sym::cfg_attr {
                     self.cx.sess.parse_sess.buffer_lint_with_diagnostic(
                         &UNUSED_ATTRIBUTES,
                         attr.span,
@@ -1622,27 +1629,27 @@ impl<'a, 'b> InvocationCollector<'a, 'b> {
                             invoc_span: call.path.span,
                         },
                     );
-                }
+                // }
             }
         }
     }
 
-    fn expand_cfg_true(
-        &mut self,
-        node: &mut impl HasAttrs,
-        attr: ast::Attribute,
-        pos: usize,
-    ) -> bool {
-        let res = self.cfg().cfg_true(&attr);
-        if res {
-            // FIXME: `cfg(TRUE)` attributes do not currently remove themselves during expansion,
-            // and some tools like rustdoc and clippy rely on that. Find a way to remove them
-            // while keeping the tools working.
-            self.cx.expanded_inert_attrs.mark(&attr);
-            node.visit_attrs(|attrs| attrs.insert(pos, attr));
-        }
-        res
-    }
+    // fn expand_cfg_true(
+    //     &mut self,
+    //     node: &mut impl HasAttrs,
+    //     attr: ast::Attribute,
+    //     pos: usize,
+    // ) -> bool {
+    //     let res = self.cfg().cfg_true(&attr);
+    //     if res {
+    //         // FIXME: `cfg(TRUE)` attributes do not currently remove themselves during expansion,
+    //         // and some tools like rustdoc and clippy rely on that. Find a way to remove them
+    //         // while keeping the tools working.
+    //         self.cx.expanded_inert_attrs.mark(&attr);
+    //         node.visit_attrs(|attrs| attrs.insert(pos, attr));
+    //     }
+    //     res
+    // }
 
     fn expand_cfg_attr(&self, node: &mut impl HasAttrs, attr: ast::Attribute, pos: usize) {
         node.visit_attrs(|attrs| {
@@ -1658,12 +1665,13 @@ impl<'a, 'b> InvocationCollector<'a, 'b> {
             return match self.take_first_attr(&mut node) {
                 Some((attr, pos, derives)) => match attr.name_or_empty() {
                     // This will probably also be a problem !
-                    sym::cfg => {
-                        if self.expand_cfg_true(&mut node, attr, pos) {
-                            continue;
-                        }
-                        Default::default()
-                    }
+                    // sym::cfg => {
+                    //     dbg!(&attr);
+                    //     if self.expand_cfg_true(&mut node, attr, pos) {
+                    //         continue;
+                    //     }
+                    //     Default::default()
+                    // }
                     sym::cfg_attr => {
                         self.expand_cfg_attr(&mut node, attr, pos);
                         continue;
@@ -1704,16 +1712,16 @@ impl<'a, 'b> InvocationCollector<'a, 'b> {
             return match self.take_first_attr(node) {
                 Some((attr, pos, derives)) => match attr.name_or_empty() {
                     // This will probably also be a problem !
-                    sym::cfg => {
-                        let span = attr.span;
-                        if self.expand_cfg_true(node, attr, pos) {
-                            continue;
-                        }
-                        let msg =
-                            format!("removing {} is not supported in this position", Node::descr());
-                        self.cx.span_err(span, &msg);
-                        continue;
-                    }
+                    // sym::cfg => {
+                    //     let span = attr.span;
+                    //     if self.expand_cfg_true(node, attr, pos) {
+                    //         continue;
+                    //     }
+                    //     let msg =
+                    //         format!("removing {} is not supported in this position", Node::descr());
+                    //     self.cx.span_err(span, &msg);
+                    //     continue;
+                    // }
                     sym::cfg_attr => {
                         self.expand_cfg_attr(node, attr, pos);
                         continue;

@@ -851,6 +851,7 @@ impl SyntaxExtension {
 }
 
 /// Error type that denotes indeterminacy.
+#[derive(Debug)]
 pub struct Indeterminate;
 
 pub type DeriveResolutions = Vec<(ast::Path, Annotatable, Option<Lrc<SyntaxExtension>>)>;

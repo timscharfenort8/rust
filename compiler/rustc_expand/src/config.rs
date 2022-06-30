@@ -1,5 +1,7 @@
 //! Conditional compilation stripping.
 
+#![allow(unused_imports)]
+
 use rustc_ast::ptr::P;
 use rustc_ast::token::{Delimiter, Token, TokenKind};
 use rustc_ast::tokenstream::{AttrAnnotatedTokenStream, AttrAnnotatedTokenTree};
@@ -248,12 +250,12 @@ macro_rules! configure {
 impl<'a> StripUnconfigured<'a> {
     pub fn configure<T: HasAttrs + HasTokens>(&self, mut node: T) -> Option<T> {
         self.process_cfg_attrs(&mut node);
-        if self.in_cfg(node.attrs()) {
-            self.try_configure_tokens(&mut node);
+        // if self.in_cfg(node.attrs()) {
+        //     self.try_configure_tokens(&mut node);
             Some(node)
-        } else {
-            None
-        }
+        // } else {
+        //     None
+        // }
     }
 
     fn try_configure_tokens<T: HasTokens>(&self, node: &mut T) {
@@ -267,7 +269,8 @@ impl<'a> StripUnconfigured<'a> {
 
     fn configure_krate_attrs(&self, mut attrs: Vec<ast::Attribute>) -> Option<Vec<ast::Attribute>> {
         attrs.flat_map_in_place(|attr| self.process_cfg_attr(attr));
-        if self.in_cfg(&attrs) { Some(attrs) } else { None }
+        // if self.in_cfg(&attrs) { Some(attrs) } else { None }
+        Some(attrs)
     }
 
     /// Performs cfg-expansion on `stream`, producing a new `AttrAnnotatedTokenStream`.
@@ -296,14 +299,14 @@ impl<'a> StripUnconfigured<'a> {
                     attrs.flat_map_in_place(|attr| self.process_cfg_attr(attr));
                     data.attrs = attrs.into();
 
-                    if self.in_cfg(&data.attrs) {
+                    // if self.in_cfg(&data.attrs) {
                         data.tokens = LazyTokenStream::new(
                             self.configure_tokens(&data.tokens.create_token_stream()),
                         );
                         Some((AttrAnnotatedTokenTree::Attributes(data), *spacing)).into_iter()
-                    } else {
-                        None.into_iter()
-                    }
+                    // } else {
+                    //     None.into_iter()
+                    // }
                 }
                 AttrAnnotatedTokenTree::Delimited(sp, delim, mut inner) => {
                     inner = self.configure_tokens(&inner);
@@ -446,27 +449,27 @@ impl<'a> StripUnconfigured<'a> {
         attr
     }
 
-    // TODO: What to do about this ?
-    // Called multiple times here
-    /// Determines if a node with the given attributes should be included in this configuration.
-    fn in_cfg(&self, attrs: &[Attribute]) -> bool {
-        attrs.iter().all(|attr| !is_cfg(attr) || self.cfg_true(attr))
-    }
-
-    // TODO: What to do about this ?
-    // Called in `flat_map_node` and `visit_node` in rustc_expand/expand.rs
-    pub(crate) fn cfg_true(&self, attr: &Attribute) -> bool {
-        let meta_item = match validate_attr::parse_meta(&self.sess.parse_sess, attr) {
-            Ok(meta_item) => meta_item,
-            Err(mut err) => {
-                err.emit();
-                return true;
-            }
-        };
-        parse_cfg(&meta_item, &self.sess).map_or(true, |meta_item| {
-            attr::cfg_matches(&meta_item, &self.sess.parse_sess, self.lint_node_id, self.features)
-        })
-    }
+    // // TODO: What to do about this ?
+    // // Called multiple times here
+    // /// Determines if a node with the given attributes should be included in this configuration.
+    // fn in_cfg(&self, attrs: &[Attribute]) -> bool {
+    //     attrs.iter().all(|attr| !is_cfg(attr) || self.cfg_true(attr))
+    // }
+    //
+    // // TODO: What to do about this ?
+    // // Called in `flat_map_node` and `visit_node` in rustc_expand/expand.rs
+    // pub(crate) fn cfg_true(&self, attr: &Attribute) -> bool {
+    //     let meta_item = match validate_attr::parse_meta(&self.sess.parse_sess, attr) {
+    //         Ok(meta_item) => meta_item,
+    //         Err(mut err) => {
+    //             err.emit();
+    //             return true;
+    //         }
+    //     };
+    //     parse_cfg(&meta_item, &self.sess).map_or(true, |meta_item| {
+    //         attr::cfg_matches(&meta_item, &self.sess.parse_sess, self.lint_node_id, self.features)
+    //     })
+    // }
 
     /// If attributes are not allowed on expressions, emit an error for `attr`
     pub(crate) fn maybe_emit_expr_attr_err(&self, attr: &Attribute) {
@@ -491,49 +494,49 @@ impl<'a> StripUnconfigured<'a> {
             self.maybe_emit_expr_attr_err(attr);
         }
 
-        // If an expr is valid to cfg away it will have been removed by the
-        // outer stmt or expression folder before descending in here.
-        // Anything else is always required, and thus has to error out
-        // in case of a cfg attr.
-        //
-        // N.B., this is intentionally not part of the visit_expr() function
-        //     in order for filter_map_expr() to be able to avoid this check
-        if let Some(attr) = expr.attrs().iter().find(|a| is_cfg(*a)) {
-            let msg = "removing an expression is not supported in this position";
-            self.sess.parse_sess.span_diagnostic.span_err(attr.span, msg);
-        }
+        // // If an expr is valid to cfg away it will have been removed by the
+        // // outer stmt or expression folder before descending in here.
+        // // Anything else is always required, and thus has to error out
+        // // in case of a cfg attr.
+        // //
+        // // N.B., this is intentionally not part of the visit_expr() function
+        // //     in order for filter_map_expr() to be able to avoid this check
+        // if let Some(attr) = expr.attrs().iter().find(|a| is_cfg(*a)) {
+        //     let msg = "removing an expression is not supported in this position";
+        //     self.sess.parse_sess.span_diagnostic.span_err(attr.span, msg);
+        // }
 
         self.process_cfg_attrs(expr);
         self.try_configure_tokens(&mut *expr);
     }
 }
 
-pub fn parse_cfg<'a>(meta_item: &'a MetaItem, sess: &Session) -> Option<&'a MetaItem> {
-    let error = |span, msg, suggestion: &str| {
-        let mut err = sess.parse_sess.span_diagnostic.struct_span_err(span, msg);
-        if !suggestion.is_empty() {
-            err.span_suggestion(
-                span,
-                "expected syntax is",
-                suggestion,
-                Applicability::HasPlaceholders,
-            );
-        }
-        err.emit();
-        None
-    };
-    let span = meta_item.span;
-    match meta_item.meta_item_list() {
-        None => error(span, "`cfg` is not followed by parentheses", "cfg(/* predicate */)"),
-        Some([]) => error(span, "`cfg` predicate is not specified", ""),
-        Some([_, .., l]) => error(l.span(), "multiple `cfg` predicates are specified", ""),
-        Some([single]) => match single.meta_item() {
-            Some(meta_item) => Some(meta_item),
-            None => error(single.span(), "`cfg` predicate key cannot be a literal", ""),
-        },
-    }
-}
-
-fn is_cfg(attr: &Attribute) -> bool {
-    attr.has_name(sym::cfg)
-}
+// pub fn parse_cfg<'a>(meta_item: &'a MetaItem, sess: &Session) -> Option<&'a MetaItem> {
+//     let error = |span, msg, suggestion: &str| {
+//         let mut err = sess.parse_sess.span_diagnostic.struct_span_err(span, msg);
+//         if !suggestion.is_empty() {
+//             err.span_suggestion(
+//                 span,
+//                 "expected syntax is",
+//                 suggestion,
+//                 Applicability::HasPlaceholders,
+//             );
+//         }
+//         err.emit();
+//         None
+//     };
+//     let span = meta_item.span;
+//     match meta_item.meta_item_list() {
+//         None => error(span, "`cfg` is not followed by parentheses", "cfg(/* predicate */)"),
+//         Some([]) => error(span, "`cfg` predicate is not specified", ""),
+//         Some([_, .., l]) => error(l.span(), "multiple `cfg` predicates are specified", ""),
+//         Some([single]) => match single.meta_item() {
+//             Some(meta_item) => Some(meta_item),
+//             None => error(single.span(), "`cfg` predicate key cannot be a literal", ""),
+//         },
+//     }
+// }
+//
+// fn is_cfg(attr: &Attribute) -> bool {
+//     attr.has_name(sym::cfg)
+// }

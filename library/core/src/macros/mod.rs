@@ -1316,7 +1316,7 @@ pub(crate) mod builtin {
     /// ```
     #[stable(feature = "rust1", since = "1.0.0")]
     #[rustc_builtin_macro]
-    // #[macro_export]
+    #[macro_export]
     // #[cfg_attr(not(test), rustc_diagnostic_item = "cfg_macro")]
     // macro_rules! cfg {
     //     ($($cfg:tt)*) => {
@@ -1327,16 +1327,16 @@ pub(crate) mod builtin {
         /* compiler built-in */
     }
    
-    /// jjjjj
-    #[stable(feature = "rust1", since = "1.0.0")]
-    // #[rustc_builtin_macro]
-    #[macro_export]
-    #[cfg_attr(not(test), rustc_diagnostic_item = "cfg_macro")]
-    macro_rules! cfg {
-        ($($cfg:tt)*) => {
-            false
-        };
-    }
+    // /// jjjjj
+    // #[stable(feature = "rust1", since = "1.0.0")]
+    // // #[rustc_builtin_macro]
+    // #[macro_export]
+    // #[cfg_attr(not(test), rustc_diagnostic_item = "cfg_macro")]
+    // macro_rules! cfg {
+    //     ($($cfg:tt)*) => {
+    //         false
+    //     };
+    // }
 
     /// Parses a file as an expression or an item according to the context.
     ///
