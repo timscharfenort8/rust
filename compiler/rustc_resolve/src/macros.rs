@@ -208,6 +208,8 @@ impl<'a> ResolverExpand for Resolver<'a> {
         parent_scope.module.unexpanded_invocations.borrow_mut().remove(&expansion);
     }
 
+    // Here is the register of the builtin macro; it doens't diferenchiate by SyntaxExtensionKind
+    // only by name which is why attr-`cfg` and macro-`cfg!` conflict
     fn register_builtin_macro(&mut self, name: Symbol, ext: SyntaxExtensionKind) {
         if self.builtin_macros.insert(name, BuiltinMacroState::NotYetSeen(ext)).is_some() {
             self.session

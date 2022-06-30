@@ -1657,6 +1657,7 @@ impl<'a, 'b> InvocationCollector<'a, 'b> {
         loop {
             return match self.take_first_attr(&mut node) {
                 Some((attr, pos, derives)) => match attr.name_or_empty() {
+                    // This will probably also be a problem !
                     sym::cfg => {
                         if self.expand_cfg_true(&mut node, attr, pos) {
                             continue;
@@ -1702,6 +1703,7 @@ impl<'a, 'b> InvocationCollector<'a, 'b> {
         loop {
             return match self.take_first_attr(node) {
                 Some((attr, pos, derives)) => match attr.name_or_empty() {
+                    // This will probably also be a problem !
                     sym::cfg => {
                         let span = attr.span;
                         if self.expand_cfg_true(node, attr, pos) {
