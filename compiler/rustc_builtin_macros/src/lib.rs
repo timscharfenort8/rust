@@ -95,7 +95,8 @@ pub fn register_builtin_macros(resolver: &mut dyn ResolverExpand) {
     register_attr! {
         bench: test::expand_bench,
         // The cfg attr-macro, will conflict with the above !!!
-        cfg: cfg::Expander,
+        // cfg: cfg::Expander,
+        cfg_hack: cfg::Expander,
         cfg_accessible: cfg_accessible::Expander,
         cfg_eval: cfg_eval::expand,
         derive: derive::Expander,
