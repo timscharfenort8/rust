@@ -66,7 +66,7 @@ pub fn register_builtin_macros(resolver: &mut dyn ResolverExpand) {
         asm: asm::expand_asm,
         assert: assert::expand_assert,
         // The cfg! macro
-        cfg: cfg_bang::expand_cfg,
+        target_os: cfg_bang::expand_cfg,
         column: source_util::expand_column,
         compile_error: compile_error::expand_compile_error,
         concat_bytes: concat_bytes::expand_concat_bytes,

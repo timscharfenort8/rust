@@ -1316,11 +1316,25 @@ pub(crate) mod builtin {
     /// ```
     #[stable(feature = "rust1", since = "1.0.0")]
     #[rustc_builtin_macro]
+    // #[macro_export]
+    // #[cfg_attr(not(test), rustc_diagnostic_item = "cfg_macro")]
+    // macro_rules! cfg {
+    //     ($($cfg:tt)*) => {
+    //         /* compiler built-in */
+    //     };
+    // }
+    pub macro cfg($item:item) {
+        /* compiler built-in */
+    }
+   
+    /// jjjjj
+    #[stable(feature = "rust1", since = "1.0.0")]
+    // #[rustc_builtin_macro]
     #[macro_export]
     #[cfg_attr(not(test), rustc_diagnostic_item = "cfg_macro")]
     macro_rules! cfg {
         ($($cfg:tt)*) => {
-            /* compiler built-in */
+            false
         };
     }
 
