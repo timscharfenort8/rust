@@ -312,6 +312,7 @@ symbols! {
         abi_x86_interrupt,
         abort,
         aborts,
+        accessible,
         add,
         add_assign,
         add_with_overflow,

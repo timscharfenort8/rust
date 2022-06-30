@@ -503,6 +503,53 @@ pub fn cfg_matches(
     })
 }
 
+/// Tests if a cfg-pattern matches the cfg set
+pub fn cfg_matches_extanded<E>(
+    cfg: &ast::MetaItem,
+    sess: &ParseSess,
+    lint_node_id: NodeId,
+    features: Option<&Features>,
+    eval_accessible: &mut impl FnMut(&ast::Path) -> Result<bool, E>,
+) -> Result<bool, E> {
+    eval_condition_extanded(
+        cfg,
+        sess,
+        features,
+        &mut |cfg| {
+            try_gate_cfg(cfg.name, cfg.span, sess, features);
+            if let Some(names_valid) = &sess.check_config.names_valid {
+                if !names_valid.contains(&cfg.name) {
+                    sess.buffer_lint_with_diagnostic(
+                        UNEXPECTED_CFGS,
+                        cfg.span,
+                        lint_node_id,
+                        "unexpected `cfg` condition name",
+                        BuiltinLintDiagnostics::UnexpectedCfg((cfg.name, cfg.name_span), None),
+                    );
+                }
+            }
+            if let Some(value) = cfg.value {
+                if let Some(values) = &sess.check_config.values_valid.get(&cfg.name) {
+                    if !values.contains(&value) {
+                        sess.buffer_lint_with_diagnostic(
+                            UNEXPECTED_CFGS,
+                            cfg.span,
+                            lint_node_id,
+                            "unexpected `cfg` condition value",
+                            BuiltinLintDiagnostics::UnexpectedCfg(
+                                (cfg.name, cfg.name_span),
+                                cfg.value_span.map(|vs| (value, vs)),
+                            ),
+                        );
+                    }
+                }
+            }
+            sess.config.contains(&(cfg.name, cfg.value))
+        },
+        eval_accessible,
+    )
+}
+
 fn try_gate_cfg(name: Symbol, span: Span, sess: &ParseSess, features: Option<&Features>) {
     let gate = find_gated_cfg(|sym| sym == name);
     if let (Some(feats), Some(gated_cfg)) = (features, gate) {
@@ -536,6 +583,228 @@ fn parse_version(s: &str, allow_appendix: bool) -> Option<Version> {
     let minor = digits.next()?.parse().ok()?;
     let patch = digits.next().unwrap_or("0").parse().ok()?;
     Some(Version { major, minor, patch })
+}
+
+/// Evaluate a cfg-like condition (with `any` and `all`), using `eval` to
+/// evaluate individual items.
+pub fn eval_condition_extanded<E>(
+    cfg: &ast::MetaItem,
+    sess: &ParseSess,
+    features: Option<&Features>,
+    eval: &mut impl FnMut(Condition) -> bool,
+    eval_accessible: &mut impl FnMut(&ast::Path) -> Result<bool, E>,
+) -> Result<bool, E> {
+    match cfg.kind {
+        ast::MetaItemKind::List(ref mis) if cfg.name_or_empty() == sym::version => {
+            try_gate_cfg(sym::version, cfg.span, sess, features);
+            let (min_version, span) = match &mis[..] {
+                [NestedMetaItem::Literal(Lit { kind: LitKind::Str(sym, ..), span, .. })] => {
+                    (sym, span)
+                }
+                [
+                    NestedMetaItem::Literal(Lit { span, .. })
+                    | NestedMetaItem::MetaItem(MetaItem { span, .. }),
+                ] => {
+                    sess.span_diagnostic
+                        .struct_span_err(*span, "expected a version literal")
+                        .emit();
+                    return Ok(false);
+                }
+                [..] => {
+                    sess.span_diagnostic
+                        .struct_span_err(cfg.span, "expected single version literal")
+                        .emit();
+                    return Ok(false);
+                }
+            };
+            let Some(min_version) = parse_version(min_version.as_str(), false) else {
+                sess.span_diagnostic
+                    .struct_span_warn(
+                        *span,
+                        "unknown version literal format, assuming it refers to a future version",
+                    )
+                    .emit();
+                return Ok(false);
+            };
+            let rustc_version = parse_version(env!("CFG_RELEASE"), true).unwrap();
+
+            // See https://github.com/rust-lang/rust/issues/64796#issuecomment-640851454 for details
+            Ok(if sess.assume_incomplete_release {
+                rustc_version > min_version
+            } else {
+                rustc_version >= min_version
+            })
+        }
+        ast::MetaItemKind::List(ref mis) => {
+            for mi in mis.iter() {
+                if !mi.is_meta_item() {
+                    handle_errors(
+                        sess,
+                        mi.span(),
+                        AttrError::UnsupportedLiteral("unsupported literal", false),
+                    );
+                    return Ok(false);
+                }
+            }
+
+            // The unwraps below may look dangerous, but we've already asserted
+            // that they won't fail with the loop above.
+            match cfg.name_or_empty() {
+                sym::any => mis
+                    .iter()
+                    // We don't use any() here, because we want to evaluate all cfg condition
+                    // as eval_condition can (and does) extra checks
+                    .fold(Ok(false), |res, mi| {
+                        match (
+                            res,
+                            eval_condition_extanded(
+                                mi.meta_item().unwrap(),
+                                sess,
+                                features,
+                                eval,
+                                eval_accessible,
+                            ),
+                        ) {
+                            (Ok(lhs), Ok(rhs)) => Ok(lhs | rhs),
+                            (_, Err(rhs)) => Err(rhs),
+                            (Err(lhs), _) => Err(lhs),
+                        }
+                    }),
+                sym::all => mis
+                    .iter()
+                    // We don't use all() here, because we want to evaluate all cfg condition
+                    // as eval_condition can (and does) extra checks
+                    .fold(Ok(true), |res, mi| {
+                        // res & eval_condition_extanded(mi.meta_item().unwrap(), sess, features, eval, eval_accessible)
+                        match (
+                            res,
+                            eval_condition_extanded(
+                                mi.meta_item().unwrap(),
+                                sess,
+                                features,
+                                eval,
+                                eval_accessible,
+                            ),
+                        ) {
+                            (Ok(lhs), Ok(rhs)) => Ok(lhs & rhs),
+                            (_, Err(rhs)) => Err(rhs),
+                            (Err(lhs), _) => Err(lhs),
+                        }
+                    }),
+                sym::not => {
+                    if mis.len() != 1 {
+                        struct_span_err!(
+                            sess.span_diagnostic,
+                            cfg.span,
+                            E0536,
+                            "expected 1 cfg-pattern"
+                        )
+                        .emit();
+                        return Ok(false);
+                    }
+
+                    eval_condition_extanded(
+                        mis[0].meta_item().unwrap(),
+                        sess,
+                        features,
+                        eval,
+                        eval_accessible,
+                    )
+                    .map(|res| !res)
+                }
+                sym::target => {
+                    if let Some(features) = features && !features.cfg_target_compact {
+                        feature_err(
+                            sess,
+                            sym::cfg_target_compact,
+                            cfg.span,
+                            &"compact `cfg(target(..))` is experimental and subject to change"
+                        ).emit();
+                    }
+
+                    Ok(mis.iter().fold(true, |res, mi| {
+                        let mut mi = mi.meta_item().unwrap().clone();
+                        if let [seg, ..] = &mut mi.path.segments[..] {
+                            seg.ident.name = Symbol::intern(&format!("target_{}", seg.ident.name));
+                        }
+
+                        res & eval_condition(&mi, sess, features, eval)
+                    }))
+                }
+                sym::accessible => {
+                    let error = |span, msg, suggestion: &str| {
+                        let mut err = sess.span_diagnostic.struct_span_err(span, msg);
+                        if !suggestion.is_empty() {
+                            err.span_suggestion(
+                                span,
+                                "expected syntax is",
+                                suggestion,
+                                Applicability::HasPlaceholders,
+                            );
+                        }
+                        err.emit();
+                        None
+                    };
+                    let span = cfg.span;
+                    let mi = match &mis[..] {
+                        [] => error(span, "`ACCESSIBLE` predicate is not specified", ""),
+                        [_, .., l] => {
+                            error(l.span(), "multiple `ACCESSIBLE` predicates are specified", "")
+                        }
+                        [single] => match single.meta_item() {
+                            Some(meta_item) => Some(meta_item),
+                            None => error(
+                                single.span(),
+                                "`ACCESSIBLE` predicate key cannot be a literal",
+                                "",
+                            ),
+                        },
+                    };
+
+                    dbg!(&mi, &mis);
+
+                    if let Some(mi) = mi { eval_accessible(&mi.path) } else { Ok(false) }
+                }
+                _ => {
+                    struct_span_err!(
+                        sess.span_diagnostic,
+                        cfg.span,
+                        E0537,
+                        "invalid predicate `{}`",
+                        pprust::path_to_string(&cfg.path)
+                    )
+                    .emit();
+                    Ok(false)
+                }
+            }
+        }
+        ast::MetaItemKind::Word | MetaItemKind::NameValue(..) if cfg.path.segments.len() != 1 => {
+            sess.span_diagnostic
+                .span_err(cfg.path.span, "`cfg` predicate key must be an identifier");
+            Ok(true)
+        }
+        MetaItemKind::NameValue(ref lit) if !lit.kind.is_str() => {
+            handle_errors(
+                sess,
+                lit.span,
+                AttrError::UnsupportedLiteral(
+                    "literal in `cfg` predicate value must be a string",
+                    lit.kind.is_bytestr(),
+                ),
+            );
+            Ok(true)
+        }
+        ast::MetaItemKind::Word | ast::MetaItemKind::NameValue(..) => {
+            let ident = cfg.ident().expect("multi-segment cfg predicate");
+            Ok(eval(Condition {
+                name: ident.name,
+                name_span: ident.span,
+                value: cfg.value_str(),
+                value_span: cfg.name_value_literal_span(),
+                span: cfg.span,
+            }))
+        }
+    }
 }
 
 /// Evaluate a cfg-like condition (with `any` and `all`), using `eval` to
