@@ -86,14 +86,6 @@ pub use crate::macros::builtin::{bench, derive, global_allocator, test, test_cas
 pub use crate::macros::builtin::cfg_accessible;
 
 #[unstable(
-    feature = "cfg_accessible",
-    issue = "64797",
-    reason = "`cfg_accessible` is not fully implemented"
-)]
-#[cfg(not(bootstrap))]
-pub use crate::macros::builtin::cfg_hack;
-
-#[unstable(
     feature = "cfg_eval",
     issue = "82679",
     reason = "`cfg_eval` is a recently implemented feature"

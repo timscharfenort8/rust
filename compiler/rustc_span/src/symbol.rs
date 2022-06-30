@@ -437,7 +437,6 @@ symbols! {
         cfg_attr_multi,
         cfg_doctest,
         cfg_eval,
-        cfg_hack,
         cfg_hide,
         cfg_macro,
         cfg_panic,
