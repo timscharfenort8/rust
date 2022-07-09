@@ -262,3 +262,16 @@ resolve_const_param_in_enum_discriminant =
 
 resolve_lifetime_param_in_enum_discriminant =
     lifetime parameters may not be used in enum discriminant values
+
+resolve_restriction_relative_2018 =
+    relative paths are not supported in restrictions in 2018 edition or later
+    .suggestion = try
+
+resolve_restriction_ancestor_only =
+    restrictions can only be restricted to ancestor modules
+
+resolve_restriction_indeterminate =
+    cannot determine resolution for the restriction
+
+resolve_restriction_module_only =
+    restriction must resolve to a module
