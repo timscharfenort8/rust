@@ -409,7 +409,14 @@ impl<'hir> LoweringContext<'_, 'hir> {
                     items: new_impl_items,
                 }))
             }
-            ItemKind::Trait(box Trait { is_auto, unsafety, generics, bounds, items }) => {
+            ItemKind::Trait(box Trait {
+                impl_restriction: _,
+                is_auto,
+                unsafety,
+                generics,
+                bounds,
+                items,
+            }) => {
                 let (generics, (unsafety, items, bounds)) = self.lower_generics(
                     generics,
                     id,

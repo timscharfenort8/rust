@@ -2885,6 +2885,7 @@ impl Default for FnHeader {
 
 #[derive(Clone, Encodable, Decodable, Debug)]
 pub struct Trait {
+    pub impl_restriction: Restriction,
     pub unsafety: Unsafe,
     pub is_auto: IsAuto,
     pub generics: Generics,
