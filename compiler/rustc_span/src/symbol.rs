@@ -1212,6 +1212,7 @@ symbols! {
         repr_transparent,
         require,
         residual,
+        restrictions,
         result,
         resume,
         return_position_impl_trait_in_trait,
