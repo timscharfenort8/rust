@@ -969,6 +969,7 @@ pub struct Resolver<'a, 'tcx> {
     visibilities: FxHashMap<LocalDefId, ty::Visibility>,
     has_pub_restricted: bool,
     impl_restrictions: FxHashMap<LocalDefId, ty::Restriction>,
+    mut_restrictions: FxHashMap<LocalDefId, ty::Restriction>,
     used_imports: FxHashSet<NodeId>,
     maybe_unused_trait_imports: FxIndexSet<LocalDefId>,
 
@@ -1300,6 +1301,7 @@ impl<'a, 'tcx> Resolver<'a, 'tcx> {
             glob_map: Default::default(),
             visibilities,
             impl_restrictions: FxHashMap::default(),
+            mut_restrictions: FxHashMap::default(),
             has_pub_restricted: false,
             used_imports: FxHashSet::default(),
             maybe_unused_trait_imports: Default::default(),
@@ -1415,6 +1417,7 @@ impl<'a, 'tcx> Resolver<'a, 'tcx> {
         let expn_that_defined = self.expn_that_defined;
         let visibilities = self.visibilities;
         let impl_restrictions = self.impl_restrictions;
+        let mut_restrictions = self.mut_restrictions;
         let has_pub_restricted = self.has_pub_restricted;
         let extern_crate_map = self.extern_crate_map;
         let maybe_unused_trait_imports = self.maybe_unused_trait_imports;
@@ -1426,6 +1429,7 @@ impl<'a, 'tcx> Resolver<'a, 'tcx> {
             expn_that_defined,
             visibilities,
             impl_restrictions,
+            mut_restrictions,
             has_pub_restricted,
             effective_visibilities,
             extern_crate_map,
