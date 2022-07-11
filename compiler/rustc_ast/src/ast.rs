@@ -2746,6 +2746,7 @@ pub struct FieldDef {
     pub id: NodeId,
     pub span: Span,
     pub vis: Visibility,
+    pub mut_restriction: Restriction,
     pub ident: Option<Ident>,
 
     pub ty: P<Ty>,
