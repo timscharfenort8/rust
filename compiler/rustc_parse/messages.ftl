@@ -276,6 +276,20 @@ parse_incorrect_visibility_restriction = incorrect visibility restriction
             `pub(in path::to::module)`: visible only on the specified path
     .suggestion = make this visible only to module `{$inner_str}` with `in`
 
+parse_incorrect_restriction = incorrect {$kind} restriction
+    .help = some possible {$kind} restrictions are:
+            `{$kw}(crate)`: {$action} only in the current crate
+            `{$kw}(super)`: {$action} only in the current module's parent
+            `{$kw}(in path::to::module)`: {$action} only in the specified path
+    .suggestion = make this {$action} only to module `{$path}` with `in`
+
+parse_naked_restriction = incorrect {$kind} restriction
+    .help = some possible {$kind} restrictions are:
+            `{$kw}(crate)`: {$action} only in the current crate
+            `{$kw}(super)`: {$action} only in the current module's parent
+            `{$kw}(in path::to::module)`: {$action} only in the specified path
+    .suggestion = make this {$action} only in the current crate
+
 parse_assignment_else_not_allowed = <assignment> ... else {"{"} ... {"}"} is not allowed
 
 parse_expected_statement_after_outer_attr = expected statement after outer attribute
