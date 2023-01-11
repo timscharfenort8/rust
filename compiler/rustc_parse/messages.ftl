@@ -269,26 +269,19 @@ parse_mismatched_closing_delimiter = mismatched closing delimiter: `{$delimiter}
     .label_opening_candidate = closing delimiter possibly meant for this
     .label_unclosed = unclosed delimiter
 
-parse_incorrect_visibility_restriction = incorrect visibility restriction
-    .help = some possible visibility restrictions are:
-            `pub(crate)`: visible only on the current crate
-            `pub(super)`: visible only in the current module's parent
-            `pub(in path::to::module)`: visible only on the specified path
-    .suggestion = make this visible only to module `{$inner_str}` with `in`
+parse_incorrect_restriction = incorrect {$noun} restriction
+    .help = some possible {$noun} restrictions are:
+            `{$keyword}(crate)`: {$adjective} only in the current crate
+            `{$keyword}(super)`: {$adjective} only in the current module's parent
+            `{$keyword}(in path::to::module)`: {$adjective} only in the specified path
+    .suggestion = make this {$adjective} only to module `{$path}` with `in`
 
-parse_incorrect_restriction = incorrect {$kind} restriction
-    .help = some possible {$kind} restrictions are:
-            `{$kw}(crate)`: {$action} only in the current crate
-            `{$kw}(super)`: {$action} only in the current module's parent
-            `{$kw}(in path::to::module)`: {$action} only in the specified path
-    .suggestion = make this {$action} only to module `{$path}` with `in`
-
-parse_naked_restriction = incorrect {$kind} restriction
-    .help = some possible {$kind} restrictions are:
-            `{$kw}(crate)`: {$action} only in the current crate
-            `{$kw}(super)`: {$action} only in the current module's parent
-            `{$kw}(in path::to::module)`: {$action} only in the specified path
-    .suggestion = make this {$action} only in the current crate
+parse_restriction_missing_path = incorrect {$noun} restriction
+    .help = some possible {$noun} restrictions are:
+            `{$keyword}(crate)`: {$adjective} only in the current crate
+            `{$keyword}(super)`: {$adjective} only in the current module's parent
+            `{$keyword}(in path::to::module)`: {$adjective} only in the specified path
+    .suggestion = make this {$adjective} only to the current crate
 
 parse_assignment_else_not_allowed = <assignment> ... else {"{"} ... {"}"} is not allowed
 
