@@ -7,7 +7,8 @@ use crate::{
         InvalidNanComparisonsSuggestion, OnlyCastu8ToChar, OverflowingBinHex,
         OverflowingBinHexSign, OverflowingBinHexSignBitSub, OverflowingBinHexSub, OverflowingInt,
         OverflowingIntHelp, OverflowingLiteral, OverflowingUInt, RangeEndpointOutOfRange,
-        UnusedComparisons, UseInclusiveRange, VariantSizeDifferencesDiag,
+        UnpredictableFunctionPointerComparisons, UnusedComparisons, UseInclusiveRange,
+        VariantSizeDifferencesDiag,
     },
 };
 use crate::{LateContext, LateLintPass, LintContext};
@@ -169,6 +170,32 @@ declare_lint! {
     "detects ambiguous wide pointer comparisons"
 }
 
+declare_lint! {
+    /// The `unpredictable_function_pointer_comparisons` lint checks comparison
+    /// of function pointer as the operands.
+    ///
+    /// ### Example
+    ///
+    /// ```rust
+    /// fn foo() {}
+    /// # let a = foo as fn();
+    ///
+    /// let _ = a == foo;
+    /// ```
+    ///
+    /// {{produces}}
+    ///
+    /// ### Explanation
+    ///
+    /// Function pointers comparisons do not produce meaningful result since
+    /// they are never guaranteed to be unique and could vary between different
+    /// code generation units. Furthermore, different functions could have the
+    /// same address after being merged together.
+    UNPREDICTABLE_FUNCTION_POINTER_COMPARISONS,
+    Warn,
+    "detects unpredictable function pointer comparisons"
+}
+
 #[derive(Copy, Clone)]
 pub struct TypeLimits {
     /// Id of the last visited negated expression
@@ -181,7 +208,8 @@ impl_lint_pass!(TypeLimits => [
     UNUSED_COMPARISONS,
     OVERFLOWING_LITERALS,
     INVALID_NAN_COMPARISONS,
-    AMBIGUOUS_WIDE_POINTER_COMPARISONS
+    AMBIGUOUS_WIDE_POINTER_COMPARISONS,
+    UNPREDICTABLE_FUNCTION_POINTER_COMPARISONS
 ]);
 
 impl TypeLimits {
@@ -758,6 +786,30 @@ fn lint_wide_pointer<'tcx>(
     );
 }
 
+fn lint_fn_pointer<'tcx>(
+    cx: &LateContext<'tcx>,
+    e: &'tcx hir::Expr<'tcx>,
+    _binop: hir::BinOpKind,
+    l: &'tcx hir::Expr<'tcx>,
+    r: &'tcx hir::Expr<'tcx>,
+) {
+    let Some(l_ty) = cx.typeck_results().expr_ty_opt(l) else { return };
+    let Some(r_ty) = cx.typeck_results().expr_ty_opt(r) else { return };
+
+    let l_ty = l_ty.peel_refs();
+    let r_ty = r_ty.peel_refs();
+
+    if !l_ty.is_fn() || !r_ty.is_fn() {
+        return;
+    }
+
+    cx.emit_spanned_lint(
+        UNPREDICTABLE_FUNCTION_POINTER_COMPARISONS,
+        e.span,
+        UnpredictableFunctionPointerComparisons,
+    );
+}
+
 impl<'tcx> LateLintPass<'tcx> for TypeLimits {
     fn check_expr(&mut self, cx: &LateContext<'tcx>, e: &'tcx hir::Expr<'tcx>) {
         match e.kind {
@@ -775,6 +827,7 @@ impl<'tcx> LateLintPass<'tcx> for TypeLimits {
                     } else {
                         lint_nan(cx, e, binop, l, r);
                         lint_wide_pointer(cx, e, binop.node, l, r);
+                        lint_fn_pointer(cx, e, binop.node, l, r);
                     }
                 }
             }
@@ -786,6 +839,7 @@ impl<'tcx> LateLintPass<'tcx> for TypeLimits {
                     && let Some(binop) = partialeq_binop(diag_item) =>
             {
                 lint_wide_pointer(cx, e, binop, l, r);
+                lint_fn_pointer(cx, e, binop, l, r);
             }
             hir::ExprKind::MethodCall(_, l, [r], _)
                 if let Some(def_id) = cx.typeck_results().type_dependent_def_id(e.hir_id)
@@ -793,6 +847,7 @@ impl<'tcx> LateLintPass<'tcx> for TypeLimits {
                     && let Some(binop) = partialeq_binop(diag_item) =>
             {
                 lint_wide_pointer(cx, e, binop, l, r);
+                lint_fn_pointer(cx, e, binop, l, r);
             }
             _ => {}
         };
