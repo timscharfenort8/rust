@@ -614,6 +614,28 @@ pub enum UselessPtrNullChecksDiag<'a> {
     FnRet { fn_name: Ident },
 }
 
+#[derive(LintDiagnostic)]
+#[diag(lint_invalid_null_ptr_usages)]
+pub struct InvalidNullPtrUsagesDiag<'a> {
+    #[subdiagnostic]
+    pub suggestion: InvalidNullPtrUsagesSuggestion<'a>,
+}
+
+#[derive(Subdiagnostic)]
+pub enum InvalidNullPtrUsagesSuggestion<'a> {
+    #[multipart_suggestion(lint_suggestion, applicability = "machine-applicable")]
+    WithoutExplicitType {
+        #[suggestion_part(code = "core::ptr::NonNull::dangling().as_ptr()")]
+        arg_span: Span,
+    },
+    #[multipart_suggestion(lint_suggestion, applicability = "machine-applicable")]
+    WithExplicitType {
+        ty: Ty<'a>,
+        #[suggestion_part(code = "core::ptr::NonNull::<{ty}>::dangling().as_ptr()")]
+        arg_span: Span,
+    },
+}
+
 // for_loops_over_fallibles.rs
 #[derive(LintDiagnostic)]
 #[diag(lint_for_loops_over_fallibles)]

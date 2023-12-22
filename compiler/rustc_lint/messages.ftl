@@ -313,6 +313,9 @@ lint_invalid_nan_comparisons_eq_ne = incorrect NaN comparison, NaN cannot be dir
 
 lint_invalid_nan_comparisons_lt_le_gt_ge = incorrect NaN comparison, NaN is not orderable
 
+lint_invalid_null_ptr_usages = calling this function with a null pointer is undefined behavior, even if the result of the function is unused, consider using a dangling pointer instead
+    .suggestion = use a dangling pointer instead
+
 lint_invalid_reference_casting_assign_to_ref = assigning to `&T` is undefined behavior, consider using an `UnsafeCell`
     .label = casting happend here
 
