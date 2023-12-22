@@ -453,15 +453,6 @@ lint_path_statement_drop = path statement drops value
 
 lint_path_statement_no_effect = path statement with no effect
 
-lint_ptr_null_checks_fn_ptr = function pointers are not nullable, so checking them for null will always return false
-    .help = wrap the function pointer inside an `Option` and use `Option::is_none` to check for null pointer value
-    .label = expression has type `{$orig_ty}`
-
-lint_ptr_null_checks_fn_ret = returned pointer of `{$fn_name}` call is never null, so checking it for null will always return false
-
-lint_ptr_null_checks_ref = references are not nullable, so checking them for null will always return false
-    .label = expression has type `{$orig_ty}`
-
 lint_query_instability = using `{$query}` can result in unstable query results
     .note = if you believe this case to be fine, allow this lint and add a comment explaining your rationale
 
@@ -574,6 +565,15 @@ lint_unused_op = unused {$op} that must be used
     .suggestion = use `let _ = ...` to ignore the resulting value
 
 lint_unused_result = unused result of type `{$ty}`
+
+lint_useless_ptr_null_checks_fn_ptr = function pointers are not nullable, so checking them for null will always return false
+    .help = wrap the function pointer inside an `Option` and use `Option::is_none` to check for null pointer value
+    .label = expression has type `{$orig_ty}`
+
+lint_useless_ptr_null_checks_fn_ret = returned pointer of `{$fn_name}` call is never null, so checking it for null will always return false
+
+lint_useless_ptr_null_checks_ref = references are not nullable, so checking them for null will always return false
+    .label = expression has type `{$orig_ty}`
 
 lint_variant_size_differences =
     enum variant is more than three times larger ({$largest} bytes) than the next largest
