@@ -31,6 +31,7 @@ declare_lint_pass! {
         CONST_EVALUATABLE_UNCHECKED,
         CONST_ITEM_MUTATION,
         CONST_PATTERNS_WITHOUT_PARTIAL_EQ,
+        DANGEROUS_LARGE_STACK_ALLOCATIONS,
         DEAD_CODE,
         DEPRECATED,
         DEPRECATED_CFG_ATTR_CRATE_TYPE_NAME,
@@ -56,6 +57,7 @@ declare_lint_pass! {
         INVALID_TYPE_PARAM_DEFAULT,
         IRREFUTABLE_LET_PATTERNS,
         LARGE_ASSIGNMENTS,
+        LARGE_STACK_ALLOCATIONS,
         LATE_BOUND_LIFETIME_ARGUMENTS,
         LEGACY_DERIVE_HELPERS,
         LONG_RUNNING_CONST_EVAL,
@@ -4613,4 +4615,45 @@ declare_lint! {
         reason: FutureIncompatibilityReason::FutureReleaseErrorReportInDeps,
         reference: "issue #X <https://github.com/rust-lang/rust/issues/X>",
     };
+}
+
+declare_lint! {
+    /// The `large_stack_allocations` lint detects large stack allocations.
+    ///
+    /// ### Example
+    ///
+    /// ```rust
+    /// let array = [0; 1024 * 1024 * 10]; // 10 Mio
+    /// ```
+    ///
+    /// {{produces}}
+    ///
+    /// ### Explanation
+    ///
+    /// Large arras may cause stack overflow due to the limited size of the
+    /// stack on most platforms (Windows: 1Mio; Linux: 10 Mio).
+    pub LARGE_STACK_ALLOCATIONS,
+    Warn,
+    "large arrays can cause stack overflow",
+}
+
+declare_lint! {
+    /// The `dangerous_large_stack_allocations` lint detects large stack
+    /// allocations.
+    ///
+    /// ### Example
+    ///
+    /// ```rust
+    /// let array = [0; 1024 * 1024 * 10]; // 10 Mio
+    /// ```
+    ///
+    /// {{produces}}
+    ///
+    /// ### Explanation
+    ///
+    /// Large stack allocations may cause stack overflow,
+    /// compiler OOM or other kind of unexpected behavior.
+    pub DANGEROUS_LARGE_STACK_ALLOCATIONS,
+    Deny,
+    "large arrays can cause stack overflow and unexpected behavior",
 }

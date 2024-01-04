@@ -10,6 +10,8 @@ use rustc_session::lint::builtin::UNCONDITIONAL_RECURSION;
 use rustc_span::Span;
 use std::ops::ControlFlow;
 
+pub(crate) mod large_stack_allocation;
+
 pub(crate) fn check<'tcx>(tcx: TyCtxt<'tcx>, body: &Body<'tcx>) {
     check_call_recursion(tcx, body);
 }

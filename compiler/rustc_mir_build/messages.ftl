@@ -178,6 +178,16 @@ mir_build_irrefutable_let_patterns_while_let = irrefutable `while let` {$count -
     } will always match, so the loop will never exit
     .help = consider instead using a `loop {"{"} ... {"}"}` with a `let` inside it
 
+mir_build_large_stack_alloc = large stack allocation, they can cause stack overflow due to the limited stack size
+    .note = `{$ty}` has size of {$size}, which is higher than the 1 Mio and 10 Mio stack size on Linux and Windows
+    .help = consider reducing the size of allocation or allocating directly on the heap
+    .vec_macro = consider using the `vec![]` macro to allocate directly on the heap
+
+mir_build_dangerous_large_stack_alloc = dangerous large stack allocation, they can cause stack overflow and unexpected behavior
+    .note = `{$ty}` has size of {$size}, which is way higher than the stack size on most platforms and more than the compiler can confortably handle
+    .help = consider reducing the size of allocation or allocating directly on the heap
+    .vec_macro = consider using the `vec![]` macro to allocate directly on the heap
+
 mir_build_leading_irrefutable_let_patterns = leading irrefutable {$count ->
         [one] pattern
         *[other] patterns

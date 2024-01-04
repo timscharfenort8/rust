@@ -932,3 +932,34 @@ pub enum RustcBoxAttrReason {
     #[note(mir_build_missing_box)]
     MissingBox,
 }
+
+#[derive(LintDiagnostic)]
+#[diag(mir_build_large_stack_alloc)]
+#[note]
+#[help]
+pub struct LargeStackAlloc<'tcx> {
+    pub ty: Ty<'tcx>,
+    pub size: String,
+    #[subdiagnostic]
+    pub suggestion: Option<LargeStackAllocSuggestions>,
+}
+
+#[derive(LintDiagnostic)]
+#[diag(mir_build_dangerous_large_stack_alloc)]
+#[note]
+#[help]
+pub struct DangerousLargeStackAlloc<'tcx> {
+    pub ty: Ty<'tcx>,
+    pub size: String,
+    #[subdiagnostic]
+    pub suggestion: Option<LargeStackAllocSuggestions>,
+}
+
+#[derive(Subdiagnostic)]
+pub enum LargeStackAllocSuggestions {
+    #[multipart_suggestion(mir_build_vec_macro, applicability = "maybe-incorrect")]
+    VecMacro {
+        #[suggestion_part(code = "vec!")]
+        start_span: Span,
+    },
+}

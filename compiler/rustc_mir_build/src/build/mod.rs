@@ -58,6 +58,9 @@ fn mir_build<'tcx>(tcx: TyCtxt<'tcx>, def: LocalDefId) -> Body<'tcx> {
     if let Err(e) = tcx.check_match(def) {
         return construct_error(tcx, def, e);
     }
+    if let Err(e) = lints::large_stack_allocation::check(tcx, def) {
+        return construct_error(tcx, def, e);
+    }
 
     let body = match tcx.thir_body(def) {
         Err(error_reported) => construct_error(tcx, def, error_reported),

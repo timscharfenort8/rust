@@ -1,0 +1,123 @@
+warning: large stack allocation, they can cause stack overflow due to the limited stack size
+  --> $DIR/large_stack_allocations.rs:3:28
+   |
+LL | static _T: [u8; 1 << 24] = [0; 1 << 24];
+   |                            ^^^^^^^^^^^^
+   |
+   = note: `[u8; 16777216]` has size of 16.00 MiB, which is higher than the 1 Mio and 10 Mio stack size on Linux and Windows
+   = help: consider reducing the size of allocation or allocating directly on the heap
+   = note: `#[warn(large_stack_allocations)]` on by default
+help: consider using the `vec![]` macro to allocate directly on the heap
+   |
+LL | static _T: [u8; 1 << 24] = vec![0; 1 << 24];
+   |                            ++++
+
+warning: large stack allocation, they can cause stack overflow due to the limited stack size
+  --> $DIR/large_stack_allocations.rs:5:31
+   |
+LL | static _T2: [u8; 1 << 24] = { [0; 1 << 24] };
+   |                               ^^^^^^^^^^^^
+   |
+   = note: `[u8; 16777216]` has size of 16.00 MiB, which is higher than the 1 Mio and 10 Mio stack size on Linux and Windows
+   = help: consider reducing the size of allocation or allocating directly on the heap
+help: consider using the `vec![]` macro to allocate directly on the heap
+   |
+LL | static _T2: [u8; 1 << 24] = { vec![0; 1 << 24] };
+   |                               ++++
+
+error: dangerous large stack allocation, they can cause stack overflow and unexpected behavior
+  --> $DIR/large_stack_allocations.rs:9:5
+   |
+LL |     [0; 1 << 32]
+   |     ^^^^^^^^^^^^
+   |
+   = note: `[u8; 4294967296]` has size of 4.00 GiB, which is way higher than the stack size on most platforms and more than the compiler can confortably handle
+   = help: consider reducing the size of allocation or allocating directly on the heap
+   = note: `#[deny(dangerous_large_stack_allocations)]` on by default
+help: consider using the `vec![]` macro to allocate directly on the heap
+   |
+LL |     vec![0; 1 << 32]
+   |     ++++
+
+error: dangerous large stack allocation, they can cause stack overflow and unexpected behavior
+  --> $DIR/large_stack_allocations.rs:18:14
+   |
+LL |     let _a = [0u32; 1 << 32];
+   |              ^^^^^^^^^^^^^^^
+   |
+   = note: `[u32; 4294967296]` has size of 16.00 GiB, which is way higher than the stack size on most platforms and more than the compiler can confortably handle
+   = help: consider reducing the size of allocation or allocating directly on the heap
+help: consider using the `vec![]` macro to allocate directly on the heap
+   |
+LL |     let _a = vec![0u32; 1 << 32];
+   |              ++++
+
+error: dangerous large stack allocation, they can cause stack overflow and unexpected behavior
+  --> $DIR/large_stack_allocations.rs:20:14
+   |
+LL |     let _b = test()[0];
+   |              ^^^^^^
+   |
+   = note: `[u8; 4294967296]` has size of 4.00 GiB, which is way higher than the stack size on most platforms and more than the compiler can confortably handle
+   = help: consider reducing the size of allocation or allocating directly on the heap
+
+warning: large stack allocation, they can cause stack overflow due to the limited stack size
+  --> $DIR/large_stack_allocations.rs:22:29
+   |
+LL |     let _c: [u8; 1 << 24] = std::array::from_fn(|_| 0);
+   |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `[u8; 16777216]` has size of 16.00 MiB, which is higher than the 1 Mio and 10 Mio stack size on Linux and Windows
+   = help: consider reducing the size of allocation or allocating directly on the heap
+
+error: dangerous large stack allocation, they can cause stack overflow and unexpected behavior
+  --> $DIR/large_stack_allocations.rs:26:30
+   |
+LL |         [a, ..] if u32::from(test()[0]) == a => {},
+   |                              ^^^^^^
+   |
+   = note: `[u8; 4294967296]` has size of 4.00 GiB, which is way higher than the stack size on most platforms and more than the compiler can confortably handle
+   = help: consider reducing the size of allocation or allocating directly on the heap
+
+error: dangerous large stack allocation, they can cause stack overflow and unexpected behavior
+  --> $DIR/large_stack_allocations.rs:31:14
+   |
+LL |     let _d = foo(3);
+   |              ^^^^^^
+   |
+   = note: `[i32; 4294967296]` has size of 16.00 GiB, which is way higher than the stack size on most platforms and more than the compiler can confortably handle
+   = help: consider reducing the size of allocation or allocating directly on the heap
+
+error: dangerous large stack allocation, they can cause stack overflow and unexpected behavior
+  --> $DIR/large_stack_allocations.rs:35:14
+   |
+LL |     let _e = A(_a);
+   |              ^^^^^
+   |
+   = note: `A<[u32; 4294967296]>` has size of 16.00 GiB, which is way higher than the stack size on most platforms and more than the compiler can confortably handle
+   = help: consider reducing the size of allocation or allocating directly on the heap
+
+warning: large stack allocation, they can cause stack overflow due to the limited stack size
+  --> $DIR/large_stack_allocations.rs:37:14
+   |
+LL |     let _f = A([0; 1024 * 1024 * 10]);
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `A<[i32; 10485760]>` has size of 40.00 MiB, which is higher than the 1 Mio and 10 Mio stack size on Linux and Windows
+   = help: consider reducing the size of allocation or allocating directly on the heap
+
+warning: large stack allocation, they can cause stack overflow due to the limited stack size
+  --> $DIR/large_stack_allocations.rs:37:16
+   |
+LL |     let _f = A([0; 1024 * 1024 * 10]);
+   |                ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `[i32; 10485760]` has size of 40.00 MiB, which is higher than the 1 Mio and 10 Mio stack size on Linux and Windows
+   = help: consider reducing the size of allocation or allocating directly on the heap
+help: consider using the `vec![]` macro to allocate directly on the heap
+   |
+LL |     let _f = A(vec![0; 1024 * 1024 * 10]);
+   |                ++++
+
+error: aborting due to 6 previous errors; 5 warnings emitted
+
