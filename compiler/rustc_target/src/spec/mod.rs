@@ -1383,6 +1383,10 @@ macro_rules! supported_targets {
             Some(t)
         }
 
+        fn load_all_builtin() -> impl Iterator<Item = Target> {
+            [$(targets::$module::target, )*].iter().map(|f| f())
+        }
+
         #[cfg(test)]
         mod tests {
             mod tests_impl;
@@ -3124,6 +3128,11 @@ impl Target {
                 panic!("built-in targets doesn't support target-paths")
             }
         }
+    }
+
+    /// Load all built-in targets
+    pub fn iter_builtins() -> impl Iterator<Item = Target> {
+        load_all_builtin()
     }
 
     /// Search for a JSON file specifying the given target triple.

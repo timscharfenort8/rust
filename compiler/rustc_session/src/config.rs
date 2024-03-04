@@ -20,7 +20,7 @@ use rustc_span::{FileName, FileNameDisplayPreference, RealFileName, SourceFileHa
 use rustc_target::abi::Align;
 use rustc_target::spec::LinkSelfContainedComponents;
 use rustc_target::spec::{PanicStrategy, RelocModel, SanitizerSet, SplitDebuginfo};
-use rustc_target::spec::{Target, TargetTriple, TargetWarnings, TARGETS};
+use rustc_target::spec::{Target, TargetTriple, TargetWarnings};
 use std::collections::btree_map::{
     Iter as BTreeMapIter, Keys as BTreeMapKeysIter, Values as BTreeMapValuesIter,
 };
@@ -1511,11 +1511,7 @@ impl CheckCfg {
                     .get_many_mut(VALUES)
                     .expect("unable to get all the check-cfg values buckets");
 
-                for target in TARGETS
-                    .iter()
-                    .map(|target| Target::expect_builtin(&TargetTriple::from_triple(target)))
-                    .chain(iter::once(current_target.clone()))
-                {
+                for target in Target::iter_builtins().chain(iter::once(current_target.clone())) {
                     values_target_abi.insert(Symbol::intern(&target.options.abi));
                     values_target_arch.insert(Symbol::intern(&target.arch));
                     values_target_endian.insert(Symbol::intern(target.options.endian.as_str()));
