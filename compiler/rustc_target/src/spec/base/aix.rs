@@ -27,6 +27,6 @@ pub fn opts() -> TargetOptions {
             (LinkOutputKind::DynamicPicExe, &["/usr/lib/crt0_64.o", "/usr/lib/crti_64.o"]),
         ]),
         dll_suffix: ".a".into(),
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

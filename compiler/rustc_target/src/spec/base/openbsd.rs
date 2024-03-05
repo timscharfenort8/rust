@@ -12,6 +12,6 @@ pub fn opts() -> TargetOptions {
         relro_level: RelroLevel::Full,
         default_dwarf_version: 2,
         tls_model: TlsModel::Emulated,
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

@@ -16,6 +16,6 @@ pub fn opts() -> TargetOptions {
         crt_static_allows_dylibs: true,
         // VxWorks needs to implement this to support profiling
         mcount: "_mcount".into(),
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

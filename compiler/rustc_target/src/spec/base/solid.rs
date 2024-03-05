@@ -7,6 +7,6 @@ pub fn opts(kernel: &str) -> TargetOptions {
         executables: false,
         frame_pointer: FramePointer::NonLeaf,
         has_thread_local: true,
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

@@ -6,6 +6,6 @@ pub fn opts() -> TargetOptions {
         dynamic_linking: true,
         families: cvs!["unix"],
         relro_level: RelroLevel::Full,
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

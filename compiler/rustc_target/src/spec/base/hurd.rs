@@ -10,6 +10,6 @@ pub fn opts() -> TargetOptions {
         relro_level: RelroLevel::Full,
         has_thread_local: true,
         crt_static_respected: true,
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

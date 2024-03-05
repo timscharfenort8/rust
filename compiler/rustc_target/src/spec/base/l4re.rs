@@ -9,6 +9,6 @@ pub fn opts() -> TargetOptions {
         linker: Some("l4-bender".into()),
         families: cvs!["unix"],
         relocation_model: RelocModel::Static,
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

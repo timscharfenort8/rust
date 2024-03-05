@@ -2237,12 +2237,6 @@ impl TargetOptions {
         link_args
     }
 
-    // TODO: remove replace by base.pre_link_args = LazyLock::new(|| add_link_args(..))
-    // fn add_pre_link_args(&mut self, flavor: LinkerFlavor, args: &[&'static str]) {
-    //     add_link_args(&mut self.pre_link_args, flavor, args);
-    // }
-
-    #[allow(dead_code)]
     fn update_from_cli(&mut self) {
         self.linker_flavor = LinkerFlavor::from_cli_json(
             self.linker_flavor_json,
@@ -2274,6 +2268,7 @@ impl TargetOptions {
         }
     }
 
+    #[allow(dead_code)]
     fn update_to_cli(&mut self) {
         self.linker_flavor_json = self.linker_flavor.to_cli_counterpart();
         self.lld_flavor_json = self.linker_flavor.lld_flavor();

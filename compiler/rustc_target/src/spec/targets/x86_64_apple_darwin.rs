@@ -1,3 +1,5 @@
+use std::sync::LazyLock;
+
 use crate::spec::base::apple::{macos_llvm_target, opts, Arch};
 use crate::spec::{Cc, FramePointer, LinkerFlavor, Lld, SanitizerSet};
 use crate::spec::{Target, TargetOptions};
@@ -7,7 +9,9 @@ pub fn target() -> Target {
     let mut base = opts("macos", arch);
     base.max_atomic_width = Some(128); // penryn+ supports cmpxchg16b
     base.frame_pointer = FramePointer::Always;
-    base.add_pre_link_args(LinkerFlavor::Darwin(Cc::Yes, Lld::No), &["-m64"]);
+    base.pre_link_args = LazyLock::new(|| {
+        TargetOptions::link_args(LinkerFlavor::Darwin(Cc::Yes, Lld::No), &["-m64"])
+    });
     base.supported_sanitizers =
         SanitizerSet::ADDRESS | SanitizerSet::CFI | SanitizerSet::LEAK | SanitizerSet::THREAD;
 

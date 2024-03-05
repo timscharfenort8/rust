@@ -1,3 +1,5 @@
+use std::sync::LazyLock;
+
 use crate::spec::{
     add_link_args, cvs, Cc, LinkSelfContainedDefault, LinkerFlavor, PanicStrategy, RelocModel,
     TargetOptions, TlsModel,
@@ -48,9 +50,6 @@ pub fn options() -> TargetOptions {
         };
     }
 
-    let mut pre_link_args = TargetOptions::link_args(LinkerFlavor::WasmLld(Cc::No), args!(""));
-    add_link_args(&mut pre_link_args, LinkerFlavor::WasmLld(Cc::Yes), args!("-Wl,"));
-
     TargetOptions {
         is_like_wasm: true,
         families: cvs!["wasm"],
@@ -92,7 +91,12 @@ pub fn options() -> TargetOptions {
         linker: Some("rust-lld".into()),
         linker_flavor: LinkerFlavor::WasmLld(Cc::No),
 
-        pre_link_args,
+        pre_link_args: LazyLock::new(|| {
+            let mut pre_link_args =
+                TargetOptions::link_args(LinkerFlavor::WasmLld(Cc::No), args!(""));
+            add_link_args(&mut pre_link_args, LinkerFlavor::WasmLld(Cc::Yes), args!("-Wl,"));
+            pre_link_args
+        }),
 
         // FIXME: Figure out cases in which WASM needs to link with a native toolchain.
         //
@@ -127,6 +131,6 @@ pub fn options() -> TargetOptions {
         // representation, so this is disabled.
         generate_arange_section: false,
 
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

@@ -12,6 +12,6 @@ pub fn opts() -> TargetOptions {
         has_thread_local: true,
         use_ctors_section: true,
         default_dwarf_version: 2,
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

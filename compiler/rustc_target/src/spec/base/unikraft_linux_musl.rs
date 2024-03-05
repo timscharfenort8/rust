@@ -10,6 +10,6 @@ pub fn opts() -> TargetOptions {
         families: cvs!["unix"],
         has_thread_local: true,
         panic_strategy: PanicStrategy::Abort,
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

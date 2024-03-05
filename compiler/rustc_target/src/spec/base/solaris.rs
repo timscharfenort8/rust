@@ -11,6 +11,6 @@ pub fn opts() -> TargetOptions {
         limit_rdylib_exports: false, // Linker doesn't support this
         eh_frame_header: false,
 
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

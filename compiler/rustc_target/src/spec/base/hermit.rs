@@ -10,6 +10,6 @@ pub fn opts() -> TargetOptions {
         static_position_independent_executables: true,
         has_thread_local: true,
         panic_strategy: PanicStrategy::Abort,
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

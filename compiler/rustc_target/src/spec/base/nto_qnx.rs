@@ -13,6 +13,6 @@ pub fn opts() -> TargetOptions {
         position_independent_executables: true,
         static_position_independent_executables: true,
         relro_level: RelroLevel::Full,
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }
