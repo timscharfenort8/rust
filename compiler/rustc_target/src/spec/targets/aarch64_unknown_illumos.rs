@@ -1,8 +1,10 @@
-use crate::spec::{base, Cc, LinkerFlavor, SanitizerSet, Target};
+use crate::spec::{base, Cc, LinkerFlavor, SanitizerSet, Target, TargetOptions};
+use std::sync::LazyLock;
 
 pub fn target() -> Target {
     let mut base = base::illumos::opts();
-    base.add_pre_link_args(LinkerFlavor::Unix(Cc::Yes), &["-std=c99"]);
+    base.pre_link_args =
+        LazyLock::new(|| TargetOptions::link_args(LinkerFlavor::Unix(Cc::Yes), &["-std=c99"]));
     base.max_atomic_width = Some(128);
     base.supported_sanitizers = SanitizerSet::ADDRESS | SanitizerSet::CFI;
     base.features = "+v8a".into();

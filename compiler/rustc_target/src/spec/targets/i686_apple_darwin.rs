@@ -1,12 +1,15 @@
 use crate::spec::base::apple::{macos_llvm_target, opts, Arch};
 use crate::spec::{Cc, FramePointer, LinkerFlavor, Lld, Target, TargetOptions};
+use std::sync::LazyLock;
 
 pub fn target() -> Target {
     // ld64 only understands i386 and not i686
     let arch = Arch::I386;
     let mut base = opts("macos", arch);
     base.max_atomic_width = Some(64);
-    base.add_pre_link_args(LinkerFlavor::Darwin(Cc::Yes, Lld::No), &["-m32"]);
+    base.pre_link_args = LazyLock::new(|| {
+        TargetOptions::link_args(LinkerFlavor::Darwin(Cc::Yes, Lld::No), &["-m32"])
+    });
     base.frame_pointer = FramePointer::Always;
 
     Target {

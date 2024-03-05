@@ -1,4 +1,5 @@
-use crate::spec::{base, Cc, LinkerFlavor, Lld, Target};
+use crate::spec::{base, Cc, LinkerFlavor, Lld, Target, TargetOptions};
+use std::sync::LazyLock;
 
 pub fn target() -> Target {
     let mut base = base::windows_uwp_gnu::opts();
@@ -10,7 +11,12 @@ pub fn target() -> Target {
         LinkerFlavor::Gnu(Cc::No, Lld::No),
         &["-m", "i386pep", "--high-entropy-va"],
     );
-    base.add_pre_link_args(LinkerFlavor::Gnu(Cc::Yes, Lld::No), &["-m64", "-Wl,--high-entropy-va"]);
+    base.pre_link_args = LazyLock::new(|| {
+        TargetOptions::link_args(
+            LinkerFlavor::Gnu(Cc::Yes, Lld::No),
+            &["-m64", "-Wl,--high-entropy-va"],
+        )
+    });
     base.max_atomic_width = Some(128);
 
     Target {

@@ -1,4 +1,5 @@
-use crate::spec::{base, Cc, FramePointer, LinkerFlavor, Lld, Target};
+use crate::spec::{base, Cc, FramePointer, LinkerFlavor, Lld, Target, TargetOptions};
+use std::sync::LazyLock;
 
 pub fn target() -> Target {
     let mut base = base::windows_gnu::opts();
@@ -13,7 +14,12 @@ pub fn target() -> Target {
         LinkerFlavor::Gnu(Cc::No, Lld::No),
         &["-m", "i386pe", "--large-address-aware"],
     );
-    base.add_pre_link_args(LinkerFlavor::Gnu(Cc::Yes, Lld::No), &["-Wl,--large-address-aware"]);
+    base.pre_link_args = LazyLock::new(|| {
+        TargetOptions::link_args(
+            LinkerFlavor::Gnu(Cc::Yes, Lld::No),
+            &["-Wl,--large-address-aware"],
+        )
+    });
 
     Target {
         llvm_target: "i686-pc-windows-gnu".into(),

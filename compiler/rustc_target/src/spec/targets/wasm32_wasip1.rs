@@ -10,15 +10,20 @@
 //! was since renamed to `wasm32-wasip1` after the preview2 target was
 //! introduced.
 
+use std::sync::LazyLock;
+
 use crate::spec::crt_objects;
 use crate::spec::LinkSelfContainedDefault;
+use crate::spec::TargetOptions;
 use crate::spec::{base, Cc, LinkerFlavor, Target};
 
 pub fn target() -> Target {
     let mut options = base::wasm::options();
 
     options.os = "wasi".into();
-    options.add_pre_link_args(LinkerFlavor::WasmLld(Cc::Yes), &["--target=wasm32-wasi"]);
+    options.pre_link_args = LazyLock::new(|| {
+        TargetOptions::link_args(LinkerFlavor::WasmLld(Cc::Yes), &["--target=wasm32-wasi"])
+    });
 
     options.pre_link_objects_self_contained = crt_objects::pre_wasi_self_contained();
     options.post_link_objects_self_contained = crt_objects::post_wasi_self_contained();
