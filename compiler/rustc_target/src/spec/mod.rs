@@ -49,6 +49,7 @@ use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
+use std::sync::LazyLock;
 use std::{fmt, io};
 
 use rustc_macros::HashStable_Generic;
@@ -1031,6 +1032,10 @@ pub enum DebuginfoKind {
 }
 
 impl DebuginfoKind {
+    const fn default() -> DebuginfoKind {
+        DebuginfoKind::Dwarf
+    }
+
     fn as_str(&self) -> &'static str {
         match self {
             DebuginfoKind::Dwarf => "dwarf",
@@ -1095,6 +1100,10 @@ pub enum SplitDebuginfo {
 }
 
 impl SplitDebuginfo {
+    const fn default() -> SplitDebuginfo {
+        SplitDebuginfo::Off
+    }
+
     fn as_str(&self) -> &'static str {
         match self {
             SplitDebuginfo::Off => "off",
@@ -1404,290 +1413,290 @@ macro_rules! supported_targets {
 
 supported_targets! {
     ("x86_64-unknown-linux-gnu", x86_64_unknown_linux_gnu),
-    ("x86_64-unknown-linux-gnux32", x86_64_unknown_linux_gnux32),
-    ("i686-unknown-linux-gnu", i686_unknown_linux_gnu),
-    ("i586-unknown-linux-gnu", i586_unknown_linux_gnu),
-    ("loongarch64-unknown-linux-gnu", loongarch64_unknown_linux_gnu),
-    ("m68k-unknown-linux-gnu", m68k_unknown_linux_gnu),
-    ("csky-unknown-linux-gnuabiv2", csky_unknown_linux_gnuabiv2),
-    ("csky-unknown-linux-gnuabiv2hf", csky_unknown_linux_gnuabiv2hf),
-    ("mips-unknown-linux-gnu", mips_unknown_linux_gnu),
-    ("mips64-unknown-linux-gnuabi64", mips64_unknown_linux_gnuabi64),
-    ("mips64el-unknown-linux-gnuabi64", mips64el_unknown_linux_gnuabi64),
-    ("mipsisa32r6-unknown-linux-gnu", mipsisa32r6_unknown_linux_gnu),
-    ("mipsisa32r6el-unknown-linux-gnu", mipsisa32r6el_unknown_linux_gnu),
-    ("mipsisa64r6-unknown-linux-gnuabi64", mipsisa64r6_unknown_linux_gnuabi64),
-    ("mipsisa64r6el-unknown-linux-gnuabi64", mipsisa64r6el_unknown_linux_gnuabi64),
-    ("mipsel-unknown-linux-gnu", mipsel_unknown_linux_gnu),
-    ("powerpc-unknown-linux-gnu", powerpc_unknown_linux_gnu),
-    ("powerpc-unknown-linux-gnuspe", powerpc_unknown_linux_gnuspe),
-    ("powerpc-unknown-linux-musl", powerpc_unknown_linux_musl),
-    ("powerpc64-ibm-aix", powerpc64_ibm_aix),
-    ("powerpc64-unknown-linux-gnu", powerpc64_unknown_linux_gnu),
-    ("powerpc64-unknown-linux-musl", powerpc64_unknown_linux_musl),
-    ("powerpc64le-unknown-linux-gnu", powerpc64le_unknown_linux_gnu),
-    ("powerpc64le-unknown-linux-musl", powerpc64le_unknown_linux_musl),
-    ("s390x-unknown-linux-gnu", s390x_unknown_linux_gnu),
-    ("s390x-unknown-linux-musl", s390x_unknown_linux_musl),
-    ("sparc-unknown-linux-gnu", sparc_unknown_linux_gnu),
-    ("sparc64-unknown-linux-gnu", sparc64_unknown_linux_gnu),
-    ("arm-unknown-linux-gnueabi", arm_unknown_linux_gnueabi),
-    ("arm-unknown-linux-gnueabihf", arm_unknown_linux_gnueabihf),
-    ("armeb-unknown-linux-gnueabi", armeb_unknown_linux_gnueabi),
-    ("arm-unknown-linux-musleabi", arm_unknown_linux_musleabi),
-    ("arm-unknown-linux-musleabihf", arm_unknown_linux_musleabihf),
-    ("armv4t-unknown-linux-gnueabi", armv4t_unknown_linux_gnueabi),
-    ("armv5te-unknown-linux-gnueabi", armv5te_unknown_linux_gnueabi),
-    ("armv5te-unknown-linux-musleabi", armv5te_unknown_linux_musleabi),
-    ("armv5te-unknown-linux-uclibceabi", armv5te_unknown_linux_uclibceabi),
-    ("armv7-unknown-linux-gnueabi", armv7_unknown_linux_gnueabi),
-    ("armv7-unknown-linux-gnueabihf", armv7_unknown_linux_gnueabihf),
-    ("thumbv7neon-unknown-linux-gnueabihf", thumbv7neon_unknown_linux_gnueabihf),
-    ("thumbv7neon-unknown-linux-musleabihf", thumbv7neon_unknown_linux_musleabihf),
-    ("armv7-unknown-linux-musleabi", armv7_unknown_linux_musleabi),
-    ("armv7-unknown-linux-musleabihf", armv7_unknown_linux_musleabihf),
-    ("aarch64-unknown-linux-gnu", aarch64_unknown_linux_gnu),
-    ("aarch64-unknown-linux-musl", aarch64_unknown_linux_musl),
-    ("x86_64-unknown-linux-musl", x86_64_unknown_linux_musl),
-    ("i686-unknown-linux-musl", i686_unknown_linux_musl),
-    ("i586-unknown-linux-musl", i586_unknown_linux_musl),
-    ("mips-unknown-linux-musl", mips_unknown_linux_musl),
-    ("mipsel-unknown-linux-musl", mipsel_unknown_linux_musl),
-    ("mips64-unknown-linux-muslabi64", mips64_unknown_linux_muslabi64),
-    ("mips64el-unknown-linux-muslabi64", mips64el_unknown_linux_muslabi64),
-    ("hexagon-unknown-linux-musl", hexagon_unknown_linux_musl),
-    ("hexagon-unknown-none-elf", hexagon_unknown_none_elf),
-
-    ("mips-unknown-linux-uclibc", mips_unknown_linux_uclibc),
-    ("mipsel-unknown-linux-uclibc", mipsel_unknown_linux_uclibc),
-
-    ("i686-linux-android", i686_linux_android),
-    ("x86_64-linux-android", x86_64_linux_android),
-    ("arm-linux-androideabi", arm_linux_androideabi),
-    ("armv7-linux-androideabi", armv7_linux_androideabi),
-    ("thumbv7neon-linux-androideabi", thumbv7neon_linux_androideabi),
-    ("aarch64-linux-android", aarch64_linux_android),
-    ("riscv64-linux-android", riscv64_linux_android),
-
-    ("aarch64-unknown-freebsd", aarch64_unknown_freebsd),
-    ("armv6-unknown-freebsd", armv6_unknown_freebsd),
-    ("armv7-unknown-freebsd", armv7_unknown_freebsd),
-    ("i686-unknown-freebsd", i686_unknown_freebsd),
-    ("powerpc-unknown-freebsd", powerpc_unknown_freebsd),
-    ("powerpc64-unknown-freebsd", powerpc64_unknown_freebsd),
-    ("powerpc64le-unknown-freebsd", powerpc64le_unknown_freebsd),
-    ("riscv64gc-unknown-freebsd", riscv64gc_unknown_freebsd),
-    ("x86_64-unknown-freebsd", x86_64_unknown_freebsd),
-
-    ("x86_64-unknown-dragonfly", x86_64_unknown_dragonfly),
-
-    ("aarch64-unknown-openbsd", aarch64_unknown_openbsd),
-    ("i686-unknown-openbsd", i686_unknown_openbsd),
-    ("powerpc-unknown-openbsd", powerpc_unknown_openbsd),
-    ("powerpc64-unknown-openbsd", powerpc64_unknown_openbsd),
-    ("riscv64gc-unknown-openbsd", riscv64gc_unknown_openbsd),
-    ("sparc64-unknown-openbsd", sparc64_unknown_openbsd),
-    ("x86_64-unknown-openbsd", x86_64_unknown_openbsd),
-
-    ("aarch64-unknown-netbsd", aarch64_unknown_netbsd),
-    ("aarch64_be-unknown-netbsd", aarch64_be_unknown_netbsd),
-    ("armv6-unknown-netbsd-eabihf", armv6_unknown_netbsd_eabihf),
-    ("armv7-unknown-netbsd-eabihf", armv7_unknown_netbsd_eabihf),
-    ("i586-unknown-netbsd", i586_unknown_netbsd),
-    ("i686-unknown-netbsd", i686_unknown_netbsd),
-    ("mipsel-unknown-netbsd", mipsel_unknown_netbsd),
-    ("powerpc-unknown-netbsd", powerpc_unknown_netbsd),
-    ("riscv64gc-unknown-netbsd", riscv64gc_unknown_netbsd),
-    ("sparc64-unknown-netbsd", sparc64_unknown_netbsd),
-    ("x86_64-unknown-netbsd", x86_64_unknown_netbsd),
-
-    ("i686-unknown-haiku", i686_unknown_haiku),
-    ("x86_64-unknown-haiku", x86_64_unknown_haiku),
-
-    ("i686-unknown-hurd-gnu", i686_unknown_hurd_gnu),
+    // ("x86_64-unknown-linux-gnux32", x86_64_unknown_linux_gnux32),
+    // ("i686-unknown-linux-gnu", i686_unknown_linux_gnu),
+    // ("i586-unknown-linux-gnu", i586_unknown_linux_gnu),
+    // ("loongarch64-unknown-linux-gnu", loongarch64_unknown_linux_gnu),
+    // ("m68k-unknown-linux-gnu", m68k_unknown_linux_gnu),
+    // ("csky-unknown-linux-gnuabiv2", csky_unknown_linux_gnuabiv2),
+    // ("csky-unknown-linux-gnuabiv2hf", csky_unknown_linux_gnuabiv2hf),
+    // ("mips-unknown-linux-gnu", mips_unknown_linux_gnu),
+    // ("mips64-unknown-linux-gnuabi64", mips64_unknown_linux_gnuabi64),
+    // ("mips64el-unknown-linux-gnuabi64", mips64el_unknown_linux_gnuabi64),
+    // ("mipsisa32r6-unknown-linux-gnu", mipsisa32r6_unknown_linux_gnu),
+    // ("mipsisa32r6el-unknown-linux-gnu", mipsisa32r6el_unknown_linux_gnu),
+    // ("mipsisa64r6-unknown-linux-gnuabi64", mipsisa64r6_unknown_linux_gnuabi64),
+    // ("mipsisa64r6el-unknown-linux-gnuabi64", mipsisa64r6el_unknown_linux_gnuabi64),
+    // ("mipsel-unknown-linux-gnu", mipsel_unknown_linux_gnu),
+    // ("powerpc-unknown-linux-gnu", powerpc_unknown_linux_gnu),
+    // ("powerpc-unknown-linux-gnuspe", powerpc_unknown_linux_gnuspe),
+    // ("powerpc-unknown-linux-musl", powerpc_unknown_linux_musl),
+    // ("powerpc64-ibm-aix", powerpc64_ibm_aix),
+    // ("powerpc64-unknown-linux-gnu", powerpc64_unknown_linux_gnu),
+    // ("powerpc64-unknown-linux-musl", powerpc64_unknown_linux_musl),
+    // ("powerpc64le-unknown-linux-gnu", powerpc64le_unknown_linux_gnu),
+    // ("powerpc64le-unknown-linux-musl", powerpc64le_unknown_linux_musl),
+    // ("s390x-unknown-linux-gnu", s390x_unknown_linux_gnu),
+    // ("s390x-unknown-linux-musl", s390x_unknown_linux_musl),
+    // ("sparc-unknown-linux-gnu", sparc_unknown_linux_gnu),
+    // ("sparc64-unknown-linux-gnu", sparc64_unknown_linux_gnu),
+    // ("arm-unknown-linux-gnueabi", arm_unknown_linux_gnueabi),
+    // ("arm-unknown-linux-gnueabihf", arm_unknown_linux_gnueabihf),
+    // ("armeb-unknown-linux-gnueabi", armeb_unknown_linux_gnueabi),
+    // ("arm-unknown-linux-musleabi", arm_unknown_linux_musleabi),
+    // ("arm-unknown-linux-musleabihf", arm_unknown_linux_musleabihf),
+    // ("armv4t-unknown-linux-gnueabi", armv4t_unknown_linux_gnueabi),
+    // ("armv5te-unknown-linux-gnueabi", armv5te_unknown_linux_gnueabi),
+    // ("armv5te-unknown-linux-musleabi", armv5te_unknown_linux_musleabi),
+    // ("armv5te-unknown-linux-uclibceabi", armv5te_unknown_linux_uclibceabi),
+    // ("armv7-unknown-linux-gnueabi", armv7_unknown_linux_gnueabi),
+    // ("armv7-unknown-linux-gnueabihf", armv7_unknown_linux_gnueabihf),
+    // ("thumbv7neon-unknown-linux-gnueabihf", thumbv7neon_unknown_linux_gnueabihf),
+    // ("thumbv7neon-unknown-linux-musleabihf", thumbv7neon_unknown_linux_musleabihf),
+    // ("armv7-unknown-linux-musleabi", armv7_unknown_linux_musleabi),
+    // ("armv7-unknown-linux-musleabihf", armv7_unknown_linux_musleabihf),
+    // ("aarch64-unknown-linux-gnu", aarch64_unknown_linux_gnu),
+    // ("aarch64-unknown-linux-musl", aarch64_unknown_linux_musl),
+    // ("x86_64-unknown-linux-musl", x86_64_unknown_linux_musl),
+    // ("i686-unknown-linux-musl", i686_unknown_linux_musl),
+    // ("i586-unknown-linux-musl", i586_unknown_linux_musl),
+    // ("mips-unknown-linux-musl", mips_unknown_linux_musl),
+    // ("mipsel-unknown-linux-musl", mipsel_unknown_linux_musl),
+    // ("mips64-unknown-linux-muslabi64", mips64_unknown_linux_muslabi64),
+    // ("mips64el-unknown-linux-muslabi64", mips64el_unknown_linux_muslabi64),
+    // ("hexagon-unknown-linux-musl", hexagon_unknown_linux_musl),
+    // ("hexagon-unknown-none-elf", hexagon_unknown_none_elf),
+    //
+    // ("mips-unknown-linux-uclibc", mips_unknown_linux_uclibc),
+    // ("mipsel-unknown-linux-uclibc", mipsel_unknown_linux_uclibc),
+    //
+    // ("i686-linux-android", i686_linux_android),
+    // ("x86_64-linux-android", x86_64_linux_android),
+    // ("arm-linux-androideabi", arm_linux_androideabi),
+    // ("armv7-linux-androideabi", armv7_linux_androideabi),
+    // ("thumbv7neon-linux-androideabi", thumbv7neon_linux_androideabi),
+    // ("aarch64-linux-android", aarch64_linux_android),
+    // ("riscv64-linux-android", riscv64_linux_android),
+    //
+    // ("aarch64-unknown-freebsd", aarch64_unknown_freebsd),
+    // ("armv6-unknown-freebsd", armv6_unknown_freebsd),
+    // ("armv7-unknown-freebsd", armv7_unknown_freebsd),
+    // ("i686-unknown-freebsd", i686_unknown_freebsd),
+    // ("powerpc-unknown-freebsd", powerpc_unknown_freebsd),
+    // ("powerpc64-unknown-freebsd", powerpc64_unknown_freebsd),
+    // ("powerpc64le-unknown-freebsd", powerpc64le_unknown_freebsd),
+    // ("riscv64gc-unknown-freebsd", riscv64gc_unknown_freebsd),
+    // ("x86_64-unknown-freebsd", x86_64_unknown_freebsd),
+    //
+    // ("x86_64-unknown-dragonfly", x86_64_unknown_dragonfly),
+    //
+    // ("aarch64-unknown-openbsd", aarch64_unknown_openbsd),
+    // ("i686-unknown-openbsd", i686_unknown_openbsd),
+    // ("powerpc-unknown-openbsd", powerpc_unknown_openbsd),
+    // ("powerpc64-unknown-openbsd", powerpc64_unknown_openbsd),
+    // ("riscv64gc-unknown-openbsd", riscv64gc_unknown_openbsd),
+    // ("sparc64-unknown-openbsd", sparc64_unknown_openbsd),
+    // ("x86_64-unknown-openbsd", x86_64_unknown_openbsd),
+    //
+    // ("aarch64-unknown-netbsd", aarch64_unknown_netbsd),
+    // ("aarch64_be-unknown-netbsd", aarch64_be_unknown_netbsd),
+    // ("armv6-unknown-netbsd-eabihf", armv6_unknown_netbsd_eabihf),
+    // ("armv7-unknown-netbsd-eabihf", armv7_unknown_netbsd_eabihf),
+    // ("i586-unknown-netbsd", i586_unknown_netbsd),
+    // ("i686-unknown-netbsd", i686_unknown_netbsd),
+    // ("mipsel-unknown-netbsd", mipsel_unknown_netbsd),
+    // ("powerpc-unknown-netbsd", powerpc_unknown_netbsd),
+    // ("riscv64gc-unknown-netbsd", riscv64gc_unknown_netbsd),
+    // ("sparc64-unknown-netbsd", sparc64_unknown_netbsd),
+    // ("x86_64-unknown-netbsd", x86_64_unknown_netbsd),
+    //
+    // ("i686-unknown-haiku", i686_unknown_haiku),
+    // ("x86_64-unknown-haiku", x86_64_unknown_haiku),
+    //
+    // ("i686-unknown-hurd-gnu", i686_unknown_hurd_gnu),
 
     ("aarch64-apple-darwin", aarch64_apple_darwin),
-    ("arm64e-apple-darwin", arm64e_apple_darwin),
+    // ("arm64e-apple-darwin", arm64e_apple_darwin),
     ("x86_64-apple-darwin", x86_64_apple_darwin),
-    ("x86_64h-apple-darwin", x86_64h_apple_darwin),
-    ("i686-apple-darwin", i686_apple_darwin),
-
-    // FIXME(#106649): Remove aarch64-fuchsia in favor of aarch64-unknown-fuchsia
-    ("aarch64-fuchsia", aarch64_fuchsia),
-    ("aarch64-unknown-fuchsia", aarch64_unknown_fuchsia),
-    ("riscv64gc-unknown-fuchsia", riscv64gc_unknown_fuchsia),
-    // FIXME(#106649): Remove x86_64-fuchsia in favor of x86_64-unknown-fuchsia
-    ("x86_64-fuchsia", x86_64_fuchsia),
-    ("x86_64-unknown-fuchsia", x86_64_unknown_fuchsia),
-
-    ("avr-unknown-gnu-atmega328", avr_unknown_gnu_atmega328),
-
-    ("x86_64-unknown-l4re-uclibc", x86_64_unknown_l4re_uclibc),
-
-    ("aarch64-unknown-redox", aarch64_unknown_redox),
-    ("x86_64-unknown-redox", x86_64_unknown_redox),
-
-    ("i386-apple-ios", i386_apple_ios),
-    ("x86_64-apple-ios", x86_64_apple_ios),
-    ("aarch64-apple-ios", aarch64_apple_ios),
-    ("arm64e-apple-ios", arm64e_apple_ios),
-    ("armv7s-apple-ios", armv7s_apple_ios),
-    ("x86_64-apple-ios-macabi", x86_64_apple_ios_macabi),
-    ("aarch64-apple-ios-macabi", aarch64_apple_ios_macabi),
-    ("aarch64-apple-ios-sim", aarch64_apple_ios_sim),
-    ("aarch64-apple-tvos", aarch64_apple_tvos),
-    ("aarch64-apple-tvos-sim", aarch64_apple_tvos_sim),
-    ("x86_64-apple-tvos", x86_64_apple_tvos),
-
-    ("armv7k-apple-watchos", armv7k_apple_watchos),
-    ("arm64_32-apple-watchos", arm64_32_apple_watchos),
-    ("x86_64-apple-watchos-sim", x86_64_apple_watchos_sim),
-    ("aarch64-apple-watchos", aarch64_apple_watchos),
-    ("aarch64-apple-watchos-sim", aarch64_apple_watchos_sim),
-
-    ("armebv7r-none-eabi", armebv7r_none_eabi),
-    ("armebv7r-none-eabihf", armebv7r_none_eabihf),
-    ("armv7r-none-eabi", armv7r_none_eabi),
-    ("armv7r-none-eabihf", armv7r_none_eabihf),
-    ("armv8r-none-eabihf", armv8r_none_eabihf),
-
-    ("x86_64-pc-solaris", x86_64_pc_solaris),
-    ("sparcv9-sun-solaris", sparcv9_sun_solaris),
-
-    ("x86_64-unknown-illumos", x86_64_unknown_illumos),
-    ("aarch64-unknown-illumos", aarch64_unknown_illumos),
-
-    ("x86_64-pc-windows-gnu", x86_64_pc_windows_gnu),
-    ("i686-pc-windows-gnu", i686_pc_windows_gnu),
-    ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
-    ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
-
-    ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
-    ("i686-pc-windows-gnullvm", i686_pc_windows_gnullvm),
-    ("x86_64-pc-windows-gnullvm", x86_64_pc_windows_gnullvm),
-
-    ("aarch64-pc-windows-msvc", aarch64_pc_windows_msvc),
-    ("aarch64-uwp-windows-msvc", aarch64_uwp_windows_msvc),
-    ("x86_64-pc-windows-msvc", x86_64_pc_windows_msvc),
-    ("x86_64-uwp-windows-msvc", x86_64_uwp_windows_msvc),
-    ("x86_64-win7-windows-msvc", x86_64_win7_windows_msvc),
-    ("i686-pc-windows-msvc", i686_pc_windows_msvc),
-    ("i686-uwp-windows-msvc", i686_uwp_windows_msvc),
-    ("i686-win7-windows-msvc", i686_win7_windows_msvc),
-    ("i586-pc-windows-msvc", i586_pc_windows_msvc),
-    ("thumbv7a-pc-windows-msvc", thumbv7a_pc_windows_msvc),
-    ("thumbv7a-uwp-windows-msvc", thumbv7a_uwp_windows_msvc),
-
-    ("wasm32-unknown-emscripten", wasm32_unknown_emscripten),
-    ("wasm32-unknown-unknown", wasm32_unknown_unknown),
-    ("wasm32-wasi", wasm32_wasi),
-    ("wasm32-wasip1", wasm32_wasip1),
-    ("wasm32-wasip2", wasm32_wasip2),
-    ("wasm32-wasi-preview1-threads", wasm32_wasi_preview1_threads),
-    ("wasm64-unknown-unknown", wasm64_unknown_unknown),
-
-    ("thumbv6m-none-eabi", thumbv6m_none_eabi),
-    ("thumbv7m-none-eabi", thumbv7m_none_eabi),
-    ("thumbv7em-none-eabi", thumbv7em_none_eabi),
-    ("thumbv7em-none-eabihf", thumbv7em_none_eabihf),
-    ("thumbv8m.base-none-eabi", thumbv8m_base_none_eabi),
-    ("thumbv8m.main-none-eabi", thumbv8m_main_none_eabi),
-    ("thumbv8m.main-none-eabihf", thumbv8m_main_none_eabihf),
-
-    ("armv7a-none-eabi", armv7a_none_eabi),
-    ("armv7a-none-eabihf", armv7a_none_eabihf),
-
-    ("msp430-none-elf", msp430_none_elf),
-
-    ("aarch64-unknown-hermit", aarch64_unknown_hermit),
-    ("riscv64gc-unknown-hermit", riscv64gc_unknown_hermit),
-    ("x86_64-unknown-hermit", x86_64_unknown_hermit),
-
-    ("x86_64-unikraft-linux-musl", x86_64_unikraft_linux_musl),
-
-    ("riscv32i-unknown-none-elf", riscv32i_unknown_none_elf),
-    ("riscv32im-risc0-zkvm-elf", riscv32im_risc0_zkvm_elf),
-    ("riscv32im-unknown-none-elf", riscv32im_unknown_none_elf),
-    ("riscv32imc-unknown-none-elf", riscv32imc_unknown_none_elf),
-    ("riscv32imc-esp-espidf", riscv32imc_esp_espidf),
-    ("riscv32imac-esp-espidf", riscv32imac_esp_espidf),
-    ("riscv32imafc-esp-espidf", riscv32imafc_esp_espidf),
-
-    ("riscv32imac-unknown-none-elf", riscv32imac_unknown_none_elf),
-    ("riscv32imafc-unknown-none-elf", riscv32imafc_unknown_none_elf),
-    ("riscv32imac-unknown-xous-elf", riscv32imac_unknown_xous_elf),
-    ("riscv32gc-unknown-linux-gnu", riscv32gc_unknown_linux_gnu),
-    ("riscv32gc-unknown-linux-musl", riscv32gc_unknown_linux_musl),
-    ("riscv64imac-unknown-none-elf", riscv64imac_unknown_none_elf),
-    ("riscv64gc-unknown-none-elf", riscv64gc_unknown_none_elf),
-    ("riscv64gc-unknown-linux-gnu", riscv64gc_unknown_linux_gnu),
-    ("riscv64gc-unknown-linux-musl", riscv64gc_unknown_linux_musl),
-
-    ("sparc-unknown-none-elf", sparc_unknown_none_elf),
-
-    ("loongarch64-unknown-none", loongarch64_unknown_none),
-    ("loongarch64-unknown-none-softfloat", loongarch64_unknown_none_softfloat),
-
-    ("aarch64-unknown-none", aarch64_unknown_none),
-    ("aarch64-unknown-none-softfloat", aarch64_unknown_none_softfloat),
-
-    ("x86_64-fortanix-unknown-sgx", x86_64_fortanix_unknown_sgx),
-
-    ("x86_64-unknown-uefi", x86_64_unknown_uefi),
-    ("i686-unknown-uefi", i686_unknown_uefi),
-    ("aarch64-unknown-uefi", aarch64_unknown_uefi),
-
-    ("nvptx64-nvidia-cuda", nvptx64_nvidia_cuda),
-
-    ("i686-wrs-vxworks", i686_wrs_vxworks),
-    ("x86_64-wrs-vxworks", x86_64_wrs_vxworks),
-    ("armv7-wrs-vxworks-eabihf", armv7_wrs_vxworks_eabihf),
-    ("aarch64-wrs-vxworks", aarch64_wrs_vxworks),
-    ("powerpc-wrs-vxworks", powerpc_wrs_vxworks),
-    ("powerpc-wrs-vxworks-spe", powerpc_wrs_vxworks_spe),
-    ("powerpc64-wrs-vxworks", powerpc64_wrs_vxworks),
-
-    ("aarch64-kmc-solid_asp3", aarch64_kmc_solid_asp3),
-    ("armv7a-kmc-solid_asp3-eabi", armv7a_kmc_solid_asp3_eabi),
-    ("armv7a-kmc-solid_asp3-eabihf", armv7a_kmc_solid_asp3_eabihf),
-
-    ("mipsel-sony-psp", mipsel_sony_psp),
-    ("mipsel-sony-psx", mipsel_sony_psx),
-    ("mipsel-unknown-none", mipsel_unknown_none),
-    ("thumbv4t-none-eabi", thumbv4t_none_eabi),
-    ("armv4t-none-eabi", armv4t_none_eabi),
-    ("thumbv5te-none-eabi", thumbv5te_none_eabi),
-    ("armv5te-none-eabi", armv5te_none_eabi),
-
-    ("aarch64_be-unknown-linux-gnu", aarch64_be_unknown_linux_gnu),
-    ("aarch64-unknown-linux-gnu_ilp32", aarch64_unknown_linux_gnu_ilp32),
-    ("aarch64_be-unknown-linux-gnu_ilp32", aarch64_be_unknown_linux_gnu_ilp32),
-
-    ("bpfeb-unknown-none", bpfeb_unknown_none),
-    ("bpfel-unknown-none", bpfel_unknown_none),
-
-    ("armv6k-nintendo-3ds", armv6k_nintendo_3ds),
-
-    ("aarch64-nintendo-switch-freestanding", aarch64_nintendo_switch_freestanding),
-
-    ("armv7-sony-vita-newlibeabihf", armv7_sony_vita_newlibeabihf),
-
-    ("armv7-unknown-linux-uclibceabi", armv7_unknown_linux_uclibceabi),
-    ("armv7-unknown-linux-uclibceabihf", armv7_unknown_linux_uclibceabihf),
-
-    ("x86_64-unknown-none", x86_64_unknown_none),
-
-    ("aarch64-unknown-teeos", aarch64_unknown_teeos),
-
-    ("mips64-openwrt-linux-musl", mips64_openwrt_linux_musl),
-
-    ("aarch64-unknown-nto-qnx710", aarch64_unknown_nto_qnx710),
-    ("x86_64-pc-nto-qnx710", x86_64_pc_nto_qnx710),
-    ("i586-pc-nto-qnx700", i586_pc_nto_qnx700),
-
-    ("aarch64-unknown-linux-ohos", aarch64_unknown_linux_ohos),
-    ("armv7-unknown-linux-ohos", armv7_unknown_linux_ohos),
-    ("x86_64-unknown-linux-ohos", x86_64_unknown_linux_ohos),
+    // ("x86_64h-apple-darwin", x86_64h_apple_darwin),
+    // ("i686-apple-darwin", i686_apple_darwin),
+    //
+    // // FIXME(#106649): Remove aarch64-fuchsia in favor of aarch64-unknown-fuchsia
+    // ("aarch64-fuchsia", aarch64_fuchsia),
+    // ("aarch64-unknown-fuchsia", aarch64_unknown_fuchsia),
+    // ("riscv64gc-unknown-fuchsia", riscv64gc_unknown_fuchsia),
+    // // FIXME(#106649): Remove x86_64-fuchsia in favor of x86_64-unknown-fuchsia
+    // ("x86_64-fuchsia", x86_64_fuchsia),
+    // ("x86_64-unknown-fuchsia", x86_64_unknown_fuchsia),
+    //
+    // ("avr-unknown-gnu-atmega328", avr_unknown_gnu_atmega328),
+    //
+    // ("x86_64-unknown-l4re-uclibc", x86_64_unknown_l4re_uclibc),
+    //
+    // ("aarch64-unknown-redox", aarch64_unknown_redox),
+    // ("x86_64-unknown-redox", x86_64_unknown_redox),
+    //
+    // ("i386-apple-ios", i386_apple_ios),
+    // ("x86_64-apple-ios", x86_64_apple_ios),
+    // ("aarch64-apple-ios", aarch64_apple_ios),
+    // ("arm64e-apple-ios", arm64e_apple_ios),
+    // ("armv7s-apple-ios", armv7s_apple_ios),
+    // ("x86_64-apple-ios-macabi", x86_64_apple_ios_macabi),
+    // ("aarch64-apple-ios-macabi", aarch64_apple_ios_macabi),
+    // ("aarch64-apple-ios-sim", aarch64_apple_ios_sim),
+    // ("aarch64-apple-tvos", aarch64_apple_tvos),
+    // ("aarch64-apple-tvos-sim", aarch64_apple_tvos_sim),
+    // ("x86_64-apple-tvos", x86_64_apple_tvos),
+    //
+    // ("armv7k-apple-watchos", armv7k_apple_watchos),
+    // ("arm64_32-apple-watchos", arm64_32_apple_watchos),
+    // ("x86_64-apple-watchos-sim", x86_64_apple_watchos_sim),
+    // ("aarch64-apple-watchos", aarch64_apple_watchos),
+    // ("aarch64-apple-watchos-sim", aarch64_apple_watchos_sim),
+    //
+    // ("armebv7r-none-eabi", armebv7r_none_eabi),
+    // ("armebv7r-none-eabihf", armebv7r_none_eabihf),
+    // ("armv7r-none-eabi", armv7r_none_eabi),
+    // ("armv7r-none-eabihf", armv7r_none_eabihf),
+    // ("armv8r-none-eabihf", armv8r_none_eabihf),
+    //
+    // ("x86_64-pc-solaris", x86_64_pc_solaris),
+    // ("sparcv9-sun-solaris", sparcv9_sun_solaris),
+    //
+    // ("x86_64-unknown-illumos", x86_64_unknown_illumos),
+    // ("aarch64-unknown-illumos", aarch64_unknown_illumos),
+    //
+    // ("x86_64-pc-windows-gnu", x86_64_pc_windows_gnu),
+    // ("i686-pc-windows-gnu", i686_pc_windows_gnu),
+    // ("i686-uwp-windows-gnu", i686_uwp_windows_gnu),
+    // ("x86_64-uwp-windows-gnu", x86_64_uwp_windows_gnu),
+    //
+    // ("aarch64-pc-windows-gnullvm", aarch64_pc_windows_gnullvm),
+    // ("i686-pc-windows-gnullvm", i686_pc_windows_gnullvm),
+    // ("x86_64-pc-windows-gnullvm", x86_64_pc_windows_gnullvm),
+    //
+    // ("aarch64-pc-windows-msvc", aarch64_pc_windows_msvc),
+    // ("aarch64-uwp-windows-msvc", aarch64_uwp_windows_msvc),
+    // ("x86_64-pc-windows-msvc", x86_64_pc_windows_msvc),
+    // ("x86_64-uwp-windows-msvc", x86_64_uwp_windows_msvc),
+    // ("x86_64-win7-windows-msvc", x86_64_win7_windows_msvc),
+    // ("i686-pc-windows-msvc", i686_pc_windows_msvc),
+    // ("i686-uwp-windows-msvc", i686_uwp_windows_msvc),
+    // ("i686-win7-windows-msvc", i686_win7_windows_msvc),
+    // ("i586-pc-windows-msvc", i586_pc_windows_msvc),
+    // ("thumbv7a-pc-windows-msvc", thumbv7a_pc_windows_msvc),
+    // ("thumbv7a-uwp-windows-msvc", thumbv7a_uwp_windows_msvc),
+    //
+    // ("wasm32-unknown-emscripten", wasm32_unknown_emscripten),
+    // ("wasm32-unknown-unknown", wasm32_unknown_unknown),
+    // ("wasm32-wasi", wasm32_wasi),
+    // ("wasm32-wasip1", wasm32_wasip1),
+    // ("wasm32-wasip2", wasm32_wasip2),
+    // ("wasm32-wasi-preview1-threads", wasm32_wasi_preview1_threads),
+    // ("wasm64-unknown-unknown", wasm64_unknown_unknown),
+    //
+    // ("thumbv6m-none-eabi", thumbv6m_none_eabi),
+    // ("thumbv7m-none-eabi", thumbv7m_none_eabi),
+    // ("thumbv7em-none-eabi", thumbv7em_none_eabi),
+    // ("thumbv7em-none-eabihf", thumbv7em_none_eabihf),
+    // ("thumbv8m.base-none-eabi", thumbv8m_base_none_eabi),
+    // ("thumbv8m.main-none-eabi", thumbv8m_main_none_eabi),
+    // ("thumbv8m.main-none-eabihf", thumbv8m_main_none_eabihf),
+    //
+    // ("armv7a-none-eabi", armv7a_none_eabi),
+    // ("armv7a-none-eabihf", armv7a_none_eabihf),
+    //
+    // ("msp430-none-elf", msp430_none_elf),
+    //
+    // ("aarch64-unknown-hermit", aarch64_unknown_hermit),
+    // ("riscv64gc-unknown-hermit", riscv64gc_unknown_hermit),
+    // ("x86_64-unknown-hermit", x86_64_unknown_hermit),
+    //
+    // ("x86_64-unikraft-linux-musl", x86_64_unikraft_linux_musl),
+    //
+    // ("riscv32i-unknown-none-elf", riscv32i_unknown_none_elf),
+    // ("riscv32im-risc0-zkvm-elf", riscv32im_risc0_zkvm_elf),
+    // ("riscv32im-unknown-none-elf", riscv32im_unknown_none_elf),
+    // ("riscv32imc-unknown-none-elf", riscv32imc_unknown_none_elf),
+    // ("riscv32imc-esp-espidf", riscv32imc_esp_espidf),
+    // ("riscv32imac-esp-espidf", riscv32imac_esp_espidf),
+    // ("riscv32imafc-esp-espidf", riscv32imafc_esp_espidf),
+    //
+    // ("riscv32imac-unknown-none-elf", riscv32imac_unknown_none_elf),
+    // ("riscv32imafc-unknown-none-elf", riscv32imafc_unknown_none_elf),
+    // ("riscv32imac-unknown-xous-elf", riscv32imac_unknown_xous_elf),
+    // ("riscv32gc-unknown-linux-gnu", riscv32gc_unknown_linux_gnu),
+    // ("riscv32gc-unknown-linux-musl", riscv32gc_unknown_linux_musl),
+    // ("riscv64imac-unknown-none-elf", riscv64imac_unknown_none_elf),
+    // ("riscv64gc-unknown-none-elf", riscv64gc_unknown_none_elf),
+    // ("riscv64gc-unknown-linux-gnu", riscv64gc_unknown_linux_gnu),
+    // ("riscv64gc-unknown-linux-musl", riscv64gc_unknown_linux_musl),
+    //
+    // ("sparc-unknown-none-elf", sparc_unknown_none_elf),
+    //
+    // ("loongarch64-unknown-none", loongarch64_unknown_none),
+    // ("loongarch64-unknown-none-softfloat", loongarch64_unknown_none_softfloat),
+    //
+    // ("aarch64-unknown-none", aarch64_unknown_none),
+    // ("aarch64-unknown-none-softfloat", aarch64_unknown_none_softfloat),
+    //
+    // ("x86_64-fortanix-unknown-sgx", x86_64_fortanix_unknown_sgx),
+    //
+    // ("x86_64-unknown-uefi", x86_64_unknown_uefi),
+    // ("i686-unknown-uefi", i686_unknown_uefi),
+    // ("aarch64-unknown-uefi", aarch64_unknown_uefi),
+    //
+    // ("nvptx64-nvidia-cuda", nvptx64_nvidia_cuda),
+    //
+    // ("i686-wrs-vxworks", i686_wrs_vxworks),
+    // ("x86_64-wrs-vxworks", x86_64_wrs_vxworks),
+    // ("armv7-wrs-vxworks-eabihf", armv7_wrs_vxworks_eabihf),
+    // ("aarch64-wrs-vxworks", aarch64_wrs_vxworks),
+    // ("powerpc-wrs-vxworks", powerpc_wrs_vxworks),
+    // ("powerpc-wrs-vxworks-spe", powerpc_wrs_vxworks_spe),
+    // ("powerpc64-wrs-vxworks", powerpc64_wrs_vxworks),
+    //
+    // ("aarch64-kmc-solid_asp3", aarch64_kmc_solid_asp3),
+    // ("armv7a-kmc-solid_asp3-eabi", armv7a_kmc_solid_asp3_eabi),
+    // ("armv7a-kmc-solid_asp3-eabihf", armv7a_kmc_solid_asp3_eabihf),
+    //
+    // ("mipsel-sony-psp", mipsel_sony_psp),
+    // ("mipsel-sony-psx", mipsel_sony_psx),
+    // ("mipsel-unknown-none", mipsel_unknown_none),
+    // ("thumbv4t-none-eabi", thumbv4t_none_eabi),
+    // ("armv4t-none-eabi", armv4t_none_eabi),
+    // ("thumbv5te-none-eabi", thumbv5te_none_eabi),
+    // ("armv5te-none-eabi", armv5te_none_eabi),
+    //
+    // ("aarch64_be-unknown-linux-gnu", aarch64_be_unknown_linux_gnu),
+    // ("aarch64-unknown-linux-gnu_ilp32", aarch64_unknown_linux_gnu_ilp32),
+    // ("aarch64_be-unknown-linux-gnu_ilp32", aarch64_be_unknown_linux_gnu_ilp32),
+    //
+    // ("bpfeb-unknown-none", bpfeb_unknown_none),
+    // ("bpfel-unknown-none", bpfel_unknown_none),
+    //
+    // ("armv6k-nintendo-3ds", armv6k_nintendo_3ds),
+    //
+    // ("aarch64-nintendo-switch-freestanding", aarch64_nintendo_switch_freestanding),
+    //
+    // ("armv7-sony-vita-newlibeabihf", armv7_sony_vita_newlibeabihf),
+    //
+    // ("armv7-unknown-linux-uclibceabi", armv7_unknown_linux_uclibceabi),
+    // ("armv7-unknown-linux-uclibceabihf", armv7_unknown_linux_uclibceabihf),
+    //
+    // ("x86_64-unknown-none", x86_64_unknown_none),
+    //
+    // ("aarch64-unknown-teeos", aarch64_unknown_teeos),
+    //
+    // ("mips64-openwrt-linux-musl", mips64_openwrt_linux_musl),
+    //
+    // ("aarch64-unknown-nto-qnx710", aarch64_unknown_nto_qnx710),
+    // ("x86_64-pc-nto-qnx710", x86_64_pc_nto_qnx710),
+    // ("i586-pc-nto-qnx700", i586_pc_nto_qnx700),
+    //
+    // ("aarch64-unknown-linux-ohos", aarch64_unknown_linux_ohos),
+    // ("armv7-unknown-linux-ohos", armv7_unknown_linux_ohos),
+    // ("x86_64-unknown-linux-ohos", x86_64_unknown_linux_ohos),
 }
 
 /// Cow-Vec-Str: Cow<'static, [Cow<'static, str>]>
@@ -1704,6 +1713,17 @@ macro_rules! cvs {
     };
 }
 
+/// Cow-Str: Cow<'static, str>
+macro_rules! cs {
+    () => {
+        ::std::borrow::Cow::Borrowed()
+    };
+    ($x:expr) => {
+        ::std::borrow::Cow::Borrowed($x)
+    };
+}
+
+pub(crate) use cs;
 pub(crate) use cvs;
 
 /// Warnings encountered when parsing the target `json`.
@@ -1741,7 +1761,7 @@ impl TargetWarnings {
 /// Everything `rustc` knows about how to compile for a specific target.
 ///
 /// Every field here must be specified, and has no default value.
-#[derive(PartialEq, Clone, Debug)]
+#[derive(Debug)]
 pub struct Target {
     /// Target triple to pass to LLVM.
     pub llvm_target: StaticCow<str>,
@@ -1814,7 +1834,7 @@ type StaticCow<T> = Cow<'static, T>;
 /// `TargetOptions` as a separate structure is mostly an implementation detail of `Target`
 /// construction, all its fields logically belong to `Target` and available from `Target`
 /// through `Deref` impls.
-#[derive(PartialEq, Clone, Debug)]
+#[derive(Debug)]
 pub struct TargetOptions {
     /// Whether the target is built-in or loaded from a custom target specification.
     pub is_builtin: bool,
@@ -1856,24 +1876,24 @@ pub struct TargetOptions {
     pub link_self_contained: LinkSelfContainedDefault,
 
     /// Linker arguments that are passed *before* any user-defined libraries.
-    pub pre_link_args: LinkArgs,
+    pub pre_link_args: LazyLock<LinkArgs>,
     pre_link_args_json: LinkArgsCli,
     /// Linker arguments that are unconditionally passed after any
     /// user-defined but before post-link objects. Standard platform
     /// libraries that should be always be linked to, usually go here.
-    pub late_link_args: LinkArgs,
+    pub late_link_args: LazyLock<LinkArgs>,
     late_link_args_json: LinkArgsCli,
     /// Linker arguments used in addition to `late_link_args` if at least one
     /// Rust dependency is dynamically linked.
-    pub late_link_args_dynamic: LinkArgs,
+    pub late_link_args_dynamic: LazyLock<LinkArgs>,
     late_link_args_dynamic_json: LinkArgsCli,
     /// Linker arguments used in addition to `late_link_args` if all Rust
     /// dependencies are statically linked.
-    pub late_link_args_static: LinkArgs,
+    pub late_link_args_static: LazyLock<LinkArgs>,
     late_link_args_static_json: LinkArgsCli,
     /// Linker arguments that are unconditionally passed *after* any
     /// user-defined libraries.
-    pub post_link_args: LinkArgs,
+    pub post_link_args: LazyLock<LinkArgs>,
     post_link_args_json: LinkArgsCli,
 
     /// Optional link script applied to `dylib` and `executable` crate types.
@@ -2217,24 +2237,26 @@ impl TargetOptions {
         link_args
     }
 
-    fn add_pre_link_args(&mut self, flavor: LinkerFlavor, args: &[&'static str]) {
-        add_link_args(&mut self.pre_link_args, flavor, args);
-    }
+    // TODO: remove replace by base.pre_link_args = LazyLock::new(|| add_link_args(..))
+    // fn add_pre_link_args(&mut self, flavor: LinkerFlavor, args: &[&'static str]) {
+    //     add_link_args(&mut self.pre_link_args, flavor, args);
+    // }
 
+    #[allow(dead_code)]
     fn update_from_cli(&mut self) {
         self.linker_flavor = LinkerFlavor::from_cli_json(
             self.linker_flavor_json,
             self.lld_flavor_json,
             self.linker_is_gnu_json,
         );
-        for (args, args_json) in [
+        for (real_args, args_json) in [
             (&mut self.pre_link_args, &self.pre_link_args_json),
             (&mut self.late_link_args, &self.late_link_args_json),
             (&mut self.late_link_args_dynamic, &self.late_link_args_dynamic_json),
             (&mut self.late_link_args_static, &self.late_link_args_static_json),
             (&mut self.post_link_args, &self.post_link_args_json),
         ] {
-            args.clear();
+            let mut args = LinkArgs::new();
             for (flavor, args_json) in args_json {
                 let linker_flavor = self.linker_flavor.with_cli_hints(*flavor);
                 // Normalize to no lld to avoid asserts.
@@ -2245,9 +2267,10 @@ impl TargetOptions {
                     _ => linker_flavor,
                 };
                 if !args.contains_key(&linker_flavor) {
-                    add_link_args_iter(args, linker_flavor, args_json.iter().cloned());
+                    add_link_args_iter(&mut args, linker_flavor, args_json.iter().cloned());
                 }
             }
+            *real_args = LazyLock::preinit(args);
         }
     }
 
@@ -2270,27 +2293,31 @@ impl TargetOptions {
     }
 }
 
-impl Default for TargetOptions {
+impl TargetOptions {
     /// Creates a set of "sane defaults" for any target. This is still
     /// incomplete, and if used for compilation, will certainly not work.
-    fn default() -> TargetOptions {
+    const fn default() -> TargetOptions {
         TargetOptions {
             is_builtin: false,
             endian: Endian::Little,
-            c_int_width: "32".into(),
-            os: "none".into(),
-            env: "".into(),
-            abi: "".into(),
-            vendor: "unknown".into(),
-            linker: option_env!("CFG_DEFAULT_LINKER").map(|s| s.into()),
+            c_int_width: cs!("32"),
+            os: cs!("none"),
+            env: cs!(""),
+            abi: cs!(""),
+            vendor: cs!("unknown"),
+            linker: if let Some(s) = option_env!("CFG_DEFAULT_LINKER") {
+                Some(cs!(s))
+            } else {
+                None
+            },
             linker_flavor: LinkerFlavor::Gnu(Cc::Yes, Lld::No),
             linker_flavor_json: LinkerFlavorCli::Gcc,
             lld_flavor_json: LldFlavor::Ld,
             linker_is_gnu_json: true,
             link_script: None,
             asm_args: cvs![],
-            cpu: "generic".into(),
-            features: "".into(),
+            cpu: cs!("generic"),
+            features: cs!(""),
             direct_access_external_data: None,
             dynamic_linking: false,
             dll_tls_export: true,
@@ -2302,11 +2329,11 @@ impl Default for TargetOptions {
             disable_redzone: false,
             frame_pointer: FramePointer::MayOmit,
             function_sections: true,
-            dll_prefix: "lib".into(),
-            dll_suffix: ".so".into(),
-            exe_suffix: "".into(),
-            staticlib_prefix: "lib".into(),
-            staticlib_suffix: ".a".into(),
+            dll_prefix: cs!("lib"),
+            dll_suffix: cs!(".so"),
+            exe_suffix: cs!(""),
+            staticlib_prefix: cs!("lib"),
+            staticlib_suffix: cs!(".a"),
             families: cvs![],
             abi_return_struct_as_int: false,
             is_like_aix: false,
@@ -2324,30 +2351,30 @@ impl Default for TargetOptions {
             static_position_independent_executables: false,
             plt_by_default: true,
             relro_level: RelroLevel::None,
-            pre_link_objects: Default::default(),
-            post_link_objects: Default::default(),
-            pre_link_objects_self_contained: Default::default(),
-            post_link_objects_self_contained: Default::default(),
+            pre_link_objects: CrtObjects::new(),
+            post_link_objects: CrtObjects::new(),
+            pre_link_objects_self_contained: CrtObjects::new(),
+            post_link_objects_self_contained: CrtObjects::new(),
             link_self_contained: LinkSelfContainedDefault::False,
-            pre_link_args: LinkArgs::new(),
+            pre_link_args: LazyLock::new(Default::default),
             pre_link_args_json: LinkArgsCli::new(),
-            late_link_args: LinkArgs::new(),
+            late_link_args: LazyLock::new(Default::default),
             late_link_args_json: LinkArgsCli::new(),
-            late_link_args_dynamic: LinkArgs::new(),
+            late_link_args_dynamic: LazyLock::new(Default::default),
             late_link_args_dynamic_json: LinkArgsCli::new(),
-            late_link_args_static: LinkArgs::new(),
+            late_link_args_static: LazyLock::new(Default::default),
             late_link_args_static_json: LinkArgsCli::new(),
-            post_link_args: LinkArgs::new(),
+            post_link_args: LazyLock::new(Default::default),
             post_link_args_json: LinkArgsCli::new(),
             link_env: cvs![],
             link_env_remove: cvs![],
-            archive_format: "gnu".into(),
+            archive_format: cs!("gnu"),
             main_needs_argc_argv: true,
             allow_asm: true,
             has_thread_local: false,
             obj_is_bitcode: false,
             forces_embed_bitcode: false,
-            bitcode_llvm_cmdline: "".into(),
+            bitcode_llvm_cmdline: cs!(""),
             min_atomic_width: None,
             max_atomic_width: None,
             atomic_cas: true,
@@ -2370,16 +2397,16 @@ impl Default for TargetOptions {
             limit_rdylib_exports: true,
             override_export_symbols: None,
             merge_functions: MergeFunctions::Aliases,
-            mcount: "mcount".into(),
+            mcount: cs!("mcount"),
             llvm_mcount_intrinsic: None,
-            llvm_abiname: "".into(),
+            llvm_abiname: cs!(""),
             relax_elf_relocations: false,
             llvm_args: cvs![],
             use_ctors_section: false,
             eh_frame_header: true,
             has_thumb_interworking: false,
-            debuginfo_kind: Default::default(),
-            split_debuginfo: Default::default(),
+            debuginfo_kind: DebuginfoKind::default(),
+            split_debuginfo: SplitDebuginfo::default(),
             // `Off` is supported by default, but targets can remove this manually, e.g. Windows.
             supported_split_debuginfo: Cow::Borrowed(&[SplitDebuginfo::Off]),
             supported_sanitizers: SanitizerSet::empty(),
@@ -2387,7 +2414,7 @@ impl Default for TargetOptions {
             c_enum_min_bits: None,
             generate_arange_section: true,
             supports_stack_protector: true,
-            entry_name: "main".into(),
+            entry_name: cs!("main"),
             entry_abi: Conv::C,
             supports_xray: false,
         }
@@ -2551,7 +2578,7 @@ impl Target {
                 .map_err(|_| "target-pointer-width must be an integer".to_string())?,
             data_layout: get_req_field("data-layout")?.into(),
             arch: get_req_field("arch")?.into(),
-            options: Default::default(),
+            options: TargetOptions::default(),
         };
 
         let mut incorrect_type = vec![];
@@ -3205,9 +3232,11 @@ impl Target {
 impl ToJson for Target {
     fn to_json(&self) -> Json {
         let mut d = serde_json::Map::new();
-        let default: TargetOptions = Default::default();
-        let mut target = self.clone();
-        target.update_to_cli();
+        let default: TargetOptions = TargetOptions::default();
+        // TODO: avoid clone completly and just hack something in update_to_cli
+        // let mut target = self.clone();
+        // target.update_to_cli();
+        let target = self;
 
         macro_rules! target_val {
             ($attr:ident) => {{
@@ -3273,11 +3302,11 @@ impl ToJson for Target {
         target_option_val!(post_link_objects);
         target_option_val!(pre_link_objects_self_contained, "pre-link-objects-fallback");
         target_option_val!(post_link_objects_self_contained, "post-link-objects-fallback");
-        target_option_val!(link_args - pre_link_args_json, "pre-link-args");
-        target_option_val!(link_args - late_link_args_json, "late-link-args");
-        target_option_val!(link_args - late_link_args_dynamic_json, "late-link-args-dynamic");
-        target_option_val!(link_args - late_link_args_static_json, "late-link-args-static");
-        target_option_val!(link_args - post_link_args_json, "post-link-args");
+        // target_option_val!(link_args - pre_link_args_json, "pre-link-args");
+        // target_option_val!(link_args - late_link_args_json, "late-link-args");
+        // target_option_val!(link_args - late_link_args_dynamic_json, "late-link-args-dynamic");
+        // target_option_val!(link_args - late_link_args_static_json, "late-link-args-static");
+        // target_option_val!(link_args - post_link_args_json, "post-link-args");
         target_option_val!(link_script);
         target_option_val!(env - link_env);
         target_option_val!(link_env_remove);

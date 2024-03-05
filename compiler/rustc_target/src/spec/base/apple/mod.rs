@@ -1,3 +1,5 @@
+use std::marker::ConstParamTy;
+use std::sync::LazyLock;
 use std::{borrow::Cow, env};
 
 use crate::spec::{add_link_args, add_link_args_iter};
@@ -8,8 +10,9 @@ use crate::spec::{SplitDebuginfo, StackProbeType, StaticCow, Target, TargetOptio
 mod tests;
 
 use Arch::*;
+
 #[allow(non_camel_case_types)]
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq, ConstParamTy)]
 pub enum Arch {
     Armv7k,
     Armv7s,
@@ -28,7 +31,7 @@ pub enum Arch {
 }
 
 impl Arch {
-    pub fn target_name(self) -> &'static str {
+    pub const fn target_name(self) -> &'static str {
         match self {
             Armv7k => "armv7k",
             Armv7s => "armv7s",
@@ -42,7 +45,7 @@ impl Arch {
         }
     }
 
-    pub fn target_arch(self) -> Cow<'static, str> {
+    pub const fn target_arch(self) -> Cow<'static, str> {
         Cow::Borrowed(match self {
             Armv7k | Armv7s => "arm",
             Arm64 | Arm64e | Arm64_32 | Arm64_macabi | Arm64_sim => "aarch64",
@@ -51,7 +54,7 @@ impl Arch {
         })
     }
 
-    fn target_abi(self) -> &'static str {
+    pub const fn target_abi(self) -> &'static str {
         match self {
             Armv7k | Armv7s | Arm64 | Arm64e | Arm64_32 | I386 | I686 | X86_64 | X86_64h => "",
             X86_64_macabi | Arm64_macabi => "macabi",
@@ -59,7 +62,7 @@ impl Arch {
         }
     }
 
-    fn target_cpu(self) -> &'static str {
+    const fn target_cpu(self) -> &'static str {
         match self {
             Armv7k => "cortex-a8",
             Armv7s => "swift", // iOS 10 is only supported on iPhone 5 or higher.
@@ -81,7 +84,7 @@ impl Arch {
         }
     }
 
-    fn stack_probes(self) -> StackProbeType {
+    const fn stack_probes(self) -> StackProbeType {
         match self {
             Armv7k | Armv7s => StackProbeType::None,
             Arm64 | Arm64e | Arm64_32 | I386 | I386_sim | I686 | X86_64 | X86_64h | X86_64_sim
@@ -90,7 +93,7 @@ impl Arch {
     }
 }
 
-fn pre_link_args(os: &'static str, arch: Arch, abi: &'static str) -> LinkArgs {
+pub fn pre_link_args(os: &'static str, arch: Arch, abi: &'static str) -> LinkArgs {
     let platform_name: StaticCow<str> = match abi {
         "sim" => format!("{os}-simulator").into(),
         "macabi" => "mac-catalyst".into(),
@@ -148,7 +151,7 @@ pub fn opts(os: &'static str, arch: Arch) -> TargetOptions {
         // macOS has -dead_strip, which doesn't rely on function_sections
         function_sections: false,
         dynamic_linking: true,
-        pre_link_args: pre_link_args(os, arch, abi),
+        pre_link_args: LazyLock::new(|| panic!()),
         families: cvs!["unix"],
         is_like_osx: true,
         // LLVM notes that macOS 10.11+ and iOS 9+ default
@@ -187,7 +190,7 @@ pub fn opts(os: &'static str, arch: Arch) -> TargetOptions {
         // For some more info see the commentary on #47086
         link_env: Cow::Borrowed(&[(Cow::Borrowed("ZERO_AR_DATE"), Cow::Borrowed("1"))]),
 
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }
 

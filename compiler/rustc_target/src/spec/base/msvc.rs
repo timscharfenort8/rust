@@ -1,17 +1,17 @@
 use crate::spec::{DebuginfoKind, LinkerFlavor, Lld, SplitDebuginfo, TargetOptions};
-use std::borrow::Cow;
+use std::{borrow::Cow, sync::LazyLock};
 
 pub fn opts() -> TargetOptions {
-    // Suppress the verbose logo and authorship debugging output, which would needlessly
-    // clog any log files.
-    let pre_link_args = TargetOptions::link_args(LinkerFlavor::Msvc(Lld::No), &["/NOLOGO"]);
-
     TargetOptions {
         linker_flavor: LinkerFlavor::Msvc(Lld::No),
         dll_tls_export: false,
         is_like_windows: true,
         is_like_msvc: true,
-        pre_link_args,
+        pre_link_args: LazyLock::new(|| {
+            // Suppress the verbose logo and authorship debugging output, which would needlessly
+            // clog any log files.
+            TargetOptions::link_args(LinkerFlavor::Msvc(Lld::No), &["/NOLOGO"])
+        }),
         abi_return_struct_as_int: true,
         emit_debug_gdb_scripts: false,
 
@@ -21,6 +21,6 @@ pub fn opts() -> TargetOptions {
         supported_split_debuginfo: Cow::Borrowed(&[SplitDebuginfo::Packed]),
         debuginfo_kind: DebuginfoKind::Pdb,
 
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }

@@ -18,6 +18,9 @@
 #![cfg_attr(bootstrap, feature(min_specialization))]
 #![feature(rustc_attrs)]
 #![feature(step_trait)]
+#![feature(lazy_cell)]
+#![feature(adt_const_params)]
+#![allow(incomplete_features)]
 #![allow(internal_features)]
 
 use std::path::{Path, PathBuf};

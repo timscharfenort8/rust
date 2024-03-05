@@ -16,6 +16,6 @@ pub fn opts() -> TargetOptions {
             SplitDebuginfo::Unpacked,
             SplitDebuginfo::Off,
         ]),
-        ..Default::default()
+        ..TargetOptions::default()
     }
 }
