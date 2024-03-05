@@ -16,7 +16,7 @@ pub fn target() -> Target {
             features: "+m,+a,+c".into(),
             panic_strategy: PanicStrategy::Unwind,
             relocation_model: RelocModel::Static,
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

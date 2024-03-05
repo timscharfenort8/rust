@@ -25,7 +25,7 @@ pub fn target() -> Target {
         disable_redzone: true,
         panic_strategy: PanicStrategy::Abort,
         code_model: Some(CodeModel::Kernel),
-        ..Default::default()
+        ..TargetOptions::default()
     };
     Target {
         llvm_target: "x86_64-unknown-none-elf".into(),

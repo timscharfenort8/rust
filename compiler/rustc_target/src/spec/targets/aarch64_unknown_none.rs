@@ -27,7 +27,7 @@ pub fn target() -> Target {
         max_atomic_width: Some(128),
         stack_probes: StackProbeType::Inline,
         panic_strategy: PanicStrategy::Abort,
-        ..Default::default()
+        ..TargetOptions::default()
     };
     Target {
         llvm_target: "aarch64-unknown-none".into(),

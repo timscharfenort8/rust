@@ -15,7 +15,7 @@ pub fn target() -> Target {
         no_default_libraries: false,
         emit_debug_gdb_scripts: false,
         eh_frame_header: false,
-        ..Default::default()
+        ..TargetOptions::default()
     };
     Target {
         data_layout: "E-m:e-p:32:32-i64:64-f128:64-n32-S64".into(),

@@ -28,7 +28,7 @@ pub fn target() -> Target {
         panic_strategy: PanicStrategy::Abort,
         emit_debug_gdb_scripts: false,
         c_enum_min_bits: Some(8),
-        ..Default::default()
+        ..TargetOptions::default()
     };
     Target {
         llvm_target: "armv7a-none-eabi".into(),

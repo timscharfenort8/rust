@@ -53,7 +53,7 @@ pub fn target() -> Target {
 
             eh_frame_header: false,
 
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

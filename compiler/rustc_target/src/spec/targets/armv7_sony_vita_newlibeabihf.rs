@@ -35,7 +35,7 @@ pub fn target() -> Target {
             exe_suffix: ".elf".into(),
             has_thumb_interworking: true,
             max_atomic_width: Some(64),
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

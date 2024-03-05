@@ -43,7 +43,7 @@ pub fn target() -> Target {
             emit_debug_gdb_scripts: false,
             // From thumb_base, GCC gives enums a minimum of 8 bits on no-os targets.
             c_enum_min_bits: Some(8),
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

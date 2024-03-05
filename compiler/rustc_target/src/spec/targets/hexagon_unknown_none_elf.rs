@@ -21,7 +21,7 @@ pub fn target() -> Target {
             max_atomic_width: Some(32),
             emit_debug_gdb_scripts: false,
             c_enum_min_bits: Some(8),
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

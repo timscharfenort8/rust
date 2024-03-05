@@ -30,7 +30,7 @@ pub fn target() -> Target {
             emit_debug_gdb_scripts: false,
             eh_frame_header: false,
             singlethread: true,
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

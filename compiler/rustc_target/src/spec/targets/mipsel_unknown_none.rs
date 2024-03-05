@@ -20,7 +20,7 @@ pub fn target() -> Target {
             panic_strategy: PanicStrategy::Abort,
             relocation_model: RelocModel::Static,
             emit_debug_gdb_scripts: false,
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

@@ -70,7 +70,7 @@ pub fn target() -> Target {
         pre_link_args,
         override_export_symbols: Some(EXPORT_SYMBOLS.iter().cloned().map(Cow::from).collect()),
         relax_elf_relocations: true,
-        ..Default::default()
+        ..TargetOptions::default()
     };
     Target {
         llvm_target: "x86_64-elf".into(),

@@ -46,7 +46,7 @@ pub fn target() -> Target {
             // The LLVM backend does not support stack canaries for this target
             supports_stack_protector: false,
 
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

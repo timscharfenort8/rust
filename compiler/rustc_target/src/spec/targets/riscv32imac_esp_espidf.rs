@@ -25,7 +25,7 @@ pub fn target() -> Target {
             relocation_model: RelocModel::Static,
             emit_debug_gdb_scripts: false,
             eh_frame_header: false,
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

@@ -30,7 +30,7 @@ pub fn target() -> Target {
             llvm_args: cvs!["-mno-check-zero-division"],
             pre_link_args,
             link_script: Some(LINKER_SCRIPT.into()),
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

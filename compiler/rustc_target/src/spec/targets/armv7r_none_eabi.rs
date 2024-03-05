@@ -19,7 +19,7 @@ pub fn target() -> Target {
             emit_debug_gdb_scripts: false,
             // GCC defaults to 8 for arm-none here.
             c_enum_min_bits: Some(8),
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

@@ -23,7 +23,7 @@ pub fn target() -> Target {
             position_independent_executables: true,
             dynamic_linking: true,
             relro_level: RelroLevel::Off,
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

@@ -30,7 +30,7 @@ pub fn target() -> Target {
             exe_suffix: ".elf".into(),
             no_default_libraries: false,
             has_thread_local: true,
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

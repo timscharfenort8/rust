@@ -31,7 +31,7 @@ pub fn target() -> Target {
             llvm_args: cvs!["-mno-check-zero-division"],
             llvm_abiname: "o32".into(),
             panic_strategy: PanicStrategy::Abort,
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }

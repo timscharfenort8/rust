@@ -17,7 +17,7 @@ pub fn target() -> Target {
             relocation_model: RelocModel::Static,
             panic_strategy: PanicStrategy::Abort,
             code_model: Some(CodeModel::Small),
-            ..Default::default()
+            ..TargetOptions::default()
         },
     }
 }
