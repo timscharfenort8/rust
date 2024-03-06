@@ -1,8 +1,9 @@
+use crate::spec::cow;
 use crate::spec::{base, SanitizerSet, TargetOptions, TlsModel};
 
 pub fn opts() -> TargetOptions {
     let mut base = base::linux::opts();
-    base.os = "android".into();
+    base.os = cow!("android");
     base.is_like_android = true;
     base.default_dwarf_version = 2;
     base.tls_model = TlsModel::Emulated;

@@ -1,18 +1,19 @@
+use crate::spec::cow;
 use crate::spec::{base, cvs, TargetOptions};
 
 pub fn opts() -> TargetOptions {
     let base = base::msvc::opts();
 
     TargetOptions {
-        os: "windows".into(),
-        env: "msvc".into(),
-        vendor: "pc".into(),
+        os: cow!("windows"),
+        env: cow!("msvc"),
+        vendor: cow!("pc"),
         dynamic_linking: true,
-        dll_prefix: "".into(),
-        dll_suffix: ".dll".into(),
-        exe_suffix: ".exe".into(),
-        staticlib_prefix: "".into(),
-        staticlib_suffix: ".lib".into(),
+        dll_prefix: cow!(""),
+        dll_suffix: cow!(".dll"),
+        exe_suffix: cow!(".exe"),
+        staticlib_prefix: cow!(""),
+        staticlib_suffix: cow!(".lib"),
         families: cvs!["windows"],
         crt_static_allows_dylibs: true,
         crt_static_respected: true,

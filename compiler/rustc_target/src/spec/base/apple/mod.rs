@@ -1,3 +1,4 @@
+use crate::spec::cow;
 use std::marker::ConstParamTy;
 use std::sync::LazyLock;
 use std::{borrow::Cow, env};
@@ -131,7 +132,7 @@ pub fn pre_link_args(os: &'static str, arch: Arch, abi: &'static str) -> LinkArg
         add_link_args_iter(
             &mut args,
             LinkerFlavor::Darwin(Cc::Yes, Lld::No),
-            ["-target".into(), mac_catalyst_llvm_target(arch).into()].into_iter(),
+            [cow!("-target"), mac_catalyst_llvm_target(arch).into()].into_iter(),
         );
     }
 
@@ -146,7 +147,7 @@ pub fn opts(os: &'static str, arch: Arch) -> TargetOptions {
         os: os.into(),
         cpu: arch.target_cpu().into(),
         link_env_remove: link_env_remove(os),
-        vendor: "apple".into(),
+        vendor: cow!("apple"),
         linker_flavor: LinkerFlavor::Darwin(Cc::Yes, Lld::No),
         // macOS has -dead_strip, which doesn't rely on function_sections
         function_sections: false,
@@ -160,8 +161,8 @@ pub fn opts(os: &'static str, arch: Arch) -> TargetOptions {
         default_dwarf_version: 4,
         frame_pointer: FramePointer::Always,
         has_rpath: true,
-        dll_suffix: ".dylib".into(),
-        archive_format: "darwin".into(),
+        dll_suffix: cow!(".dylib"),
+        archive_format: cow!("darwin"),
         // Thread locals became available with iOS 8 and macOS 10.7,
         // and both are far below our minimum.
         has_thread_local: true,
@@ -294,14 +295,14 @@ fn link_env_remove(os: &'static str) -> StaticCow<[StaticCow<str>]> {
                 || sdkroot.contains("WatchOS.platform")
                 || sdkroot.contains("WatchSimulator.platform")
             {
-                env_remove.push("SDKROOT".into())
+                env_remove.push(cow!("SDKROOT"))
             }
         }
         // Additionally, `IPHONEOS_DEPLOYMENT_TARGET` must not be set when using the Xcode linker at
         // "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld",
         // although this is apparently ignored when using the linker at "/usr/bin/ld".
-        env_remove.push("IPHONEOS_DEPLOYMENT_TARGET".into());
-        env_remove.push("TVOS_DEPLOYMENT_TARGET".into());
+        env_remove.push(cow!("IPHONEOS_DEPLOYMENT_TARGET"));
+        env_remove.push(cow!("TVOS_DEPLOYMENT_TARGET"));
         env_remove.into()
     } else {
         // Otherwise if cross-compiling for a different OS/SDK (including Mac Catalyst), remove any part

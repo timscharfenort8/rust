@@ -1,11 +1,12 @@
+use crate::spec::cow;
 use std::sync::LazyLock;
 
 use crate::spec::{add_link_args, Cc, LinkerFlavor, Lld, PanicStrategy, RelroLevel, TargetOptions};
 
 pub fn opts() -> TargetOptions {
     TargetOptions {
-        os: "teeos".into(),
-        vendor: "unknown".into(),
+        os: cow!("teeos"),
+        vendor: cow!("unknown"),
         dynamic_linking: true,
         linker_flavor: LinkerFlavor::Gnu(Cc::Yes, Lld::No),
         // rpath hardcodes -Wl, so it can't be used together with ld.lld.

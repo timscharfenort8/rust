@@ -1,3 +1,4 @@
+use crate::spec::cow;
 use crate::spec::LinkSelfContainedDefault;
 use crate::spec::{add_link_args, crt_objects};
 use crate::spec::{cvs, Cc, DebuginfoKind, LinkerFlavor, Lld, SplitDebuginfo, TargetOptions};
@@ -6,17 +7,17 @@ use std::sync::LazyLock;
 
 pub fn opts() -> TargetOptions {
     TargetOptions {
-        os: "windows".into(),
-        env: "gnu".into(),
-        vendor: "pc".into(),
+        os: cow!("windows"),
+        env: cow!("gnu"),
+        vendor: cow!("pc"),
         // FIXME(#13846) this should be enabled for windows
         function_sections: false,
-        linker: Some("gcc".into()),
+        linker: Some(cow!("gcc")),
         dynamic_linking: true,
         dll_tls_export: false,
-        dll_prefix: "".into(),
-        dll_suffix: ".dll".into(),
-        exe_suffix: ".exe".into(),
+        dll_prefix: cow!(""),
+        dll_suffix: cow!(".dll"),
+        exe_suffix: cow!(".exe"),
         families: cvs!["windows"],
         is_like_windows: true,
         allows_weak_linkage: false,

@@ -1,3 +1,4 @@
+use crate::spec::cow;
 use std::sync::LazyLock;
 
 use crate::spec::crt_objects;
@@ -6,7 +7,7 @@ use crate::spec::{base, LinkSelfContainedDefault, TargetOptions};
 pub fn opts() -> TargetOptions {
     let mut base = base::linux::opts();
 
-    base.env = "musl".into();
+    base.env = cow!("musl");
     base.pre_link_objects_self_contained = LazyLock::new(|| crt_objects::pre_musl_self_contained());
     base.post_link_objects_self_contained =
         LazyLock::new(|| crt_objects::post_musl_self_contained());

@@ -1,10 +1,11 @@
+use crate::spec::cow;
 use std::sync::LazyLock;
 
 use crate::spec::{cvs, Cc, FramePointer, LinkerFlavor, TargetOptions};
 
 pub fn opts() -> TargetOptions {
     TargetOptions {
-        os: "illumos".into(),
+        os: cow!("illumos"),
         dynamic_linking: true,
         has_rpath: true,
         families: cvs!["unix"],
@@ -54,8 +55,8 @@ pub fn opts() -> TargetOptions {
         //
         // We want XPG6 behavior from libc and libm. See standards(5)
         //pre_link_objects_exe: vec![
-        //    "/usr/lib/amd64/values-Xc.o".into(),
-        //    "/usr/lib/amd64/values-xpg6.o".into(),
+        //    cow!("/usr/lib/amd64/values-Xc.o"),
+        //    cow!("/usr/lib/amd64/values-xpg6.o"),
         //],
         ..TargetOptions::default()
     }

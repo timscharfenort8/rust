@@ -1,3 +1,4 @@
+use crate::spec::cow;
 use std::sync::LazyLock;
 
 use crate::spec::{
@@ -61,9 +62,9 @@ pub fn options() -> TargetOptions {
         only_cdylib: true,
 
         // relatively self-explanatory!
-        exe_suffix: ".wasm".into(),
-        dll_prefix: "".into(),
-        dll_suffix: ".wasm".into(),
+        exe_suffix: cow!(".wasm"),
+        dll_prefix: cow!(""),
+        dll_suffix: cow!(".wasm"),
         eh_frame_header: false,
 
         max_atomic_width: Some(64),
@@ -88,7 +89,7 @@ pub fn options() -> TargetOptions {
         limit_rdylib_exports: false,
 
         // we use the LLD shipped with the Rust toolchain by default
-        linker: Some("rust-lld".into()),
+        linker: Some(cow!("rust-lld")),
         linker_flavor: LinkerFlavor::WasmLld(Cc::No),
 
         pre_link_args: LazyLock::new(|| {

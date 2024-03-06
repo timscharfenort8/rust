@@ -1,9 +1,10 @@
+use crate::spec::cow;
 use crate::spec::{cvs, RelroLevel, TargetOptions};
 
 pub fn opts() -> TargetOptions {
     TargetOptions {
-        os: "redox".into(),
-        env: "relibc".into(),
+        os: cow!("redox"),
+        env: cow!("relibc"),
         dynamic_linking: true,
         families: cvs!["unix"],
         has_rpath: true,

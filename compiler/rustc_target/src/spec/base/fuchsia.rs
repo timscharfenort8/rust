@@ -1,12 +1,13 @@
+use crate::spec::cow;
 use std::sync::LazyLock;
 
 use crate::spec::{crt_objects, cvs, Cc, LinkOutputKind, LinkerFlavor, Lld, TargetOptions};
 
 pub fn opts() -> TargetOptions {
     TargetOptions {
-        os: "fuchsia".into(),
+        os: cow!("fuchsia"),
         linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
-        linker: Some("rust-lld".into()),
+        linker: Some(cow!("rust-lld")),
         dynamic_linking: true,
         families: cvs!["unix"],
         // This mirrors the linker options provided by clang. We presume lld for

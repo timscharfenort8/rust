@@ -1,5 +1,6 @@
+use crate::spec::cow;
 use crate::spec::{base, TargetOptions};
 
 pub fn opts() -> TargetOptions {
-    TargetOptions { env: "gnu".into(), ..base::linux::opts() }
+    TargetOptions { env: cow!("gnu"), ..base::linux::opts() }
 }

@@ -1,3 +1,4 @@
+use crate::spec::cow;
 use std::sync::LazyLock;
 
 use crate::spec::{Cc, LinkerFlavor, Lld, RelocModel, Target, TargetOptions};
@@ -9,16 +10,16 @@ use object::elf;
 /// FIXME: Remove the second parameter when const string concatenation is possible.
 pub fn target<const MMCU: &'static str>(target_cpu: &'static str) -> Target {
     Target {
-        arch: "avr".into(),
-        data_layout: "e-P1-p:16:8-i8:8-i16:8-i32:8-i64:8-f32:8-f64:8-n8-a:8".into(),
-        llvm_target: "avr-unknown-unknown".into(),
+        arch: cow!("avr"),
+        data_layout: cow!("e-P1-p:16:8-i8:8-i16:8-i32:8-i64:8-f32:8-f64:8-n8-a:8"),
+        llvm_target: cow!("avr-unknown-unknown"),
         pointer_width: 16,
         options: TargetOptions {
-            c_int_width: "16".into(),
+            c_int_width: cow!("16"),
             cpu: target_cpu.into(),
-            exe_suffix: ".elf".into(),
+            exe_suffix: cow!(".elf"),
 
-            linker: Some("avr-gcc".into()),
+            linker: Some(cow!("avr-gcc")),
             eh_frame_header: false,
             pre_link_args: LazyLock::new(|| {
                 TargetOptions::link_args(LinkerFlavor::Gnu(Cc::Yes, Lld::No), &[MMCU])

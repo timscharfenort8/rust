@@ -1,4 +1,5 @@
 // This defines a base target-configuration for native UEFI systems. The UEFI specification has
+use crate::spec::cow;
 // quite detailed sections on the ABI of all the supported target architectures. In almost all
 // cases it simply follows what Microsoft Windows does. Hence, whenever in doubt, see the MSDN
 // documentation.
@@ -39,18 +40,18 @@ pub fn opts() -> TargetOptions {
     });
 
     TargetOptions {
-        os: "uefi".into(),
+        os: cow!("uefi"),
         linker_flavor: LinkerFlavor::Msvc(Lld::Yes),
         disable_redzone: true,
-        exe_suffix: ".efi".into(),
+        exe_suffix: cow!(".efi"),
         allows_weak_linkage: false,
         panic_strategy: PanicStrategy::Abort,
         // LLVM does not emit inline assembly because the LLVM target does not get considered as…
         // "Windows".
         stack_probes: StackProbeType::Call,
         singlethread: true,
-        linker: Some("rust-lld".into()),
-        entry_name: "efi_main".into(),
+        linker: Some(cow!("rust-lld")),
+        entry_name: cow!("efi_main"),
         ..base
     }
 }

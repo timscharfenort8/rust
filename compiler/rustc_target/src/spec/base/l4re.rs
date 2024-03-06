@@ -1,12 +1,13 @@
+use crate::spec::cow;
 use crate::spec::{cvs, Cc, LinkerFlavor, PanicStrategy, RelocModel, TargetOptions};
 
 pub fn opts() -> TargetOptions {
     TargetOptions {
-        os: "l4re".into(),
-        env: "uclibc".into(),
+        os: cow!("l4re"),
+        env: cow!("uclibc"),
         linker_flavor: LinkerFlavor::Unix(Cc::No),
         panic_strategy: PanicStrategy::Abort,
-        linker: Some("l4-bender".into()),
+        linker: Some(cow!("l4-bender")),
         families: cvs!["unix"],
         relocation_model: RelocModel::Static,
         ..TargetOptions::default()

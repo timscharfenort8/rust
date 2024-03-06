@@ -1,18 +1,19 @@
+use crate::spec::cow;
 use crate::spec::{cvs, Cc, DebuginfoKind, LinkerFlavor, Lld, SplitDebuginfo, TargetOptions};
 use std::{borrow::Cow, sync::LazyLock};
 
 pub fn opts() -> TargetOptions {
     TargetOptions {
-        os: "windows".into(),
-        env: "gnu".into(),
-        vendor: "pc".into(),
-        abi: "llvm".into(),
-        linker: Some("clang".into()),
+        os: cow!("windows"),
+        env: cow!("gnu"),
+        vendor: cow!("pc"),
+        abi: cow!("llvm"),
+        linker: Some(cow!("clang")),
         dynamic_linking: true,
         dll_tls_export: false,
-        dll_prefix: "".into(),
-        dll_suffix: ".dll".into(),
-        exe_suffix: ".exe".into(),
+        dll_prefix: cow!(""),
+        dll_suffix: cow!(".dll"),
+        exe_suffix: cow!(".exe"),
         families: cvs!["windows"],
         is_like_windows: true,
         allows_weak_linkage: false,

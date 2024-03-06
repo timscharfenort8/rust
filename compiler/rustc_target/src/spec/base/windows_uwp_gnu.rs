@@ -1,3 +1,4 @@
+use crate::spec::cow;
 use std::sync::LazyLock;
 
 use crate::spec::{add_link_args, base, Cc, LinkArgs, LinkerFlavor, Lld, TargetOptions};
@@ -6,8 +7,8 @@ pub fn opts() -> TargetOptions {
     let base = base::windows_gnu::opts();
 
     TargetOptions {
-        abi: "uwp".into(),
-        vendor: "uwp".into(),
+        abi: cow!("uwp"),
+        vendor: cow!("uwp"),
         limit_rdylib_exports: false,
 
         late_link_args: LazyLock::new(|| {

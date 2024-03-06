@@ -1,4 +1,5 @@
 // These `thumbv*` targets cover the ARM Cortex-M family of processors which are widely used in
+use crate::spec::cow;
 // microcontrollers. Namely, all these processors:
 //
 // - Cortex-M0
@@ -34,7 +35,7 @@ pub fn opts() -> TargetOptions {
     TargetOptions {
         linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
         // In most cases, LLD is good enough
-        linker: Some("rust-lld".into()),
+        linker: Some(cow!("rust-lld")),
         // Because these devices have very little resources having an unwinder is too onerous so we
         // default to "abort" because the "unwind" strategy is very rare.
         panic_strategy: PanicStrategy::Abort,

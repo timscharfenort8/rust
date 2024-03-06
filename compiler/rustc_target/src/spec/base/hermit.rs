@@ -1,9 +1,10 @@
+use crate::spec::cow;
 use crate::spec::{Cc, LinkerFlavor, Lld, PanicStrategy, TargetOptions, TlsModel};
 
 pub fn opts() -> TargetOptions {
     TargetOptions {
-        os: "hermit".into(),
-        linker: Some("rust-lld".into()),
+        os: cow!("hermit"),
+        linker: Some(cow!("rust-lld")),
         linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
         tls_model: TlsModel::InitialExec,
         position_independent_executables: true,
