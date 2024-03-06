@@ -99,8 +99,10 @@ pub fn target() -> Target {
             ],
         )
     });
-    options.pre_link_objects_self_contained = LazyLock::new(|| crt_objects::pre_wasi_self_contained());
-    options.post_link_objects_self_contained = LazyLock::new(|| crt_objects::post_wasi_self_contained());
+    options.pre_link_objects_self_contained =
+        LazyLock::new(|| crt_objects::pre_wasi_self_contained());
+    options.post_link_objects_self_contained =
+        LazyLock::new(|| crt_objects::post_wasi_self_contained());
 
     // FIXME: Figure out cases in which WASM needs to link with a native toolchain.
     options.link_self_contained = LinkSelfContainedDefault::True;

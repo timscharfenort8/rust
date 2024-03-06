@@ -32,12 +32,14 @@ pub fn opts() -> TargetOptions {
                 ],
             )
         }),
-        pre_link_objects: LazyLock::new(|| crt_objects::new(&[
-            (LinkOutputKind::DynamicNoPicExe, &["Scrt1.o"]),
-            (LinkOutputKind::DynamicPicExe, &["Scrt1.o"]),
-            (LinkOutputKind::StaticNoPicExe, &["Scrt1.o"]),
-            (LinkOutputKind::StaticPicExe, &["Scrt1.o"]),
-        ])),
+        pre_link_objects: LazyLock::new(|| {
+            crt_objects::new(&[
+                (LinkOutputKind::DynamicNoPicExe, &["Scrt1.o"]),
+                (LinkOutputKind::DynamicPicExe, &["Scrt1.o"]),
+                (LinkOutputKind::StaticNoPicExe, &["Scrt1.o"]),
+                (LinkOutputKind::StaticPicExe, &["Scrt1.o"]),
+            ])
+        }),
         position_independent_executables: true,
         has_thread_local: true,
         ..TargetOptions::default()

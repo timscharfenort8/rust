@@ -24,10 +24,12 @@ pub fn opts() -> TargetOptions {
         is_like_aix: true,
         default_dwarf_version: 3,
         function_sections: true,
-        pre_link_objects: LazyLock::new(|| crt_objects::new(&[
-            (LinkOutputKind::DynamicNoPicExe, &["/usr/lib/crt0_64.o", "/usr/lib/crti_64.o"]),
-            (LinkOutputKind::DynamicPicExe, &["/usr/lib/crt0_64.o", "/usr/lib/crti_64.o"]),
-        ])),
+        pre_link_objects: LazyLock::new(|| {
+            crt_objects::new(&[
+                (LinkOutputKind::DynamicNoPicExe, &["/usr/lib/crt0_64.o", "/usr/lib/crti_64.o"]),
+                (LinkOutputKind::DynamicPicExe, &["/usr/lib/crt0_64.o", "/usr/lib/crti_64.o"]),
+            ])
+        }),
         dll_suffix: ".a".into(),
         ..TargetOptions::default()
     }
