@@ -1866,11 +1866,11 @@ pub struct TargetOptions {
     linker_is_gnu_json: bool,
 
     /// Objects to link before and after all other object code.
-    pub pre_link_objects: CrtObjects,
-    pub post_link_objects: CrtObjects,
+    pub pre_link_objects: LazyLock<CrtObjects>,
+    pub post_link_objects: LazyLock<CrtObjects>,
     /// Same as `(pre|post)_link_objects`, but when self-contained linking mode is enabled.
-    pub pre_link_objects_self_contained: CrtObjects,
-    pub post_link_objects_self_contained: CrtObjects,
+    pub pre_link_objects_self_contained: LazyLock<CrtObjects>,
+    pub post_link_objects_self_contained: LazyLock<CrtObjects>,
     /// Behavior for the self-contained linking mode: inferred for some targets, or explicitly
     /// enabled (in bulk, or with individual components).
     pub link_self_contained: LinkSelfContainedDefault,
@@ -2346,10 +2346,10 @@ impl TargetOptions {
             static_position_independent_executables: false,
             plt_by_default: true,
             relro_level: RelroLevel::None,
-            pre_link_objects: CrtObjects::new(),
-            post_link_objects: CrtObjects::new(),
-            pre_link_objects_self_contained: CrtObjects::new(),
-            post_link_objects_self_contained: CrtObjects::new(),
+            pre_link_objects: LazyLock::new(CrtObjects::new),
+            post_link_objects: LazyLock::new(CrtObjects::new),
+            pre_link_objects_self_contained: LazyLock::new(CrtObjects::new),
+            post_link_objects_self_contained: LazyLock::new(CrtObjects::new),
             link_self_contained: LinkSelfContainedDefault::False,
             pre_link_args: LazyLock::new(Default::default),
             pre_link_args_json: LinkArgsCli::new(),
@@ -2911,7 +2911,7 @@ impl Target {
 
                         args.insert(kind, v);
                     }
-                    base.$key_name = args;
+                    base.$key_name = LazyLock::preinit(args);
                 }
             } );
             ($key_name:ident = $json_name:expr, link_args) => ( {
@@ -3293,10 +3293,11 @@ impl ToJson for Target {
         target_option_val!(linker_flavor_json, "linker-flavor");
         target_option_val!(lld_flavor_json, "lld-flavor");
         target_option_val!(linker_is_gnu_json, "linker-is-gnu");
-        target_option_val!(pre_link_objects);
-        target_option_val!(post_link_objects);
-        target_option_val!(pre_link_objects_self_contained, "pre-link-objects-fallback");
-        target_option_val!(post_link_objects_self_contained, "post-link-objects-fallback");
+        // TODO: deref here!
+        // target_option_val!(pre_link_objects);
+        // target_option_val!(post_link_objects);
+        // target_option_val!(pre_link_objects_self_contained, "pre-link-objects-fallback");
+        // target_option_val!(post_link_objects_self_contained, "post-link-objects-fallback");
         // target_option_val!(link_args - pre_link_args_json, "pre-link-args");
         // target_option_val!(link_args - late_link_args_json, "late-link-args");
         // target_option_val!(link_args - late_link_args_dynamic_json, "late-link-args-dynamic");

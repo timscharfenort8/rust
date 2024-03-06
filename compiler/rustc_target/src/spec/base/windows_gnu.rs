@@ -43,10 +43,10 @@ pub fn opts() -> TargetOptions {
             );
             pre_link_args
         }),
-        pre_link_objects: crt_objects::pre_mingw(),
-        post_link_objects: crt_objects::post_mingw(),
-        pre_link_objects_self_contained: crt_objects::pre_mingw_self_contained(),
-        post_link_objects_self_contained: crt_objects::post_mingw_self_contained(),
+        pre_link_objects: LazyLock::new(|| crt_objects::pre_mingw()),
+        post_link_objects: LazyLock::new(|| crt_objects::post_mingw()),
+        pre_link_objects_self_contained: LazyLock::new(|| crt_objects::pre_mingw_self_contained()),
+        post_link_objects_self_contained: LazyLock::new(|| crt_objects::post_mingw_self_contained()),
         link_self_contained: LinkSelfContainedDefault::InferredForMingw,
         late_link_args: LazyLock::new(|| {
             // Order of `late_link_args*` was found through trial and error to work with various
