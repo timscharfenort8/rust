@@ -1,3 +1,5 @@
+use std::sync::LazyLock;
+
 use crate::abi::Endian;
 use crate::spec::{cvs, Cc, LinkerFlavor, Lld, RelocModel, Target, TargetOptions};
 
@@ -6,11 +8,6 @@ use crate::spec::{cvs, Cc, LinkerFlavor, Lld, RelocModel, Target, TargetOptions}
 /// Requires the VITASDK toolchain on the host system.
 
 pub fn target() -> Target {
-    let pre_link_args = TargetOptions::link_args(
-        LinkerFlavor::Gnu(Cc::Yes, Lld::No),
-        &["-Wl,-q", "-Wl,--pic-veneer"],
-    );
-
     Target {
         llvm_target: "thumbv7a-vita-eabihf".into(),
         pointer_width: 32,
@@ -31,7 +28,12 @@ pub fn target() -> Target {
             linker: Some("arm-vita-eabi-gcc".into()),
             relocation_model: RelocModel::Static,
             features: "+v7,+neon,+vfp3,+thumb2,+thumb-mode".into(),
-            pre_link_args,
+            pre_link_args: LazyLock::new(|| {
+                TargetOptions::link_args(
+                    LinkerFlavor::Gnu(Cc::Yes, Lld::No),
+                    &["-Wl,-q", "-Wl,--pic-veneer"],
+                )
+            }),
             exe_suffix: ".elf".into(),
             has_thumb_interworking: true,
             max_atomic_width: Some(64),

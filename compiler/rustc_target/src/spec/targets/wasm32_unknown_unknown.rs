@@ -9,8 +9,10 @@
 //!
 //! This target is more or less managed by the Rust and WebAssembly Working
 //! Group nowadays at <https://github.com/rustwasm>.
+use std::sync::LazyLock;
 
 use crate::spec::abi::Abi;
+use crate::spec::TargetOptions;
 use crate::spec::{base, Cc, LinkerFlavor, Target};
 
 pub fn target() -> Target {
@@ -27,24 +29,27 @@ pub fn target() -> Target {
     // code on this target due to this ABI mismatch.
     options.default_adjusted_cabi = Some(Abi::Wasm);
 
-    options.add_pre_link_args(
-        LinkerFlavor::WasmLld(Cc::No),
-        &[
-            // For now this target just never has an entry symbol no matter the output
-            // type, so unconditionally pass this.
-            "--no-entry",
-        ],
-    );
-    options.add_pre_link_args(
-        LinkerFlavor::WasmLld(Cc::Yes),
-        &[
-            // Make sure clang uses LLD as its linker and is configured appropriately
-            // otherwise
-            "--target=wasm32-unknown-unknown",
-            "-Wl,--no-entry",
-        ],
-    );
-
+    options.pre_link_args = LazyLock::new(|| {
+        TargetOptions::link_args(
+            LinkerFlavor::WasmLld(Cc::No),
+            &[
+                // For now this target just never has an entry symbol no matter the output
+                // type,so unconditionally pass this.
+                "--no-entry",
+            ],
+        )
+    });
+    options.pre_link_args = LazyLock::new(|| {
+        TargetOptions::link_args(
+            LinkerFlavor::WasmLld(Cc::Yes),
+            &[
+                // Make sure clang uses LLD as its linker and is configured appropriately
+                // otherwise
+                "--target=wasm32-unknown-unknown",
+                "-Wl,--no-entry",
+            ],
+        )
+    });
     Target {
         llvm_target: "wasm32-unknown-unknown".into(),
         pointer_width: 32,

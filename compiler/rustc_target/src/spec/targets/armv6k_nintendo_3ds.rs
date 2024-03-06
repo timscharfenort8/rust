@@ -1,3 +1,5 @@
+use std::sync::LazyLock;
+
 use crate::spec::{cvs, Cc, LinkerFlavor, Lld, RelocModel, Target, TargetOptions};
 
 /// A base target for Nintendo 3DS devices using the devkitARM toolchain.
@@ -5,11 +7,6 @@ use crate::spec::{cvs, Cc, LinkerFlavor, Lld, RelocModel, Target, TargetOptions}
 /// Requires the devkitARM toolchain for 3DS targets on the host system.
 
 pub fn target() -> Target {
-    let pre_link_args = TargetOptions::link_args(
-        LinkerFlavor::Gnu(Cc::Yes, Lld::No),
-        &["-specs=3dsx.specs", "-mtune=mpcore", "-mfloat-abi=hard", "-mtp=soft"],
-    );
-
     Target {
         llvm_target: "armv6k-none-eabihf".into(),
         pointer_width: 32,
@@ -26,7 +23,12 @@ pub fn target() -> Target {
             linker: Some("arm-none-eabi-gcc".into()),
             relocation_model: RelocModel::Static,
             features: "+vfp2".into(),
-            pre_link_args,
+            pre_link_args: LazyLock::new(|| {
+                TargetOptions::link_args(
+                    LinkerFlavor::Gnu(Cc::Yes, Lld::No),
+                    &["-specs=3dsx.specs", "-mtune=mpcore", "-mfloat-abi=hard", "-mtp=soft"],
+                )
+            }),
             exe_suffix: ".elf".into(),
             no_default_libraries: false,
             has_thread_local: true,

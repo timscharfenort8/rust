@@ -1,5 +1,6 @@
-use crate::spec::{base, Cc, LinkerFlavor, Lld, Target, TargetOptions};
 use std::sync::LazyLock;
+
+use crate::spec::{base, Cc, LinkerFlavor, Lld, Target, TargetOptions};
 
 pub fn target() -> Target {
     let mut base = base::windows_uwp_gnu::opts();
@@ -7,10 +8,12 @@ pub fn target() -> Target {
     base.features = "+cx16,+sse3,+sahf".into();
     base.plt_by_default = false;
     // Use high-entropy 64 bit address space for ASLR
-    base.add_pre_link_args(
-        LinkerFlavor::Gnu(Cc::No, Lld::No),
-        &["-m", "i386pep", "--high-entropy-va"],
-    );
+    base.pre_link_args = LazyLock::new(|| {
+        TargetOptions::link_args(
+            LinkerFlavor::Gnu(Cc::No, Lld::No),
+            &["-m", "i386pep", "--high-entropy-va"],
+        )
+    });
     base.pre_link_args = LazyLock::new(|| {
         TargetOptions::link_args(
             LinkerFlavor::Gnu(Cc::Yes, Lld::No),

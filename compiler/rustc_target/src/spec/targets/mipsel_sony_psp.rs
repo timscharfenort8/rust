@@ -1,14 +1,11 @@
+use std::sync::LazyLock;
+
 use crate::spec::{cvs, Cc, LinkerFlavor, Lld, RelocModel, Target, TargetOptions};
 
 // The PSP has custom linker requirements.
 const LINKER_SCRIPT: &str = include_str!("./mipsel_sony_psp_linker_script.ld");
 
 pub fn target() -> Target {
-    let pre_link_args = TargetOptions::link_args(
-        LinkerFlavor::Gnu(Cc::No, Lld::No),
-        &["--emit-relocs", "--nmagic"],
-    );
-
     Target {
         llvm_target: "mipsel-sony-psp".into(),
         pointer_width: 32,
@@ -28,7 +25,12 @@ pub fn target() -> Target {
 
             // PSP does not support trap-on-condition instructions.
             llvm_args: cvs!["-mno-check-zero-division"],
-            pre_link_args,
+            pre_link_args: LazyLock::new(|| {
+                TargetOptions::link_args(
+                    LinkerFlavor::Gnu(Cc::No, Lld::No),
+                    &["--emit-relocs", "--nmagic"],
+                )
+            }),
             link_script: Some(LINKER_SCRIPT.into()),
             ..TargetOptions::default()
         },

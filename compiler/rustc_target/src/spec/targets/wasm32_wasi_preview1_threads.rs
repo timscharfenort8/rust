@@ -72,6 +72,9 @@
 //! best we can with this target. Don't start relying on too much here unless
 //! you know what you're getting in to!
 
+use std::sync::LazyLock;
+
+use crate::spec::TargetOptions;
 use crate::spec::{base, crt_objects, Cc, LinkSelfContainedDefault, LinkerFlavor, Target};
 
 pub fn target() -> Target {
@@ -79,20 +82,23 @@ pub fn target() -> Target {
 
     options.os = "wasi".into();
 
-    options.add_pre_link_args(
-        LinkerFlavor::WasmLld(Cc::No),
-        &["--import-memory", "--export-memory", "--shared-memory"],
-    );
-    options.add_pre_link_args(
-        LinkerFlavor::WasmLld(Cc::Yes),
-        &[
-            "--target=wasm32-wasi-threads",
-            "-Wl,--import-memory",
-            "-Wl,--export-memory,",
-            "-Wl,--shared-memory",
-        ],
-    );
-
+    options.pre_link_args = LazyLock::new(|| {
+        TargetOptions::link_args(
+            LinkerFlavor::WasmLld(Cc::No),
+            &["--import-memory", "--export-memory", "--shared-memory"],
+        )
+    });
+    options.pre_link_args = LazyLock::new(|| {
+        TargetOptions::link_args(
+            LinkerFlavor::WasmLld(Cc::Yes),
+            &[
+                "--target=wasm32-wasi-threads",
+                "-Wl,--import-memory",
+                "-Wl,--export-memory,",
+                "-Wl,--shared-memory",
+            ],
+        )
+    });
     options.pre_link_objects_self_contained = crt_objects::pre_wasi_self_contained();
     options.post_link_objects_self_contained = crt_objects::post_wasi_self_contained();
 

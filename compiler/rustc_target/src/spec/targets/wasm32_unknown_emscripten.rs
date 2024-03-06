@@ -1,12 +1,10 @@
+use std::sync::LazyLock;
+
 use crate::spec::{
     base, cvs, LinkArgs, LinkerFlavor, PanicStrategy, RelocModel, Target, TargetOptions,
 };
 
 pub fn target() -> Target {
-    // Reset flags for non-Em flavors back to empty to satisfy sanity checking tests.
-    let pre_link_args = LinkArgs::new();
-    let post_link_args = TargetOptions::link_args(LinkerFlavor::EmCc, &["-sABORTING_MALLOC=0"]);
-
     let opts = TargetOptions {
         os: "emscripten".into(),
         linker_flavor: LinkerFlavor::EmCc,
@@ -14,8 +12,11 @@ pub fn target() -> Target {
         // functionality, and a .wasm file.
         exe_suffix: ".js".into(),
         linker: None,
-        pre_link_args,
-        post_link_args,
+        // Reset flags for non-Em flavors back to empty to satisfy sanity checking tests.
+        pre_link_args: LazyLock::new(LinkArgs::new),
+        post_link_args: LazyLock::new(|| {
+            TargetOptions::link_args(LinkerFlavor::EmCc, &["-sABORTING_MALLOC=0"])
+        }),
         relocation_model: RelocModel::Pic,
         panic_strategy: PanicStrategy::Unwind,
         no_default_libraries: false,

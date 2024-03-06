@@ -1,43 +1,9 @@
 use std::borrow::Cow;
+use std::sync::LazyLock;
 
 use crate::spec::{cvs, Cc, LinkerFlavor, Lld, Target, TargetOptions};
 
 pub fn target() -> Target {
-    let pre_link_args = TargetOptions::link_args(
-        LinkerFlavor::Gnu(Cc::No, Lld::No),
-        &[
-            "-e",
-            "elf_entry",
-            "-Bstatic",
-            "--gc-sections",
-            "-z",
-            "text",
-            "-z",
-            "norelro",
-            "--no-undefined",
-            "--error-unresolved-symbols",
-            "--no-undefined-version",
-            "-Bsymbolic",
-            "--export-dynamic",
-            // The following symbols are needed by libunwind, which is linked after
-            // libstd. Make sure they're included in the link.
-            "-u",
-            "__rust_abort",
-            "-u",
-            "__rust_c_alloc",
-            "-u",
-            "__rust_c_dealloc",
-            "-u",
-            "__rust_print_err",
-            "-u",
-            "__rust_rwlock_rdlock",
-            "-u",
-            "__rust_rwlock_unlock",
-            "-u",
-            "__rust_rwlock_wrlock",
-        ],
-    );
-
     const EXPORT_SYMBOLS: &[&str] = &[
         "sgx_entry",
         "HEAP_BASE",
@@ -67,7 +33,42 @@ pub fn target() -> Target {
         features: "+rdrnd,+rdseed,+lvi-cfi,+lvi-load-hardening".into(),
         llvm_args: cvs!["--x86-experimental-lvi-inline-asm-hardening"],
         position_independent_executables: true,
-        pre_link_args,
+        pre_link_args: LazyLock::new(|| {
+            TargetOptions::link_args(
+                LinkerFlavor::Gnu(Cc::No, Lld::No),
+                &[
+                    "-e",
+                    "elf_entry",
+                    "-Bstatic",
+                    "--gc-sections",
+                    "-z",
+                    "text",
+                    "-z",
+                    "norelro",
+                    "--no-undefined",
+                    "--error-unresolved-symbols",
+                    "--no-undefined-version",
+                    "-Bsymbolic",
+                    "--export-dynamic",
+                    // The following symbols are needed by libunwind, which is linked after
+                    // libstd. Make sure they're included in the link.
+                    "-u",
+                    "__rust_abort",
+                    "-u",
+                    "__rust_c_alloc",
+                    "-u",
+                    "__rust_c_dealloc",
+                    "-u",
+                    "__rust_print_err",
+                    "-u",
+                    "__rust_rwlock_rdlock",
+                    "-u",
+                    "__rust_rwlock_unlock",
+                    "-u",
+                    "__rust_rwlock_wrlock",
+                ],
+            )
+        }),
         override_export_symbols: Some(EXPORT_SYMBOLS.iter().cloned().map(Cow::from).collect()),
         relax_elf_relocations: true,
         ..TargetOptions::default()

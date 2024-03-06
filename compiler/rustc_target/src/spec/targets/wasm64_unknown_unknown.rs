@@ -6,35 +6,37 @@
 //! entirely self-contained by default when using the standard library. Although
 //! the standard library is available, most of it returns an error immediately
 //! (e.g. trying to create a TCP stream or something like that).
+use std::sync::LazyLock;
 
+use crate::spec::TargetOptions;
 use crate::spec::{base, Cc, LinkerFlavor, Target};
 
 pub fn target() -> Target {
     let mut options = base::wasm::options();
     options.os = "unknown".into();
 
-    options.add_pre_link_args(
-        LinkerFlavor::WasmLld(Cc::No),
-        &[
-            // For now this target just never has an entry symbol no matter the output
-            // type, so unconditionally pass this.
-            "--no-entry",
-            "-mwasm64",
-        ],
-    );
-    options.add_pre_link_args(
-        LinkerFlavor::WasmLld(Cc::Yes),
-        &[
-            // Make sure clang uses LLD as its linker and is configured appropriately
-            // otherwise
-            "--target=wasm64-unknown-unknown",
-            "-Wl,--no-entry",
-        ],
-    );
-
-    // Any engine that implements wasm64 will surely implement the rest of these
-    // features since they were all merged into the official spec by the time
-    // wasm64 was designed.
+    options.pre_link_args = LazyLock::new(|| {
+        TargetOptions::link_args(
+            LinkerFlavor::WasmLld(Cc::No),
+            &[
+                // For now this target just never has an entry symbol no matter the output
+                // type,so unconditionally pass this.
+                "--no-entry",
+                "-mwasm64",
+            ],
+        )
+    });
+    options.pre_link_args = LazyLock::new(|| {
+        TargetOptions::link_args(
+            LinkerFlavor::WasmLld(Cc::Yes),
+            &[
+                // Make sure clang uses LLD as its linker and is configured appropriately
+                // otherwise
+                "--target=wasm64-unknown-unknown",
+                "-Wl,--no-entry",
+            ],
+        )
+    });
     options.features = "+bulk-memory,+mutable-globals,+sign-ext,+nontrapping-fptoint".into();
 
     Target {
