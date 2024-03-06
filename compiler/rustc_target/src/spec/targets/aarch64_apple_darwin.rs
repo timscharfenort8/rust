@@ -1,3 +1,4 @@
+use crate::spec::cow;
 use std::sync::LazyLock;
 
 use crate::spec::base::apple::{macos_llvm_target, opts, pre_link_args, Arch};
@@ -8,7 +9,7 @@ pub fn target() -> Target {
     const OS: &'static str = "macos";
 
     let mut base = opts(OS, ARCH);
-    base.cpu = "apple-m1".into();
+    base.cpu = cow!("apple-m1");
     base.max_atomic_width = Some(128);
 
     // FIXME: The leak sanitizer currently fails the tests, see #88132.
@@ -22,10 +23,10 @@ pub fn target() -> Target {
         // correctly, we do too.
         llvm_target: macos_llvm_target(ARCH).into(),
         pointer_width: 64,
-        data_layout: "e-m:o-i64:64-i128:128-n32:64-S128".into(),
+        data_layout: cow!("e-m:o-i64:64-i128:128-n32:64-S128"),
         arch: ARCH.target_arch(),
         options: TargetOptions {
-            mcount: "\u{1}mcount".into(),
+            mcount: cow!("\u{1}mcount"),
             frame_pointer: FramePointer::NonLeaf,
             ..base
         },

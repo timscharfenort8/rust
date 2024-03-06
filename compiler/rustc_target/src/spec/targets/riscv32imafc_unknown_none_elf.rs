@@ -1,19 +1,20 @@
+use crate::spec::cow;
 use crate::spec::{Cc, LinkerFlavor, Lld, PanicStrategy, RelocModel, Target, TargetOptions};
 
 pub fn target() -> Target {
     Target {
-        data_layout: "e-m:e-p:32:32-i64:64-n32-S128".into(),
-        llvm_target: "riscv32".into(),
+        data_layout: cow!("e-m:e-p:32:32-i64:64-n32-S128"),
+        llvm_target: cow!("riscv32"),
         pointer_width: 32,
-        arch: "riscv32".into(),
+        arch: cow!("riscv32"),
 
         options: TargetOptions {
             linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
-            linker: Some("rust-lld".into()),
-            cpu: "generic-rv32".into(),
+            linker: Some(cow!("rust-lld")),
+            cpu: cow!("generic-rv32"),
             max_atomic_width: Some(32),
-            llvm_abiname: "ilp32f".into(),
-            features: "+m,+a,+c,+f".into(),
+            llvm_abiname: cow!("ilp32f"),
+            features: cow!("+m,+a,+c,+f"),
             panic_strategy: PanicStrategy::Abort,
             relocation_model: RelocModel::Static,
             emit_debug_gdb_scripts: false,

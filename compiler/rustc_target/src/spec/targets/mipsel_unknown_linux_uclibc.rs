@@ -1,17 +1,18 @@
+use crate::spec::cow;
 use crate::spec::{base, Target, TargetOptions};
 
 pub fn target() -> Target {
     Target {
-        llvm_target: "mipsel-unknown-linux-uclibc".into(),
+        llvm_target: cow!("mipsel-unknown-linux-uclibc"),
         pointer_width: 32,
-        data_layout: "e-m:m-p:32:32-i8:8:32-i16:16:32-i64:64-n32-S64".into(),
-        arch: "mips".into(),
+        data_layout: cow!("e-m:m-p:32:32-i8:8:32-i16:16:32-i64:64-n32-S64"),
+        arch: cow!("mips"),
 
         options: TargetOptions {
-            cpu: "mips32r2".into(),
-            features: "+mips32r2,+soft-float".into(),
+            cpu: cow!("mips32r2"),
+            features: cow!("+mips32r2,+soft-float"),
             max_atomic_width: Some(32),
-            mcount: "_mcount".into(),
+            mcount: cow!("_mcount"),
 
             ..base::linux_uclibc::opts()
         },

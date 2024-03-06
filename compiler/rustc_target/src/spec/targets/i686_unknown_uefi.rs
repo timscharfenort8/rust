@@ -1,4 +1,6 @@
 // This defines the ia32 target for UEFI systems as described in the UEFI specification. See the
+use crate::spec::cow;
+
 // uefi-base module for generic UEFI options. On ia32 systems
 // UEFI systems always run in protected-mode, have the interrupt-controller pre-configured and
 // force a single-CPU execution.
@@ -9,7 +11,7 @@ use crate::spec::{base, Target};
 
 pub fn target() -> Target {
     let mut base = base::uefi_msvc::opts();
-    base.cpu = "pentium4".into();
+    base.cpu = cow!("pentium4");
     base.max_atomic_width = Some(64);
 
     // We disable MMX and SSE for now, even though UEFI allows using them. Problem is, you have to
@@ -21,7 +23,7 @@ pub fn target() -> Target {
     // far.
     // If you initialize FP units yourself, you can override these flags with custom linker
     // arguments, thus giving you access to full MMX/SSE acceleration.
-    base.features = "-mmx,-sse,+soft-float".into();
+    base.features = cow!("-mmx,-sse,+soft-float");
 
     // Use -GNU here, because of the reason below:
     // Background and Problem:
@@ -77,12 +79,12 @@ pub fn target() -> Target {
     // compiler-builtins. After compiler-builtins implements all required intrinsics, we may
     // remove -gnu and use the default one.
     Target {
-        llvm_target: "i686-unknown-windows-gnu".into(),
+        llvm_target: cow!("i686-unknown-windows-gnu"),
         pointer_width: 32,
         data_layout: "e-m:x-p:32:32-p270:32:32-p271:32:32-p272:64:64-\
             i64:64-i128:128-f80:32-n8:16:32-a:0:32-S32"
             .into(),
-        arch: "x86".into(),
+        arch: cow!("x86"),
 
         options: base,
     }

@@ -1,4 +1,6 @@
+use crate::spec::cow;
 use crate::spec::{base, Cc, LinkerFlavor, SanitizerSet, Target, TargetOptions};
+
 use std::sync::LazyLock;
 
 pub fn target() -> Target {
@@ -6,7 +8,7 @@ pub fn target() -> Target {
     base.pre_link_args = LazyLock::new(|| {
         TargetOptions::link_args(LinkerFlavor::Unix(Cc::Yes), &["-m64", "-std=c99"])
     });
-    base.cpu = "x86-64".into();
+    base.cpu = cow!("x86-64");
     base.plt_by_default = false;
     base.max_atomic_width = Some(64);
     base.supported_sanitizers = SanitizerSet::ADDRESS | SanitizerSet::CFI | SanitizerSet::THREAD;
@@ -14,11 +16,12 @@ pub fn target() -> Target {
     Target {
         // LLVM does not currently have a separate illumos target,
         // so we still pass Solaris to it
-        llvm_target: "x86_64-pc-solaris".into(),
+        llvm_target: cow!("x86_64-pc-solaris"),
         pointer_width: 64,
-        data_layout:
-            "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128".into(),
-        arch: "x86_64".into(),
+        data_layout: cow!(
+            "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+        ),
+        arch: cow!("x86_64"),
         options: base,
     }
 }

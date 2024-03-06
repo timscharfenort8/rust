@@ -1,3 +1,4 @@
+use crate::spec::cow;
 use std::sync::LazyLock;
 
 use crate::abi::Endian;
@@ -9,32 +10,32 @@ use crate::spec::{cvs, Cc, LinkerFlavor, Lld, RelocModel, Target, TargetOptions}
 
 pub fn target() -> Target {
     Target {
-        llvm_target: "thumbv7a-vita-eabihf".into(),
+        llvm_target: cow!("thumbv7a-vita-eabihf"),
         pointer_width: 32,
-        data_layout: "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".into(),
-        arch: "arm".into(),
+        data_layout: cow!("e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64"),
+        arch: cow!("arm"),
 
         options: TargetOptions {
-            os: "vita".into(),
+            os: cow!("vita"),
             endian: Endian::Little,
-            c_int_width: "32".into(),
-            env: "newlib".into(),
-            vendor: "sony".into(),
-            abi: "eabihf".into(),
+            c_int_width: cow!("32"),
+            env: cow!("newlib"),
+            vendor: cow!("sony"),
+            abi: cow!("eabihf"),
             linker_flavor: LinkerFlavor::Gnu(Cc::Yes, Lld::No),
             no_default_libraries: false,
-            cpu: "cortex-a9".into(),
+            cpu: cow!("cortex-a9"),
             families: cvs!["unix"],
-            linker: Some("arm-vita-eabi-gcc".into()),
+            linker: Some(cow!("arm-vita-eabi-gcc")),
             relocation_model: RelocModel::Static,
-            features: "+v7,+neon,+vfp3,+thumb2,+thumb-mode".into(),
+            features: cow!("+v7,+neon,+vfp3,+thumb2,+thumb-mode"),
             pre_link_args: LazyLock::new(|| {
                 TargetOptions::link_args(
                     LinkerFlavor::Gnu(Cc::Yes, Lld::No),
                     &["-Wl,-q", "-Wl,--pic-veneer"],
                 )
             }),
-            exe_suffix: ".elf".into(),
+            exe_suffix: cow!(".elf"),
             has_thumb_interworking: true,
             max_atomic_width: Some(64),
             ..TargetOptions::default()

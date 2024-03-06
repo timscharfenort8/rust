@@ -1714,7 +1714,7 @@ macro_rules! cvs {
 }
 
 /// Cow-Str: Cow<'static, str>
-macro_rules! cs {
+macro_rules! cow {
     () => {
         ::std::borrow::Cow::Borrowed()
     };
@@ -1723,7 +1723,7 @@ macro_rules! cs {
     };
 }
 
-pub(crate) use cs;
+pub(crate) use cow;
 pub(crate) use cvs;
 
 /// Warnings encountered when parsing the target `json`.
@@ -2295,13 +2295,13 @@ impl TargetOptions {
         TargetOptions {
             is_builtin: false,
             endian: Endian::Little,
-            c_int_width: cs!("32"),
-            os: cs!("none"),
-            env: cs!(""),
-            abi: cs!(""),
-            vendor: cs!("unknown"),
+            c_int_width: cow!("32"),
+            os: cow!("none"),
+            env: cow!(""),
+            abi: cow!(""),
+            vendor: cow!("unknown"),
             linker: if let Some(s) = option_env!("CFG_DEFAULT_LINKER") {
-                Some(cs!(s))
+                Some(cow!(s))
             } else {
                 None
             },
@@ -2311,8 +2311,8 @@ impl TargetOptions {
             linker_is_gnu_json: true,
             link_script: None,
             asm_args: cvs![],
-            cpu: cs!("generic"),
-            features: cs!(""),
+            cpu: cow!("generic"),
+            features: cow!(""),
             direct_access_external_data: None,
             dynamic_linking: false,
             dll_tls_export: true,
@@ -2324,11 +2324,11 @@ impl TargetOptions {
             disable_redzone: false,
             frame_pointer: FramePointer::MayOmit,
             function_sections: true,
-            dll_prefix: cs!("lib"),
-            dll_suffix: cs!(".so"),
-            exe_suffix: cs!(""),
-            staticlib_prefix: cs!("lib"),
-            staticlib_suffix: cs!(".a"),
+            dll_prefix: cow!("lib"),
+            dll_suffix: cow!(".so"),
+            exe_suffix: cow!(""),
+            staticlib_prefix: cow!("lib"),
+            staticlib_suffix: cow!(".a"),
             families: cvs![],
             abi_return_struct_as_int: false,
             is_like_aix: false,
@@ -2363,13 +2363,13 @@ impl TargetOptions {
             post_link_args_json: LinkArgsCli::new(),
             link_env: cvs![],
             link_env_remove: cvs![],
-            archive_format: cs!("gnu"),
+            archive_format: cow!("gnu"),
             main_needs_argc_argv: true,
             allow_asm: true,
             has_thread_local: false,
             obj_is_bitcode: false,
             forces_embed_bitcode: false,
-            bitcode_llvm_cmdline: cs!(""),
+            bitcode_llvm_cmdline: cow!(""),
             min_atomic_width: None,
             max_atomic_width: None,
             atomic_cas: true,
@@ -2392,9 +2392,9 @@ impl TargetOptions {
             limit_rdylib_exports: true,
             override_export_symbols: None,
             merge_functions: MergeFunctions::Aliases,
-            mcount: cs!("mcount"),
+            mcount: cow!("mcount"),
             llvm_mcount_intrinsic: None,
-            llvm_abiname: cs!(""),
+            llvm_abiname: cow!(""),
             relax_elf_relocations: false,
             llvm_args: cvs![],
             use_ctors_section: false,
@@ -2409,7 +2409,7 @@ impl TargetOptions {
             c_enum_min_bits: None,
             generate_arange_section: true,
             supports_stack_protector: true,
-            entry_name: cs!("main"),
+            entry_name: cow!("main"),
             entry_abi: Conv::C,
             supports_xray: false,
         }

@@ -1,4 +1,6 @@
 use crate::abi::Endian;
+use crate::spec::cow;
+
 use crate::spec::{base, StackProbeType, Target, TargetOptions};
 
 pub fn target() -> Target {
@@ -6,15 +8,15 @@ pub fn target() -> Target {
     base.max_atomic_width = Some(128);
 
     Target {
-        llvm_target: "aarch64_be-unknown-linux-gnu_ilp32".into(),
+        llvm_target: cow!("aarch64_be-unknown-linux-gnu_ilp32"),
         pointer_width: 32,
-        data_layout: "E-m:e-p:32:32-i8:8:32-i16:16:32-i64:64-i128:128-n32:64-S128".into(),
-        arch: "aarch64".into(),
+        data_layout: cow!("E-m:e-p:32:32-i8:8:32-i16:16:32-i64:64-i128:128-n32:64-S128"),
+        arch: cow!("aarch64"),
         options: TargetOptions {
-            abi: "ilp32".into(),
-            features: "+v8a,+outline-atomics".into(),
+            abi: cow!("ilp32"),
+            features: cow!("+v8a,+outline-atomics"),
             stack_probes: StackProbeType::Inline,
-            mcount: "\u{1}_mcount".into(),
+            mcount: cow!("\u{1}_mcount"),
             endian: Endian::Big,
             ..base
         },

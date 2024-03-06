@@ -1,4 +1,6 @@
 use crate::abi::Endian;
+use crate::spec::cow;
+
 use crate::spec::{base, StackProbeType, Target};
 
 pub fn target() -> Target {
@@ -8,10 +10,10 @@ pub fn target() -> Target {
     base.stack_probes = StackProbeType::Inline;
 
     Target {
-        llvm_target: "powerpc-unknown-openbsd".into(),
+        llvm_target: cow!("powerpc-unknown-openbsd"),
         pointer_width: 32,
-        data_layout: "E-m:e-p:32:32-Fn32-i64:64-n32".into(),
-        arch: "powerpc".into(),
+        data_layout: cow!("E-m:e-p:32:32-Fn32-i64:64-n32"),
+        arch: cow!("powerpc"),
         options: base,
     }
 }

@@ -1,4 +1,6 @@
 // Targets the Cortex-M4F and Cortex-M7F processors (ARMv7E-M)
+use crate::spec::cow;
+
 //
 // This target assumes that the device does have a FPU (Floating Point Unit) and lowers all (single
 // precision) floating point operations to hardware instructions.
@@ -12,13 +14,13 @@ use crate::spec::{base, Target, TargetOptions};
 
 pub fn target() -> Target {
     Target {
-        llvm_target: "thumbv7em-none-eabihf".into(),
+        llvm_target: cow!("thumbv7em-none-eabihf"),
         pointer_width: 32,
-        data_layout: "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".into(),
-        arch: "arm".into(),
+        data_layout: cow!("e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64"),
+        arch: cow!("arm"),
 
         options: TargetOptions {
-            abi: "eabihf".into(),
+            abi: cow!("eabihf"),
             // `+vfp4` is the lowest common denominator between the Cortex-M4 (vfp4-16) and the
             // Cortex-M7 (vfp5)
             // `-d32` both the Cortex-M4 and the Cortex-M7 only have 16 double-precision registers
@@ -28,7 +30,7 @@ pub fn target() -> Target {
             //
             // Reference:
             // ARMv7-M Architecture Reference Manual - A2.5 The optional floating-point extension
-            features: "+vfp4,-d32,-fp64".into(),
+            features: cow!("+vfp4,-d32,-fp64"),
             max_atomic_width: Some(32),
             ..base::thumb::opts()
         },

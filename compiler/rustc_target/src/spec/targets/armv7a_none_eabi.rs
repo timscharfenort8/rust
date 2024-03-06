@@ -1,4 +1,6 @@
 // Generic ARMv7-A target for bare-metal code - floating point disabled
+use crate::spec::cow;
+
 //
 // This is basically the `armv7-unknown-linux-gnueabi` target with some changes
 // (listed below) to bring it closer to the bare-metal `thumb` & `aarch64`
@@ -18,10 +20,10 @@ use crate::spec::{Cc, LinkerFlavor, Lld, PanicStrategy, RelocModel, Target, Targ
 
 pub fn target() -> Target {
     let opts = TargetOptions {
-        abi: "eabi".into(),
+        abi: cow!("eabi"),
         linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
-        linker: Some("rust-lld".into()),
-        features: "+v7,+thumb2,+soft-float,-neon,+strict-align".into(),
+        linker: Some(cow!("rust-lld")),
+        features: cow!("+v7,+thumb2,+soft-float,-neon,+strict-align"),
         relocation_model: RelocModel::Static,
         disable_redzone: true,
         max_atomic_width: Some(64),
@@ -31,10 +33,10 @@ pub fn target() -> Target {
         ..TargetOptions::default()
     };
     Target {
-        llvm_target: "armv7a-none-eabi".into(),
+        llvm_target: cow!("armv7a-none-eabi"),
         pointer_width: 32,
-        data_layout: "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".into(),
-        arch: "arm".into(),
+        data_layout: cow!("e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64"),
+        arch: cow!("arm"),
         options: opts,
     }
 }

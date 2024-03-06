@@ -1,19 +1,21 @@
 use crate::abi::Endian;
+use crate::spec::cow;
+
 use crate::spec::{base, Cc, LinkerFlavor, Lld, Target, TargetOptions};
 use std::sync::LazyLock;
 
 pub fn target() -> Target {
     let mut base = base::netbsd::opts();
-    base.cpu = "v9".into();
+    base.cpu = cow!("v9");
     base.pre_link_args =
         LazyLock::new(|| TargetOptions::link_args(LinkerFlavor::Gnu(Cc::Yes, Lld::No), &["-m64"]));
     base.max_atomic_width = Some(64);
 
     Target {
-        llvm_target: "sparc64-unknown-netbsd".into(),
+        llvm_target: cow!("sparc64-unknown-netbsd"),
         pointer_width: 64,
-        data_layout: "E-m:e-i64:64-n32:64-S128".into(),
-        arch: "sparc64".into(),
-        options: TargetOptions { endian: Endian::Big, mcount: "__mcount".into(), ..base },
+        data_layout: cow!("E-m:e-i64:64-n32:64-S128"),
+        arch: cow!("sparc64"),
+        options: TargetOptions { endian: Endian::Big, mcount: cow!("__mcount"), ..base },
     }
 }

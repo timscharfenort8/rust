@@ -1,18 +1,19 @@
+use crate::spec::cow;
 use std::borrow::Cow;
 
 use crate::spec::{base, CodeModel, SplitDebuginfo, Target, TargetOptions};
 
 pub fn target() -> Target {
     Target {
-        llvm_target: "riscv64-unknown-linux-gnu".into(),
+        llvm_target: cow!("riscv64-unknown-linux-gnu"),
         pointer_width: 64,
-        data_layout: "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128".into(),
-        arch: "riscv64".into(),
+        data_layout: cow!("e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"),
+        arch: cow!("riscv64"),
         options: TargetOptions {
             code_model: Some(CodeModel::Medium),
-            cpu: "generic-rv64".into(),
-            features: "+m,+a,+f,+d,+c".into(),
-            llvm_abiname: "lp64d".into(),
+            cpu: cow!("generic-rv64"),
+            features: cow!("+m,+a,+f,+d,+c"),
+            llvm_abiname: cow!("lp64d"),
             max_atomic_width: Some(64),
             supported_split_debuginfo: Cow::Borrowed(&[SplitDebuginfo::Off]),
             ..base::linux_gnu::opts()

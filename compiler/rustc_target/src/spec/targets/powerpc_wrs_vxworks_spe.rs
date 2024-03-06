@@ -1,4 +1,6 @@
 use crate::abi::Endian;
+use crate::spec::cow;
+
 use crate::spec::{base, Cc, LinkerFlavor, Lld, StackProbeType, Target, TargetOptions};
 use std::sync::LazyLock;
 
@@ -11,15 +13,15 @@ pub fn target() -> Target {
     base.stack_probes = StackProbeType::Inline;
 
     Target {
-        llvm_target: "powerpc-unknown-linux-gnuspe".into(),
+        llvm_target: cow!("powerpc-unknown-linux-gnuspe"),
         pointer_width: 32,
-        data_layout: "E-m:e-p:32:32-Fn32-i64:64-n32".into(),
-        arch: "powerpc".into(),
+        data_layout: cow!("E-m:e-p:32:32-Fn32-i64:64-n32"),
+        arch: cow!("powerpc"),
         options: TargetOptions {
-            abi: "spe".into(),
+            abi: cow!("spe"),
             endian: Endian::Big,
             // feature msync would disable instruction 'fsync' which is not supported by fsl_p1p2
-            features: "+secure-plt,+msync".into(),
+            features: cow!("+secure-plt,+msync"),
             ..base
         },
     }

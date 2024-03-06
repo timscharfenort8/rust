@@ -1,4 +1,6 @@
 // Targets the Cortex-M4 and Cortex-M7 processors (ARMv7E-M)
+use crate::spec::cow;
+
 //
 // This target assumes that the device doesn't have a FPU (Floating Point Unit) and lowers all the
 // floating point operations to software routines (intrinsics).
@@ -13,13 +15,13 @@ use crate::spec::{base, Target, TargetOptions};
 
 pub fn target() -> Target {
     Target {
-        llvm_target: "thumbv7em-none-eabi".into(),
+        llvm_target: cow!("thumbv7em-none-eabi"),
         pointer_width: 32,
-        data_layout: "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".into(),
-        arch: "arm".into(),
+        data_layout: cow!("e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64"),
+        arch: cow!("arm"),
 
         options: TargetOptions {
-            abi: "eabi".into(),
+            abi: cow!("eabi"),
             max_atomic_width: Some(32),
             ..base::thumb::opts()
         },

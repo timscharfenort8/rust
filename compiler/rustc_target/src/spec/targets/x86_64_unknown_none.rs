@@ -1,4 +1,6 @@
 // Generic x86-64 target for bare-metal code - Floating point disabled
+use crate::spec::cow;
+
 //
 // Can be used in conjunction with the `target-feature` and
 // `target-cpu` compiler flags to opt-in more hardware-specific
@@ -9,7 +11,7 @@ use crate::spec::{RelroLevel, SanitizerSet, StackProbeType, Target, TargetOption
 
 pub fn target() -> Target {
     let opts = TargetOptions {
-        cpu: "x86-64".into(),
+        cpu: cow!("x86-64"),
         plt_by_default: false,
         max_atomic_width: Some(64),
         stack_probes: StackProbeType::Inline,
@@ -17,7 +19,7 @@ pub fn target() -> Target {
         static_position_independent_executables: true,
         relro_level: RelroLevel::Full,
         linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
-        linker: Some("rust-lld".into()),
+        linker: Some(cow!("rust-lld")),
         features:
             "-mmx,-sse,-sse2,-sse3,-ssse3,-sse4.1,-sse4.2,-3dnow,-3dnowa,-avx,-avx2,+soft-float"
                 .into(),
@@ -28,11 +30,12 @@ pub fn target() -> Target {
         ..TargetOptions::default()
     };
     Target {
-        llvm_target: "x86_64-unknown-none-elf".into(),
+        llvm_target: cow!("x86_64-unknown-none-elf"),
         pointer_width: 64,
-        data_layout:
-            "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128".into(),
-        arch: "x86_64".into(),
+        data_layout: cow!(
+            "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+        ),
+        arch: cow!("x86_64"),
         options: opts,
     }
 }

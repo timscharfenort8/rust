@@ -1,19 +1,21 @@
+use crate::spec::cow;
 use crate::spec::{Cc, LinkerFlavor, Lld, PanicStrategy, RelocModel};
+
 use crate::spec::{Target, TargetOptions};
 
 pub fn target() -> Target {
     Target {
-        data_layout: "e-m:e-p:32:32-i64:64-n32-S128".into(),
-        llvm_target: "riscv32".into(),
+        data_layout: cow!("e-m:e-p:32:32-i64:64-n32-S128"),
+        llvm_target: cow!("riscv32"),
         pointer_width: 32,
-        arch: "riscv32".into(),
+        arch: cow!("riscv32"),
 
         options: TargetOptions {
-            os: "zkvm".into(),
-            vendor: "risc0".into(),
+            os: cow!("zkvm"),
+            vendor: cow!("risc0"),
             linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
-            linker: Some("rust-lld".into()),
-            cpu: "generic-rv32".into(),
+            linker: Some(cow!("rust-lld")),
+            cpu: cow!("generic-rv32"),
 
             // Some crates (*cough* crossbeam) assume you have 64 bit
             // atomics if the target name is not in a hardcoded list.
@@ -23,7 +25,7 @@ pub fn target() -> Target {
             max_atomic_width: Some(64),
             atomic_cas: true,
 
-            features: "+m".into(),
+            features: cow!("+m"),
             executables: true,
             panic_strategy: PanicStrategy::Abort,
             relocation_model: RelocModel::Static,

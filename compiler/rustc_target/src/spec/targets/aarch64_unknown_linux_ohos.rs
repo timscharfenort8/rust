@@ -1,4 +1,6 @@
+use crate::spec::cow;
 use crate::spec::SanitizerSet;
+
 use crate::spec::{base, StackProbeType, Target, TargetOptions};
 
 pub fn target() -> Target {
@@ -7,13 +9,13 @@ pub fn target() -> Target {
 
     Target {
         // LLVM 15 doesn't support OpenHarmony yet, use a linux target instead.
-        llvm_target: "aarch64-unknown-linux-musl".into(),
+        llvm_target: cow!("aarch64-unknown-linux-musl"),
         pointer_width: 64,
-        data_layout: "e-m:e-i8:8:32-i16:16:32-i64:64-i128:128-n32:64-S128".into(),
-        arch: "aarch64".into(),
+        data_layout: cow!("e-m:e-i8:8:32-i16:16:32-i64:64-i128:128-n32:64-S128"),
+        arch: cow!("aarch64"),
         options: TargetOptions {
-            features: "+reserve-x18".into(),
-            mcount: "\u{1}_mcount".into(),
+            features: cow!("+reserve-x18"),
+            mcount: cow!("\u{1}_mcount"),
             stack_probes: StackProbeType::Inline,
             supported_sanitizers: SanitizerSet::ADDRESS
                 | SanitizerSet::CFI

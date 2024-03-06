@@ -1,4 +1,6 @@
+use crate::spec::cow;
 use crate::spec::{base, Cc, LinkerFlavor, Lld, Target, TargetOptions};
+
 use std::sync::LazyLock;
 
 // This target if is for the Android v7a ABI in thumb mode with
@@ -15,13 +17,13 @@ pub fn target() -> Target {
         TargetOptions::link_args(LinkerFlavor::Gnu(Cc::Yes, Lld::No), &["-march=armv7-a"])
     });
     Target {
-        llvm_target: "armv7-none-linux-android".into(),
+        llvm_target: cow!("armv7-none-linux-android"),
         pointer_width: 32,
-        data_layout: "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".into(),
-        arch: "arm".into(),
+        data_layout: cow!("e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64"),
+        arch: cow!("arm"),
         options: TargetOptions {
-            abi: "eabi".into(),
-            features: "+v7,+thumb-mode,+thumb2,+vfp3,+neon".into(),
+            abi: cow!("eabi"),
+            features: cow!("+v7,+thumb-mode,+thumb2,+vfp3,+neon"),
             max_atomic_width: Some(64),
             ..base
         },

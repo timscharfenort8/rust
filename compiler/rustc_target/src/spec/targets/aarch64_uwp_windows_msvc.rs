@@ -1,15 +1,16 @@
+use crate::spec::cow;
 use crate::spec::{base, Target};
 
 pub fn target() -> Target {
     let mut base = base::windows_uwp_msvc::opts();
     base.max_atomic_width = Some(128);
-    base.features = "+v8a".into();
+    base.features = cow!("+v8a");
 
     Target {
-        llvm_target: "aarch64-pc-windows-msvc".into(),
+        llvm_target: cow!("aarch64-pc-windows-msvc"),
         pointer_width: 64,
-        data_layout: "e-m:w-p:64:64-i32:32-i64:64-i128:128-n32:64-S128".into(),
-        arch: "aarch64".into(),
+        data_layout: cow!("e-m:w-p:64:64-i32:32-i64:64-i128:128-n32:64-S128"),
+        arch: cow!("aarch64"),
         options: base,
     }
 }

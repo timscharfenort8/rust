@@ -1,4 +1,6 @@
 use crate::spec::base::apple::{macos_llvm_target, opts, Arch};
+use crate::spec::cow;
+
 use crate::spec::{Cc, FramePointer, LinkerFlavor, Lld, SanitizerSet};
 use crate::spec::{Target, TargetOptions};
 use std::sync::LazyLock;
@@ -24,7 +26,7 @@ pub fn target() -> Target {
     // It would be nice if this were not the case, but fixing it seems tricky
     // (and given that the main use-case for this target is for use in universal
     // binaries, probably not that important).
-    base.features = "-rdrnd,-aes,-pclmul,-rtm,-fsgsbase".into();
+    base.features = cow!("-rdrnd,-aes,-pclmul,-rtm,-fsgsbase");
     // Double-check that the `cpu` is what we expect (if it's not the list above
     // may need updating).
     assert_eq!(
@@ -38,9 +40,10 @@ pub fn target() -> Target {
         // correctly, we do too.
         llvm_target: macos_llvm_target(arch).into(),
         pointer_width: 64,
-        data_layout:
-            "e-m:o-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128".into(),
+        data_layout: cow!(
+            "e-m:o-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+        ),
         arch: arch.target_arch(),
-        options: TargetOptions { mcount: "\u{1}mcount".into(), ..base },
+        options: TargetOptions { mcount: cow!("\u{1}mcount"), ..base },
     }
 }

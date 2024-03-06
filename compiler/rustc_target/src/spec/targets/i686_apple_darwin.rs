@@ -1,4 +1,6 @@
 use crate::spec::base::apple::{macos_llvm_target, opts, Arch};
+use crate::spec::cow;
+
 use crate::spec::{Cc, FramePointer, LinkerFlavor, Lld, Target, TargetOptions};
 use std::sync::LazyLock;
 
@@ -24,6 +26,6 @@ pub fn target() -> Target {
             i128:128-f64:32:64-f80:128-n8:16:32-S128"
             .into(),
         arch: arch.target_arch(),
-        options: TargetOptions { mcount: "\u{1}mcount".into(), ..base },
+        options: TargetOptions { mcount: cow!("\u{1}mcount"), ..base },
     }
 }

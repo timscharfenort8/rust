@@ -1,4 +1,6 @@
+use crate::spec::cow;
 use std::borrow::Cow;
+
 use std::sync::LazyLock;
 
 use crate::spec::{cvs, Cc, LinkerFlavor, Lld, Target, TargetOptions};
@@ -21,16 +23,16 @@ pub fn target() -> Target {
         "TEXT_SIZE",
     ];
     let opts = TargetOptions {
-        os: "unknown".into(),
-        env: "sgx".into(),
-        vendor: "fortanix".into(),
-        abi: "fortanix".into(),
+        os: cow!("unknown"),
+        env: cow!("sgx"),
+        vendor: cow!("fortanix"),
+        abi: cow!("fortanix"),
         linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
-        linker: Some("rust-lld".into()),
+        linker: Some(cow!("rust-lld")),
         max_atomic_width: Some(64),
-        cpu: "x86-64".into(),
+        cpu: cow!("x86-64"),
         plt_by_default: false,
-        features: "+rdrnd,+rdseed,+lvi-cfi,+lvi-load-hardening".into(),
+        features: cow!("+rdrnd,+rdseed,+lvi-cfi,+lvi-load-hardening"),
         llvm_args: cvs!["--x86-experimental-lvi-inline-asm-hardening"],
         position_independent_executables: true,
         pre_link_args: LazyLock::new(|| {
@@ -74,11 +76,12 @@ pub fn target() -> Target {
         ..TargetOptions::default()
     };
     Target {
-        llvm_target: "x86_64-elf".into(),
+        llvm_target: cow!("x86_64-elf"),
         pointer_width: 64,
-        data_layout:
-            "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128".into(),
-        arch: "x86_64".into(),
+        data_layout: cow!(
+            "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+        ),
+        arch: cow!("x86_64"),
         options: opts,
     }
 }

@@ -1,16 +1,17 @@
 // Targets the Cortex-M3 processor (ARMv7-M)
+use crate::spec::cow;
 
 use crate::spec::{base, Target, TargetOptions};
 
 pub fn target() -> Target {
     Target {
-        llvm_target: "thumbv7m-none-eabi".into(),
+        llvm_target: cow!("thumbv7m-none-eabi"),
         pointer_width: 32,
-        data_layout: "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".into(),
-        arch: "arm".into(),
+        data_layout: cow!("e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64"),
+        arch: cow!("arm"),
 
         options: TargetOptions {
-            abi: "eabi".into(),
+            abi: cow!("eabi"),
             max_atomic_width: Some(32),
             ..base::thumb::opts()
         },

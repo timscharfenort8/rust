@@ -74,13 +74,14 @@
 
 use std::sync::LazyLock;
 
+use crate::spec::cow;
 use crate::spec::TargetOptions;
 use crate::spec::{base, crt_objects, Cc, LinkSelfContainedDefault, LinkerFlavor, Target};
 
 pub fn target() -> Target {
     let mut options = base::wasm::options();
 
-    options.os = "wasi".into();
+    options.os = cow!("wasi");
 
     options.pre_link_args = LazyLock::new(|| {
         TargetOptions::link_args(
@@ -126,16 +127,16 @@ pub fn target() -> Target {
 
     // And, WASI mangles the name of "main" to distinguish between different
     // signatures.
-    options.entry_name = "__main_void".into();
+    options.entry_name = cow!("__main_void");
 
     options.singlethread = false;
-    options.features = "+atomics,+bulk-memory,+mutable-globals".into();
+    options.features = cow!("+atomics,+bulk-memory,+mutable-globals");
 
     Target {
-        llvm_target: "wasm32-wasi".into(),
+        llvm_target: cow!("wasm32-wasi"),
         pointer_width: 32,
-        data_layout: "e-m:e-p:32:32-p10:8:8-p20:8:8-i64:64-n32:64-S128-ni:1:10:20".into(),
-        arch: "wasm32".into(),
+        data_layout: cow!("e-m:e-p:32:32-p10:8:8-p20:8:8-i64:64-n32:64-S128-ni:1:10:20"),
+        arch: cow!("wasm32"),
         options,
     }
 }

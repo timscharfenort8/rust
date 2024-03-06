@@ -6,14 +6,16 @@
 //! entirely self-contained by default when using the standard library. Although
 //! the standard library is available, most of it returns an error immediately
 //! (e.g. trying to create a TCP stream or something like that).
+
 use std::sync::LazyLock;
 
+use crate::spec::cow;
 use crate::spec::TargetOptions;
 use crate::spec::{base, Cc, LinkerFlavor, Target};
 
 pub fn target() -> Target {
     let mut options = base::wasm::options();
-    options.os = "unknown".into();
+    options.os = cow!("unknown");
 
     options.pre_link_args = LazyLock::new(|| {
         TargetOptions::link_args(
@@ -37,13 +39,13 @@ pub fn target() -> Target {
             ],
         )
     });
-    options.features = "+bulk-memory,+mutable-globals,+sign-ext,+nontrapping-fptoint".into();
+    options.features = cow!("+bulk-memory,+mutable-globals,+sign-ext,+nontrapping-fptoint");
 
     Target {
-        llvm_target: "wasm64-unknown-unknown".into(),
+        llvm_target: cow!("wasm64-unknown-unknown"),
         pointer_width: 64,
-        data_layout: "e-m:e-p:64:64-p10:8:8-p20:8:8-i64:64-n32:64-S128-ni:1:10:20".into(),
-        arch: "wasm64".into(),
+        data_layout: cow!("e-m:e-p:64:64-p10:8:8-p20:8:8-i64:64-n32:64-S128-ni:1:10:20"),
+        arch: cow!("wasm64"),
         options,
     }
 }

@@ -1,3 +1,4 @@
+use crate::spec::cow;
 use std::sync::LazyLock;
 
 use crate::abi::Endian;
@@ -16,14 +17,14 @@ pub fn target() -> Target {
     base.stack_probes = StackProbeType::Inline;
 
     Target {
-        llvm_target: "powerpc-unknown-freebsd13.0".into(),
+        llvm_target: cow!("powerpc-unknown-freebsd13.0"),
         pointer_width: 32,
-        data_layout: "E-m:e-p:32:32-Fn32-i64:64-n32".into(),
-        arch: "powerpc".into(),
+        data_layout: cow!("E-m:e-p:32:32-Fn32-i64:64-n32"),
+        arch: cow!("powerpc"),
         options: TargetOptions {
             endian: Endian::Big,
-            features: "+secure-plt".into(),
-            mcount: "_mcount".into(),
+            features: cow!("+secure-plt"),
+            mcount: cow!("_mcount"),
             ..base
         },
     }

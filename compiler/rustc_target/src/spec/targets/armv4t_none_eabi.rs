@@ -9,13 +9,14 @@
 //! The default link script is very likely wrong, so you should use
 //! `-Clink-arg=-Tmy_script.ld` to override that with a correct linker script.
 
+use crate::spec::cow;
 use crate::spec::{cvs, Cc, LinkerFlavor, Lld, PanicStrategy, RelocModel, Target, TargetOptions};
 
 pub fn target() -> Target {
     Target {
-        llvm_target: "armv4t-none-eabi".into(),
+        llvm_target: cow!("armv4t-none-eabi"),
         pointer_width: 32,
-        arch: "arm".into(),
+        arch: cow!("arm"),
         /* Data layout args are '-' separated:
          * little endian
          * stack is 64-bit aligned (EABI)
@@ -25,15 +26,15 @@ pub fn target() -> Target {
          * native integers are 32-bit
          * All other elements are default
          */
-        data_layout: "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".into(),
+        data_layout: cow!("e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64"),
         options: TargetOptions {
-            abi: "eabi".into(),
+            abi: cow!("eabi"),
             linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
-            linker: Some("rust-lld".into()),
+            linker: Some(cow!("rust-lld")),
             asm_args: cvs!["-mthumb-interwork", "-march=armv4t", "-mlittle-endian",],
             // Force-enable 32-bit atomics, which allows the use of atomic load/store only.
             // The resulting atomics are ABI incompatible with atomics backed by libatomic.
-            features: "+soft-float,+strict-align,+atomics-32".into(),
+            features: cow!("+soft-float,+strict-align,+atomics-32"),
             main_needs_argc_argv: false,
             atomic_cas: false,
             has_thumb_interworking: true,

@@ -1,20 +1,22 @@
 use crate::abi::Endian;
+use crate::spec::cow;
+
 use crate::spec::{base, Target, TargetOptions};
 
 pub fn target() -> Target {
     Target {
-        llvm_target: "mips64-unknown-linux-gnuabi64".into(),
+        llvm_target: cow!("mips64-unknown-linux-gnuabi64"),
         pointer_width: 64,
-        data_layout: "E-m:e-i8:8:32-i16:16:32-i64:64-n32:64-S128".into(),
-        arch: "mips64".into(),
+        data_layout: cow!("E-m:e-i8:8:32-i16:16:32-i64:64-n32:64-S128"),
+        arch: cow!("mips64"),
         options: TargetOptions {
-            abi: "abi64".into(),
+            abi: cow!("abi64"),
             endian: Endian::Big,
             // NOTE(mips64r2) matches C toolchain
-            cpu: "mips64r2".into(),
-            features: "+mips64r2,+xgot".into(),
+            cpu: cow!("mips64r2"),
+            features: cow!("+mips64r2,+xgot"),
             max_atomic_width: Some(64),
-            mcount: "_mcount".into(),
+            mcount: cow!("_mcount"),
 
             ..base::linux_gnu::opts()
         },

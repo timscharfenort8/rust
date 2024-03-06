@@ -10,13 +10,13 @@
 //! `-Clink-arg=-Tmy_script.ld` to override that with a correct linker script.
 
 use crate::spec::{base, PanicStrategy, RelocModel, Target, TargetOptions};
-use crate::spec::{cvs, FramePointer};
+use crate::spec::{cow, cvs, FramePointer};
 
 pub fn target() -> Target {
     Target {
-        llvm_target: "thumbv4t-none-eabi".into(),
+        llvm_target: cow!("thumbv4t-none-eabi"),
         pointer_width: 32,
-        arch: "arm".into(),
+        arch: cow!("arm"),
         /* Data layout args are '-' separated:
          * little endian
          * stack is 64-bit aligned (EABI)
@@ -26,9 +26,9 @@ pub fn target() -> Target {
          * native integers are 32-bit
          * All other elements are default
          */
-        data_layout: "e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64".into(),
+        data_layout: cow!("e-m:e-p:32:32-Fi8-i64:64-v128:64:128-a:0:32-n32-S64"),
         options: TargetOptions {
-            abi: "eabi".into(),
+            abi: cow!("eabi"),
 
             // extra args passed to the external assembler (assuming `arm-none-eabi-as`):
             // * activate t32/a32 interworking
@@ -39,7 +39,7 @@ pub fn target() -> Target {
             // minimum extra features, these cannot be disabled via -C
             // Also force-enable 32-bit atomics, which allows the use of atomic load/store only.
             // The resulting atomics are ABI incompatible with atomics backed by libatomic.
-            features: "+soft-float,+strict-align,+atomics-32".into(),
+            features: cow!("+soft-float,+strict-align,+atomics-32"),
 
             panic_strategy: PanicStrategy::Abort,
             relocation_model: RelocModel::Static,

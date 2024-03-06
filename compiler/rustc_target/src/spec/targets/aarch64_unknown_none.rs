@@ -1,4 +1,6 @@
 // Generic AArch64 target for bare-metal code - Floating point enabled
+use crate::spec::cow;
+
 //
 // Can be used in conjunction with the `target-feature` and
 // `target-cpu` compiler flags to opt-in more hardware-specific
@@ -16,7 +18,7 @@ use crate::spec::{
 pub fn target() -> Target {
     let opts = TargetOptions {
         linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
-        linker: Some("rust-lld".into()),
+        linker: Some(cow!("rust-lld")),
         // Enable the Cortex-A53 errata 843419 mitigation by default
         pre_link_args: LazyLock::new(|| {
             TargetOptions::link_args(
@@ -24,7 +26,7 @@ pub fn target() -> Target {
                 &["--fix-cortex-a53-843419"],
             )
         }),
-        features: "+v8a,+strict-align,+neon,+fp-armv8".into(),
+        features: cow!("+v8a,+strict-align,+neon,+fp-armv8"),
         supported_sanitizers: SanitizerSet::KCFI | SanitizerSet::KERNELADDRESS,
         relocation_model: RelocModel::Static,
         disable_redzone: true,
@@ -34,10 +36,10 @@ pub fn target() -> Target {
         ..TargetOptions::default()
     };
     Target {
-        llvm_target: "aarch64-unknown-none".into(),
+        llvm_target: cow!("aarch64-unknown-none"),
         pointer_width: 64,
-        data_layout: "e-m:e-i8:8:32-i16:16:32-i64:64-i128:128-n32:64-S128".into(),
-        arch: "aarch64".into(),
+        data_layout: cow!("e-m:e-i8:8:32-i16:16:32-i64:64-i128:128-n32:64-S128"),
+        arch: cow!("aarch64"),
         options: opts,
     }
 }
