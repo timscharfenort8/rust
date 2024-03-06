@@ -3,7 +3,7 @@ use crate::spec::{Cc, CodeModel, LinkerFlavor, Lld, PanicStrategy, RelocModel};
 
 use crate::spec::{Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("loongarch64-unknown-none"),
         pointer_width: 64,
@@ -23,4 +23,4 @@ pub fn target() -> Target {
             ..TargetOptions::default()
         },
     }
-}
+};

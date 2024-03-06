@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let base = opts("watchos", Arch::Arm64);
     Target {
         llvm_target: cow!("aarch64-apple-watchos"),
@@ -18,4 +18,4 @@ pub fn target() -> Target {
             ..base
         },
     }
-}
+};

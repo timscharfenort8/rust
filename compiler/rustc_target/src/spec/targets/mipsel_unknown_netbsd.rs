@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{base, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::netbsd::opts();
     base.max_atomic_width = Some(32);
     base.cpu = cow!("mips32");
@@ -20,4 +20,4 @@ pub fn target() -> Target {
             ..base
         },
     }
-}
+};

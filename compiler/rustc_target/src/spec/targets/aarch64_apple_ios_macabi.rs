@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{FramePointer, SanitizerSet, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let arch = Arch::Arm64_macabi;
     let mut base = opts("ios", arch);
     base.supported_sanitizers = SanitizerSet::ADDRESS | SanitizerSet::LEAK | SanitizerSet::THREAD;
@@ -20,4 +20,4 @@ pub fn target() -> Target {
             ..base
         },
     }
-}
+};

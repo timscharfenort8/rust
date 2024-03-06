@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("mipsisa64r6el-unknown-linux-gnuabi64"),
         pointer_width: 64,
@@ -18,4 +18,4 @@ pub fn target() -> Target {
             ..base::linux_gnu::opts()
         },
     }
-}
+};

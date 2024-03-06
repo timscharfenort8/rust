@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{FramePointer, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let arch = Arch::Arm64;
     Target {
         llvm_target: tvos_llvm_target(arch).into(),
@@ -17,4 +17,4 @@ pub fn target() -> Target {
             ..opts("tvos", arch)
         },
     }
-}
+};

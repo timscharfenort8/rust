@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, SanitizerSet, StackProbeType, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::linux_musl::opts();
     base.max_atomic_width = Some(128);
     base.supports_xray = true;
@@ -20,4 +20,4 @@ pub fn target() -> Target {
         arch: cow!("aarch64"),
         options: TargetOptions { mcount: cow!("\u{1}_mcount"), ..base },
     }
-}
+};

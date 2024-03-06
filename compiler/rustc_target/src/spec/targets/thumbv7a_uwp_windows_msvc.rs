@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, PanicStrategy, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("thumbv7a-pc-windows-msvc"),
         pointer_width: 32,
@@ -16,4 +16,4 @@ pub fn target() -> Target {
             ..base::windows_uwp_msvc::opts()
         },
     }
-}
+};

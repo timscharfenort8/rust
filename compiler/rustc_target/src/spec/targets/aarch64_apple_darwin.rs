@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 use crate::spec::base::apple::{macos_llvm_target, opts, pre_link_args, Arch};
 use crate::spec::{FramePointer, SanitizerSet, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     const ARCH: Arch = Arch::Arm64;
     const OS: &'static str = "macos";
 
@@ -31,4 +31,4 @@ pub fn target() -> Target {
             ..base
         },
     }
-}
+};

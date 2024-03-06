@@ -4,7 +4,7 @@ use crate::spec::cow;
 use crate::spec::{base, Cc, LinkerFlavor, Lld, StackProbeType, Target, TargetOptions};
 use std::sync::LazyLock;
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::linux_gnu::opts();
     base.cpu = cow!("ppc64");
     base.pre_link_args =
@@ -19,4 +19,4 @@ pub fn target() -> Target {
         arch: cow!("powerpc64"),
         options: TargetOptions { endian: Endian::Big, mcount: cow!("_mcount"), ..base },
     }
-}
+};

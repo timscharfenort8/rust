@@ -3,7 +3,7 @@ use crate::spec::{base, LinkerFlavor, Lld, PanicStrategy, Target, TargetOptions}
 
 use std::sync::LazyLock;
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::windows_msvc::opts();
     // Prevent error LNK2013: BRANCH24(T) fixup overflow
     // The LBR optimization tries to eliminate branch islands,
@@ -29,4 +29,4 @@ pub fn target() -> Target {
             ..base
         },
     }
-}
+};

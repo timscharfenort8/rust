@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{SanitizerSet, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let arch = Arch::X86_64_macabi;
     let mut base = opts("ios", arch);
     base.supported_sanitizers = SanitizerSet::ADDRESS | SanitizerSet::LEAK | SanitizerSet::THREAD;
@@ -17,4 +17,4 @@ pub fn target() -> Target {
         arch: arch.target_arch(),
         options: TargetOptions { max_atomic_width: Some(128), ..base },
     }
-}
+};

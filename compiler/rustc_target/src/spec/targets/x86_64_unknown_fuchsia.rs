@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, SanitizerSet, StackProbeType, Target};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::fuchsia::opts();
     base.cpu = cow!("x86-64");
     base.plt_by_default = false;
@@ -19,4 +19,4 @@ pub fn target() -> Target {
         arch: cow!("x86_64"),
         options: base,
     }
-}
+};

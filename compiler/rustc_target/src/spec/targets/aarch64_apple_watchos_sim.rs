@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{FramePointer, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let arch = Arch::Arm64_sim;
     Target {
         // Clang automatically chooses a more specific target based on
@@ -21,4 +21,4 @@ pub fn target() -> Target {
             ..opts("watchos", arch)
         },
     }
-}
+};

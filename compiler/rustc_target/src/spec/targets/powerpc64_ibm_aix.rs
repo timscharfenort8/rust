@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 use crate::spec::TargetOptions;
 use crate::spec::{base, Cc, LinkerFlavor, Target};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::aix::opts();
     base.max_atomic_width = Some(64);
     base.pre_link_args = LazyLock::new(|| {
@@ -20,4 +20,4 @@ pub fn target() -> Target {
         arch: cow!("powerpc64"),
         options: base,
     }
-}
+};

@@ -15,7 +15,7 @@ use crate::spec::{
     TargetOptions,
 };
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let opts = TargetOptions {
         linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
         linker: Some(cow!("rust-lld")),
@@ -42,4 +42,4 @@ pub fn target() -> Target {
         arch: cow!("aarch64"),
         options: opts,
     }
-}
+};

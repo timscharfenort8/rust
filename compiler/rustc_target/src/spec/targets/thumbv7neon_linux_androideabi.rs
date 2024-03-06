@@ -11,7 +11,7 @@ use std::sync::LazyLock;
 // See https://developer.android.com/ndk/guides/abis.html#v7a
 // for target ABI requirements.
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::android::opts();
     base.pre_link_args = LazyLock::new(|| {
         TargetOptions::link_args(LinkerFlavor::Gnu(Cc::Yes, Lld::No), &["-march=armv7-a"])
@@ -28,4 +28,4 @@ pub fn target() -> Target {
             ..base
         },
     }
-}
+};

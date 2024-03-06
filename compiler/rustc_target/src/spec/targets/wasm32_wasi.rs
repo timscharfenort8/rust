@@ -4,8 +4,4 @@
 //! * <https://github.com/rust-lang/compiler-team/issues/607>
 //! * <https://github.com/rust-lang/compiler-team/issues/695>
 
-use crate::spec::Target;
-
-pub fn target() -> Target {
-    super::wasm32_wasip1::target()
-}
+pub use super::wasm32_wasip1::TARGET;

@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, Target};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::windows_gnullvm::opts();
     base.max_atomic_width = Some(128);
     base.features = cow!("+v8a,+neon,+fp-armv8");
@@ -14,4 +14,4 @@ pub fn target() -> Target {
         arch: cow!("aarch64"),
         options: base,
     }
-}
+};

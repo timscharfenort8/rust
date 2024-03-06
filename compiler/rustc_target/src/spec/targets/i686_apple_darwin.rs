@@ -4,7 +4,7 @@ use crate::spec::cow;
 use crate::spec::{Cc, FramePointer, LinkerFlavor, Lld, Target, TargetOptions};
 use std::sync::LazyLock;
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     // ld64 only understands i386 and not i686
     let arch = Arch::I386;
     let mut base = opts("macos", arch);
@@ -28,4 +28,4 @@ pub fn target() -> Target {
         arch: arch.target_arch(),
         options: TargetOptions { mcount: cow!("\u{1}mcount"), ..base },
     }
-}
+};

@@ -13,7 +13,7 @@ use crate::spec::cow;
 use crate::spec::TargetOptions;
 use crate::spec::{base, Cc, LinkerFlavor, Target};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut options = base::wasm::options();
     options.os = cow!("unknown");
 
@@ -48,4 +48,4 @@ pub fn target() -> Target {
         arch: cow!("wasm64"),
         options,
     }
-}
+};

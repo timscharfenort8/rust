@@ -6,7 +6,7 @@ use std::sync::LazyLock;
 
 use crate::spec::{base, LinkerFlavor, Lld, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::uefi_msvc::opts();
 
     base.max_atomic_width = Some(128);
@@ -22,4 +22,4 @@ pub fn target() -> Target {
         arch: cow!("aarch64"),
         options: base,
     }
-}
+};

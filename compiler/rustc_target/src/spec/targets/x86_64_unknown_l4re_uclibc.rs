@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, PanicStrategy, Target};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::l4re::opts();
     base.cpu = cow!("x86-64");
     base.plt_by_default = false;
@@ -17,4 +17,4 @@ pub fn target() -> Target {
         arch: cow!("x86_64"),
         options: base,
     }
-}
+};

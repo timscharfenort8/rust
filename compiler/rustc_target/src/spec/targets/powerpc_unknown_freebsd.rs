@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 use crate::abi::Endian;
 use crate::spec::{base, Cc, LinkerFlavor, Lld, StackProbeType, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::freebsd::opts();
     // Extra hint to linker that we are generating secure-PLT code.
     base.pre_link_args = LazyLock::new(|| {
@@ -28,4 +28,4 @@ pub fn target() -> Target {
             ..base
         },
     }
-}
+};

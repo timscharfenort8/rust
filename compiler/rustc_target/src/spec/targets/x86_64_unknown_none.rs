@@ -9,7 +9,7 @@ use crate::spec::cow;
 use crate::spec::{Cc, CodeModel, LinkerFlavor, Lld, PanicStrategy};
 use crate::spec::{RelroLevel, SanitizerSet, StackProbeType, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let opts = TargetOptions {
         cpu: cow!("x86-64"),
         plt_by_default: false,
@@ -38,4 +38,4 @@ pub fn target() -> Target {
         arch: cow!("x86_64"),
         options: opts,
     }
-}
+};

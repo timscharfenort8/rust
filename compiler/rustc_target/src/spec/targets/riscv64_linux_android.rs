@@ -3,7 +3,7 @@ use std::borrow::Cow;
 
 use crate::spec::{base, CodeModel, SanitizerSet, SplitDebuginfo, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("riscv64-linux-android"),
         pointer_width: 64,
@@ -20,4 +20,4 @@ pub fn target() -> Target {
             ..base::android::opts()
         },
     }
-}
+};

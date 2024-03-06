@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let arch = Arch::X86_64_sim;
     Target {
         llvm_target: watchos_sim_llvm_target(arch).into(),
@@ -14,4 +14,4 @@ pub fn target() -> Target {
         arch: arch.target_arch(),
         options: TargetOptions { max_atomic_width: Some(128), ..opts("watchos", arch) },
     }
-}
+};

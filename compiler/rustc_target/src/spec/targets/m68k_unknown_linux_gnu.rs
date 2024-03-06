@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{base, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::linux_gnu::opts();
     base.cpu = cow!("M68020");
     base.max_atomic_width = Some(32);
@@ -15,4 +15,4 @@ pub fn target() -> Target {
         arch: cow!("m68k"),
         options: TargetOptions { endian: Endian::Big, mcount: cow!("_mcount"), ..base },
     }
-}
+};

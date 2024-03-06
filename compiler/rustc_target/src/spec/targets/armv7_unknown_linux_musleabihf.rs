@@ -3,7 +3,7 @@ use crate::spec::{base, Target, TargetOptions};
 
 // This target is for musl Linux on ARMv7 without thumb-mode or NEON.
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         // It's important we use "gnueabihf" and not "musleabihf" here. LLVM
         // uses it to determine the calling convention and float ABI, and LLVM
@@ -23,4 +23,4 @@ pub fn target() -> Target {
             ..base::linux_musl::opts()
         },
     }
-}
+};

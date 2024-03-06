@@ -3,7 +3,7 @@ use crate::spec::{base, Cc, LinkerFlavor, SanitizerSet, Target, TargetOptions};
 
 use std::sync::LazyLock;
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::illumos::opts();
     base.pre_link_args = LazyLock::new(|| {
         TargetOptions::link_args(LinkerFlavor::Unix(Cc::Yes), &["-m64", "-std=c99"])
@@ -24,4 +24,4 @@ pub fn target() -> Target {
         arch: cow!("x86_64"),
         options: base,
     }
-}
+};

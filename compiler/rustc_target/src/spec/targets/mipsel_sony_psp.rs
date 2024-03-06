@@ -6,7 +6,7 @@ use crate::spec::{cvs, Cc, LinkerFlavor, Lld, RelocModel, Target, TargetOptions}
 // The PSP has custom linker requirements.
 const LINKER_SCRIPT: &str = include_str!("./mipsel_sony_psp_linker_script.ld");
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("mipsel-sony-psp"),
         pointer_width: 32,
@@ -36,4 +36,4 @@ pub fn target() -> Target {
             ..TargetOptions::default()
         },
     }
-}
+};

@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{LinkerFlavor, MergeFunctions, PanicStrategy, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         arch: cow!("nvptx64"),
         data_layout: cow!("e-i64:64-i128:128-v16:16-v32:32-n16:32:64"),
@@ -50,4 +50,4 @@ pub fn target() -> Target {
             ..TargetOptions::default()
         },
     }
-}
+};

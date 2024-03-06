@@ -4,7 +4,7 @@ use crate::spec::cow;
 use crate::spec::{base, Cc, LinkerFlavor, Lld, StackProbeType, Target, TargetOptions};
 use std::sync::LazyLock;
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::linux_gnu::opts();
     base.pre_link_args =
         LazyLock::new(|| TargetOptions::link_args(LinkerFlavor::Gnu(Cc::Yes, Lld::No), &["-mspe"]));
@@ -23,4 +23,4 @@ pub fn target() -> Target {
             ..base
         },
     }
-}
+};

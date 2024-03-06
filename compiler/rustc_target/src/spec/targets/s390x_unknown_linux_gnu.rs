@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{base, SanitizerSet, StackProbeType, Target};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::linux_gnu::opts();
     base.endian = Endian::Big;
     // z10 is the oldest CPU supported by LLVM
@@ -25,4 +25,4 @@ pub fn target() -> Target {
         arch: cow!("s390x"),
         options: base,
     }
-}
+};

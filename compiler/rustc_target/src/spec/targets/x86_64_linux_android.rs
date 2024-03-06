@@ -4,7 +4,7 @@ use crate::spec::{
 };
 use std::sync::LazyLock;
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::android::opts();
     base.cpu = cow!("x86-64");
     base.plt_by_default = false;
@@ -25,4 +25,4 @@ pub fn target() -> Target {
         arch: cow!("x86_64"),
         options: TargetOptions { supported_sanitizers: SanitizerSet::ADDRESS, ..base },
     }
-}
+};

@@ -4,7 +4,7 @@ use crate::spec::SanitizerSet;
 use crate::spec::{Cc, CodeModel, LinkerFlavor, Lld, PanicStrategy};
 use crate::spec::{RelocModel, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         data_layout: cow!("e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"),
         llvm_target: cow!("riscv64"),
@@ -27,4 +27,4 @@ pub fn target() -> Target {
             ..TargetOptions::default()
         },
     }
-}
+};

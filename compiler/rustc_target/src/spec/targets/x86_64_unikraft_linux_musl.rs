@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 
 use crate::spec::{base, Cc, LinkerFlavor, Lld, StackProbeType, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("x86_64-unknown-linux-musl"),
         pointer_width: 64,
@@ -22,4 +22,4 @@ pub fn target() -> Target {
             ..base::unikraft_linux_musl::opts()
         },
     }
-}
+};

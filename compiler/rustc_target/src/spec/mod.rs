@@ -1382,18 +1382,18 @@ macro_rules! supported_targets {
         /// List of supported targets
         pub const TARGETS: &[&str] = &[$($triple),+];
 
-        fn load_builtin(target: &str) -> Option<Target> {
+        fn load_builtin(target: &str) -> Option<&'static Target> {
             let mut t = match target {
-                $( $triple => targets::$module::target(), )+
+                $( $triple => &targets::$module::TARGET, )+
                 _ => return None,
             };
-            t.is_builtin = true;
+            // TODO: t.is_builtin = true;
             debug!("got builtin target: {:?}", t);
             Some(t)
         }
 
-        fn load_all_builtin() -> impl Iterator<Item = Target> {
-            [$(targets::$module::target, )*].iter().map(|f| f())
+        fn load_all_builtins() -> impl Iterator<Item = &'static Target> {
+            [$(&targets::$module::TARGET, )*].into_iter()
         }
 
         #[cfg(test)]
@@ -3141,7 +3141,7 @@ impl Target {
     }
 
     /// Load a built-in target
-    pub fn expect_builtin(target_triple: &TargetTriple) -> Target {
+    pub fn expect_builtin(target_triple: &TargetTriple) -> &'static Target {
         match *target_triple {
             TargetTriple::TargetTriple(ref target_triple) => {
                 load_builtin(target_triple).expect("built-in target")
@@ -3153,8 +3153,8 @@ impl Target {
     }
 
     /// Load all built-in targets
-    pub fn iter_builtins() -> impl Iterator<Item = Target> {
-        load_all_builtin()
+    pub fn iter_builtins() -> impl Iterator<Item = &'static Target> {
+        load_all_builtins()
     }
 
     /// Search for a JSON file specifying the given target triple.
@@ -3182,9 +3182,11 @@ impl Target {
         match *target_triple {
             TargetTriple::TargetTriple(ref target_triple) => {
                 // check if triple is in list of built-in targets
-                if let Some(t) = load_builtin(target_triple) {
-                    return Ok((t, TargetWarnings::empty()));
-                }
+                // TODO: Make a custom type that either statically borrow a Target
+                // or has a owned Target (a bit like Cow but without the write part)
+                // if let Some(t) = load_builtin(target_triple) {
+                //     return Ok((t, TargetWarnings::empty()));
+                // }
 
                 // search for a file named `target_triple`.json in RUST_TARGET_PATH
                 let path = {

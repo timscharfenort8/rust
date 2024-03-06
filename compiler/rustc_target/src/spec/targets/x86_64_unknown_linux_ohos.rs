@@ -4,7 +4,7 @@ use crate::spec::{
 };
 use std::sync::LazyLock;
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::linux_ohos::opts();
     base.cpu = cow!("x86-64");
     base.max_atomic_width = Some(64);
@@ -29,4 +29,4 @@ pub fn target() -> Target {
         arch: cow!("x86_64"),
         options: base,
     }
-}
+};

@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{cvs, Cc, LinkerFlavor, Lld, PanicStrategy, RelocModel, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("mipsel-sony-psx"),
         pointer_width: 32,
@@ -35,4 +35,4 @@ pub fn target() -> Target {
             ..TargetOptions::default()
         },
     }
-}
+};

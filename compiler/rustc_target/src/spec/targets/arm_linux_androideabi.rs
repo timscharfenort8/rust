@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, SanitizerSet, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("arm-linux-androideabi"),
         pointer_width: 32,
@@ -16,4 +16,4 @@ pub fn target() -> Target {
             ..base::android::opts()
         },
     }
-}
+};

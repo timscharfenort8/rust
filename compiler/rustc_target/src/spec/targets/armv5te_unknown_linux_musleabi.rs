@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         // FIXME: this comment below does not seem applicable?
         // It's important we use "gnueabihf" and not "musleabihf" here. LLVM
@@ -21,4 +21,4 @@ pub fn target() -> Target {
             ..base::linux_musl::opts()
         },
     }
-}
+};

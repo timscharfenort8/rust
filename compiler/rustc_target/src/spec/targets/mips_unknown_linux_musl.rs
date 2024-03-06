@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{base, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::linux_musl::opts();
     base.cpu = cow!("mips32r2");
     base.features = cow!("+mips32r2,+soft-float");
@@ -16,4 +16,4 @@ pub fn target() -> Target {
         arch: cow!("mips"),
         options: TargetOptions { endian: Endian::Big, mcount: cow!("_mcount"), ..base },
     }
-}
+};

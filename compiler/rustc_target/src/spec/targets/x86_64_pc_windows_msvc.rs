@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, SanitizerSet, Target};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::windows_msvc::opts();
     base.cpu = cow!("x86-64");
     base.features = cow!("+cx16,+sse3,+sahf");
@@ -18,4 +18,4 @@ pub fn target() -> Target {
         arch: cow!("x86_64"),
         options: base,
     }
-}
+};

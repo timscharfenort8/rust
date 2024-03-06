@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let arch = Arch::Armv7s;
     Target {
         llvm_target: ios_llvm_target(arch).into(),
@@ -16,4 +16,4 @@ pub fn target() -> Target {
             ..opts("ios", arch)
         },
     }
-}
+};

@@ -3,7 +3,7 @@ use crate::spec::{Cc, LinkerFlavor, Lld, PanicStrategy, RelocModel};
 
 use crate::spec::{Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         data_layout: cow!("e-m:e-p:32:32-i64:64-n32-S128"),
         llvm_target: cow!("riscv32"),
@@ -35,4 +35,4 @@ pub fn target() -> Target {
             ..TargetOptions::default()
         },
     }
-}
+};

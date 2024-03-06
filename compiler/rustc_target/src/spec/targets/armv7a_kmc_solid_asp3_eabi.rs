@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, RelocModel, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let base = base::solid::opts("asp3");
     Target {
         llvm_target: cow!("armv7a-none-eabi"),
@@ -17,4 +17,4 @@ pub fn target() -> Target {
             ..base
         },
     }
-}
+};

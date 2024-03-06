@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::linux_musl::opts();
     base.cpu = cow!("mips64r2");
     base.features = cow!("+mips64r2");
@@ -14,4 +14,4 @@ pub fn target() -> Target {
         arch: cow!("mips64"),
         options: TargetOptions { abi: cow!("abi64"), mcount: cow!("_mcount"), ..base },
     }
-}
+};

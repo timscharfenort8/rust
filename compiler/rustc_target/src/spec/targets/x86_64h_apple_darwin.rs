@@ -5,7 +5,7 @@ use crate::spec::{Cc, FramePointer, LinkerFlavor, Lld, SanitizerSet};
 use crate::spec::{Target, TargetOptions};
 use std::sync::LazyLock;
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let arch = Arch::X86_64h;
     let mut base = opts("macos", arch);
     base.max_atomic_width = Some(128);
@@ -46,4 +46,4 @@ pub fn target() -> Target {
         arch: arch.target_arch(),
         options: TargetOptions { mcount: cow!("\u{1}mcount"), ..base },
     }
-}
+};

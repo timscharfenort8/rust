@@ -4,7 +4,7 @@ use crate::spec::{base, Target, TargetOptions};
 // This target is for glibc Linux on ARMv7 without NEON or
 // thumb-mode. See the thumbv7neon variant for enabling both.
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("armv7-unknown-linux-gnueabihf"),
         pointer_width: 32,
@@ -19,4 +19,4 @@ pub fn target() -> Target {
             ..base::linux_gnu::opts()
         },
     }
-}
+};

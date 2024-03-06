@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 use crate::spec::TargetOptions;
 use crate::spec::{base, LinkerFlavor, Lld, SanitizerSet, Target};
 
-pub fn target() -> Target {
+pub(super) const fn target() -> Target {
     let mut base = base::windows_msvc::opts();
     base.cpu = cow!("pentium4");
     base.max_atomic_width = Some(64);
@@ -36,3 +36,5 @@ pub fn target() -> Target {
         options: base,
     }
 }
+
+pub static TARGET: Target = target();

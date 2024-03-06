@@ -3,7 +3,7 @@ use std::borrow::Cow;
 
 use crate::spec::{base, CodeModel, SplitDebuginfo, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("riscv64-unknown-linux-musl"),
         pointer_width: 64,
@@ -19,4 +19,4 @@ pub fn target() -> Target {
             ..base::linux_musl::opts()
         },
     }
-}
+};

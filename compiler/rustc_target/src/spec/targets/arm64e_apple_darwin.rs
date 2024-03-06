@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{FramePointer, SanitizerSet, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let arch = Arch::Arm64e;
     let mut base = opts("macos", arch);
     base.cpu = cow!("apple-m1");
@@ -26,4 +26,4 @@ pub fn target() -> Target {
             ..base
         },
     }
-}
+};

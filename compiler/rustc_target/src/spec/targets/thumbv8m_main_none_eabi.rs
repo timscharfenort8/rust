@@ -5,7 +5,7 @@ use crate::spec::cow;
 
 use crate::spec::{base, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("thumbv8m.main-none-eabi"),
         pointer_width: 32,
@@ -18,4 +18,4 @@ pub fn target() -> Target {
             ..base::thumb::opts()
         },
     }
-}
+};

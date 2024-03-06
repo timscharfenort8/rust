@@ -23,7 +23,7 @@ use crate::spec::crt_objects;
 use crate::spec::LinkSelfContainedDefault;
 use crate::spec::{base, Target};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut options = base::wasm::options();
 
     options.os = cow!("wasi");
@@ -66,4 +66,4 @@ pub fn target() -> Target {
         arch: cow!("wasm32"),
         options,
     }
-}
+};

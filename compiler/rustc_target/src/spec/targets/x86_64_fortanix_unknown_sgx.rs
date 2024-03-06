@@ -5,7 +5,7 @@ use std::sync::LazyLock;
 
 use crate::spec::{cvs, Cc, LinkerFlavor, Lld, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     const EXPORT_SYMBOLS: &[&str] = &[
         "sgx_entry",
         "HEAP_BASE",
@@ -84,4 +84,4 @@ pub fn target() -> Target {
         arch: cow!("x86_64"),
         options: opts,
     }
-}
+};

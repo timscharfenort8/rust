@@ -4,7 +4,7 @@ use crate::spec::{base, SanitizerSet, StackProbeType, Target, TargetOptions};
 // See https://developer.android.com/ndk/guides/abis.html#x86
 // for target ABI requirements.
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::android::opts();
 
     base.max_atomic_width = Some(64);
@@ -23,4 +23,4 @@ pub fn target() -> Target {
         arch: cow!("x86"),
         options: TargetOptions { supported_sanitizers: SanitizerSet::ADDRESS, ..base },
     }
-}
+};

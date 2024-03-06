@@ -4,7 +4,7 @@ use crate::spec::{base, SanitizerSet, StackProbeType, Target, TargetOptions};
 // See https://developer.android.com/ndk/guides/abis.html#arm64-v8a
 // for target ABI requirements.
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("aarch64-linux-android"),
         pointer_width: 64,
@@ -25,4 +25,4 @@ pub fn target() -> Target {
             ..base::android::opts()
         },
     }
-}
+};

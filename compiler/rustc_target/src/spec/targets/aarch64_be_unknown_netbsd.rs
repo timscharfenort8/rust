@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{base, StackProbeType, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("aarch64_be-unknown-netbsd"),
         pointer_width: 64,
@@ -17,4 +17,4 @@ pub fn target() -> Target {
             ..base::netbsd::opts()
         },
     }
-}
+};

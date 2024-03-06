@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{base, cvs, FramePointer, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("armv5te-none-eabi"),
         pointer_width: 32,
@@ -39,4 +39,4 @@ pub fn target() -> Target {
             ..base::thumb::opts()
         },
     }
-}
+};

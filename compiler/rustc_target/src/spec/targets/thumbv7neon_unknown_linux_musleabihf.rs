@@ -7,7 +7,7 @@ use crate::spec::{base, Target, TargetOptions};
 // registers enabled as well. See section A2.6.2 on page A2-56 in
 // https://web.archive.org/web/20210307234416/https://static.docs.arm.com/ddi0406/cd/DDI0406C_d_armv7ar_arm.pdf
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         // It's important we use "gnueabihf" and not "musleabihf" here. LLVM
         // uses it to determine the calling convention and float ABI, and LLVM
@@ -27,4 +27,4 @@ pub fn target() -> Target {
             ..base::linux_musl::opts()
         },
     }
-}
+};

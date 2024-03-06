@@ -7,7 +7,7 @@ use crate::spec::{cvs, Cc, LinkerFlavor, Lld, RelocModel, Target, TargetOptions}
 ///
 /// Requires the devkitARM toolchain for 3DS targets on the host system.
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("armv6k-none-eabihf"),
         pointer_width: 32,
@@ -36,4 +36,4 @@ pub fn target() -> Target {
             ..TargetOptions::default()
         },
     }
-}
+};

@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 
 use crate::spec::{base, Cc, LinkerFlavor, Lld, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::windows_uwp_gnu::opts();
     base.cpu = cow!("x86-64");
     base.features = cow!("+cx16,+sse3,+sahf");
@@ -32,4 +32,4 @@ pub fn target() -> Target {
         arch: cow!("x86_64"),
         options: base,
     }
-}
+};

@@ -5,7 +5,7 @@ use crate::spec::{
     base, cvs, LinkArgs, LinkerFlavor, PanicStrategy, RelocModel, Target, TargetOptions,
 };
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let opts = TargetOptions {
         os: cow!("emscripten"),
         linker_flavor: LinkerFlavor::EmCc,
@@ -31,4 +31,4 @@ pub fn target() -> Target {
         arch: cow!("wasm32"),
         options: opts,
     }
-}
+};

@@ -18,7 +18,7 @@ use crate::spec::cow;
 
 use crate::spec::{Cc, LinkerFlavor, Lld, PanicStrategy, RelocModel, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let opts = TargetOptions {
         abi: cow!("eabi"),
         linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
@@ -39,4 +39,4 @@ pub fn target() -> Target {
         arch: cow!("arm"),
         options: opts,
     }
-}
+};

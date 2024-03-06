@@ -3,7 +3,7 @@ use std::borrow::Cow;
 
 use crate::spec::{base, CodeModel, SplitDebuginfo, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("riscv32-unknown-linux-gnu"),
         pointer_width: 32,
@@ -19,4 +19,4 @@ pub fn target() -> Target {
             ..base::linux_gnu::opts()
         },
     }
-}
+};

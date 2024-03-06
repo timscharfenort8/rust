@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, Cc, LinkerFlavor, Target};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::linux_musl::opts();
     base.cpu = cow!("hexagonv60");
     base.max_atomic_width = Some(32);
@@ -27,4 +27,4 @@ pub fn target() -> Target {
         arch: cow!("hexagon"),
         options: base,
     }
-}
+};

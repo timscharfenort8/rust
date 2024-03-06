@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, StackProbeType, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::netbsd::opts();
     base.cpu = cow!("pentium");
     base.max_atomic_width = Some(64);
@@ -16,4 +16,4 @@ pub fn target() -> Target {
         arch: cow!("x86"),
         options: TargetOptions { mcount: cow!("__mcount"), ..base },
     }
-}
+};

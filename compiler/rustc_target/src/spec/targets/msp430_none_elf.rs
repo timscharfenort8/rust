@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{cvs, Cc, LinkerFlavor, PanicStrategy, RelocModel, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("msp430-none-elf"),
         pointer_width: 16,
@@ -57,4 +57,4 @@ pub fn target() -> Target {
             ..TargetOptions::default()
         },
     }
-}
+};

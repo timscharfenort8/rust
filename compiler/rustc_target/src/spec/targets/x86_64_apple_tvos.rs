@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     // x86_64-apple-tvos is a simulator target, even though it isn't declared
     // that way in the target name like the other ones...
     let arch = Arch::X86_64_sim;
@@ -16,4 +16,4 @@ pub fn target() -> Target {
         arch: arch.target_arch(),
         options: TargetOptions { max_atomic_width: Some(128), ..opts("tvos", arch) },
     }
-}
+};

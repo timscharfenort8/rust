@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 
 use crate::spec::{base, Cc, FramePointer, LinkerFlavor, Lld, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::windows_gnu::opts();
     base.cpu = cow!("pentium4");
     base.max_atomic_width = Some(64);
@@ -34,4 +34,4 @@ pub fn target() -> Target {
         arch: cow!("x86"),
         options: base,
     }
-}
+};

@@ -9,7 +9,7 @@ use crate::spec::cow;
 
 use crate::spec::{base, Target};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::uefi_msvc::opts();
     base.cpu = cow!("pentium4");
     base.max_atomic_width = Some(64);
@@ -88,4 +88,4 @@ pub fn target() -> Target {
 
         options: base,
     }
-}
+};

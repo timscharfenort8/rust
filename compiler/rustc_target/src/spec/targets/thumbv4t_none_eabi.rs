@@ -12,7 +12,7 @@
 use crate::spec::{base, PanicStrategy, RelocModel, Target, TargetOptions};
 use crate::spec::{cow, cvs, FramePointer};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("thumbv4t-none-eabi"),
         pointer_width: 32,
@@ -56,4 +56,4 @@ pub fn target() -> Target {
             ..base::thumb::opts()
         },
     }
-}
+};

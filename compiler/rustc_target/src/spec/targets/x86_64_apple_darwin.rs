@@ -5,7 +5,7 @@ use crate::spec::base::apple::{macos_llvm_target, opts, Arch};
 use crate::spec::{Cc, FramePointer, LinkerFlavor, Lld, SanitizerSet};
 use crate::spec::{Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let arch = Arch::X86_64;
     let mut base = opts("macos", arch);
     base.max_atomic_width = Some(128); // penryn+ supports cmpxchg16b
@@ -28,4 +28,4 @@ pub fn target() -> Target {
         arch: arch.target_arch(),
         options: TargetOptions { mcount: cow!("\u{1}mcount"), ..base },
     }
-}
+};

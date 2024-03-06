@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 
 use crate::spec::{base, Cc, LinkerFlavor, Lld, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("aarch64-unknown-unknown"),
         pointer_width: 64,
@@ -31,4 +31,4 @@ pub fn target() -> Target {
             ..base::nto_qnx::opts()
         },
     }
-}
+};

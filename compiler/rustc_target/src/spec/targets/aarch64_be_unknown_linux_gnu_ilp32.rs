@@ -3,7 +3,7 @@ use crate::spec::cow;
 
 use crate::spec::{base, StackProbeType, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::linux_gnu::opts();
     base.max_atomic_width = Some(128);
 
@@ -21,4 +21,4 @@ pub fn target() -> Target {
             ..base
         },
     }
-}
+};

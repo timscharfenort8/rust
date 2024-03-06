@@ -12,7 +12,7 @@ use crate::spec::{
     Cc, LinkerFlavor, Lld, PanicStrategy, RelocModel, StackProbeType, Target, TargetOptions,
 };
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let opts = TargetOptions {
         abi: cow!("softfloat"),
         linker_flavor: LinkerFlavor::Gnu(Cc::No, Lld::Yes),
@@ -32,4 +32,4 @@ pub fn target() -> Target {
         arch: cow!("aarch64"),
         options: opts,
     }
-}
+};

@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{PanicStrategy, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("hexagon-unknown-none-elf"),
         pointer_width: 32,
@@ -25,4 +25,4 @@ pub fn target() -> Target {
             ..TargetOptions::default()
         },
     }
-}
+};

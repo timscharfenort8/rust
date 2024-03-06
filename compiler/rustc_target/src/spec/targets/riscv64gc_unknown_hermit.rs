@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, CodeModel, RelocModel, Target, TargetOptions, TlsModel};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("riscv64-unknown-hermit"),
         pointer_width: 64,
@@ -18,4 +18,4 @@ pub fn target() -> Target {
             ..base::hermit::opts()
         },
     }
-}
+};

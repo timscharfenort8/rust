@@ -4,7 +4,7 @@ use crate::spec::{base, Target, TargetOptions};
 // This target is for musl Linux on ARMv7 without thumb-mode, NEON or
 // hardfloat.
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     // Most of these settings are copied from the armv7_unknown_linux_gnueabi
     // target.
     Target {
@@ -24,4 +24,4 @@ pub fn target() -> Target {
             ..base::linux_musl::opts()
         },
     }
-}
+};

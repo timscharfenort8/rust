@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, StackProbeType, Target};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     let mut base = base::redox::opts();
     base.max_atomic_width = Some(128);
     base.stack_probes = StackProbeType::Inline;
@@ -14,4 +14,4 @@ pub fn target() -> Target {
         arch: cow!("aarch64"),
         options: base,
     }
-}
+};

@@ -5,7 +5,7 @@ use crate::spec::{
     base, Cc, LinkerFlavor, Lld, SanitizerSet, StackProbeType, Target, TargetOptions,
 };
 
-pub fn target() -> Target {
+pub(super) fn target() -> Target {
     let mut base = base::linux_gnu::opts();
     base.cpu = cow!("pentium4");
     base.max_atomic_width = Some(64);
@@ -24,3 +24,5 @@ pub fn target() -> Target {
         options: base,
     }
 }
+
+pub static TARGET: Target = target();

@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, SanitizerSet, StackProbeType, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("aarch64-unknown-freebsd"),
         pointer_width: 64,
@@ -18,4 +18,4 @@ pub fn target() -> Target {
             ..base::freebsd::opts()
         },
     }
-}
+};

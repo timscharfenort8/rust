@@ -1,7 +1,7 @@
 use crate::spec::cow;
 use crate::spec::{base, Target, TargetOptions};
 
-pub fn target() -> Target {
+pub static TARGET: Target = {
     Target {
         llvm_target: cow!("mipsel-unknown-linux-gnu"),
         pointer_width: 32,
@@ -17,4 +17,4 @@ pub fn target() -> Target {
             ..base::linux_gnu::opts()
         },
     }
-}
+};
