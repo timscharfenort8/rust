@@ -102,8 +102,8 @@ pub(crate) fn parse_cfg(dcx: &DiagCtxt, cfgs: Vec<String>) -> Cfg {
 pub(crate) fn parse_check_cfg(dcx: &DiagCtxt, specs: Vec<String>) -> CheckCfg {
     // If any --check-cfg is passed then exhaustive_values and exhaustive_names
     // are enabled by default.
-    let exhaustive_names = !specs.is_empty();
-    let exhaustive_values = !specs.is_empty();
+    let exhaustive_names = true;
+    let exhaustive_values = true;
     let mut check_cfg = CheckCfg { exhaustive_names, exhaustive_values, ..CheckCfg::default() };
 
     for s in specs {

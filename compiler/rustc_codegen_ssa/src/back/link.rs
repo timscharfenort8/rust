@@ -1767,8 +1767,8 @@ fn self_contained_components(sess: &Session, crate_type: CrateType) -> LinkSelfC
                 // (https://github.com/rust-lang/rust/pull/71769#issuecomment-626330237).
                 LinkSelfContainedDefault::InferredForMusl => sess.crt_static(Some(crate_type)),
                 LinkSelfContainedDefault::InferredForMingw => {
-                    sess.host == sess.target
-                        && sess.target.vendor != "uwp"
+                    /* TODO: sess.host == sess.target
+                        && */ sess.target.vendor != "uwp"
                         && detect_self_contained_mingw(sess)
                 }
             }

@@ -1403,7 +1403,7 @@ impl<'a, T: Eq + Hash + Copy + 'a> Extend<&'a T> for ExpectedValues<T> {
 }
 
 impl CheckCfg {
-    pub fn fill_well_known(&mut self, current_target: &Target) {
+    pub fn fill_well_known(&mut self, _current_target: &Target) {
         if !self.exhaustive_values && !self.exhaustive_names {
             return;
         }
@@ -1511,7 +1511,7 @@ impl CheckCfg {
                     .get_many_mut(VALUES)
                     .expect("unable to get all the check-cfg values buckets");
 
-                for target in Target::iter_builtins().chain(iter::once(current_target.clone())) {
+                for target in Target::iter_builtins()/*TODO: .chain(iter::once(current_target))*/ {
                     values_target_abi.insert(Symbol::intern(&target.options.abi));
                     values_target_arch.insert(Symbol::intern(&target.arch));
                     values_target_endian.insert(Symbol::intern(target.options.endian.as_str()));
