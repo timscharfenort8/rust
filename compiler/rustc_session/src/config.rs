@@ -1511,7 +1511,9 @@ impl CheckCfg {
                     .get_many_mut(VALUES)
                     .expect("unable to get all the check-cfg values buckets");
 
-                for target in Target::iter_builtins()/*TODO: .chain(iter::once(current_target))*/ {
+                for target in Target::iter_builtins()
+                /*TODO: .chain(iter::once(current_target))*/
+                {
                     values_target_abi.insert(Symbol::intern(&target.options.abi));
                     values_target_arch.insert(Symbol::intern(&target.arch));
                     values_target_endian.insert(Symbol::intern(target.options.endian.as_str()));

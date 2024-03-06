@@ -1768,8 +1768,8 @@ fn self_contained_components(sess: &Session, crate_type: CrateType) -> LinkSelfC
                 LinkSelfContainedDefault::InferredForMusl => sess.crt_static(Some(crate_type)),
                 LinkSelfContainedDefault::InferredForMingw => {
                     /* TODO: sess.host == sess.target
-                        && */ sess.target.vendor != "uwp"
-                        && detect_self_contained_mingw(sess)
+                    && */
+                    sess.target.vendor != "uwp" && detect_self_contained_mingw(sess)
                 }
             }
         };
