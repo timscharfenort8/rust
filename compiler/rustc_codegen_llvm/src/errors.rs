@@ -3,10 +3,11 @@ use std::ffi::CString;
 use std::path::Path;
 
 use crate::fluent_generated as fluent;
+use itertools::Itertools as _;
 use rustc_data_structures::small_c_str::SmallCStr;
 use rustc_errors::{Diag, DiagCtxt, EmissionGuarantee, IntoDiagnostic, Level};
 use rustc_macros::{Diagnostic, Subdiagnostic};
-use rustc_span::Span;
+use rustc_span::{Span, Symbol};
 
 #[derive(Diagnostic)]
 #[diag(codegen_llvm_unknown_ctarget_feature_prefix)]
@@ -18,23 +19,23 @@ pub(crate) struct UnknownCTargetFeaturePrefix<'a> {
 #[derive(Diagnostic)]
 #[diag(codegen_llvm_unknown_ctarget_feature)]
 #[note]
-pub(crate) struct UnknownCTargetFeature<'a> {
-    pub feature: &'a str,
+pub(crate) struct UnknownCTargetFeature {
+    pub feature: Symbol,
     #[subdiagnostic]
-    pub rust_feature: PossibleFeature<'a>,
+    pub rust_feature: PossibleFeature,
 }
 
 #[derive(Diagnostic)]
 #[diag(codegen_llvm_unstable_ctarget_feature)]
 #[note]
-pub(crate) struct UnstableCTargetFeature<'a> {
-    pub feature: &'a str,
+pub(crate) struct UnstableCTargetFeature {
+    pub feature: Symbol,
 }
 
 #[derive(Subdiagnostic)]
-pub(crate) enum PossibleFeature<'a> {
+pub(crate) enum PossibleFeature {
     #[help(codegen_llvm_possible_feature)]
-    Some { rust_feature: &'a str },
+    Some { rust_feature: Symbol },
     #[help(codegen_llvm_consider_filing_feature_request)]
     None,
 }
@@ -110,7 +111,7 @@ impl<G: EmissionGuarantee> IntoDiagnostic<'_, G> for ParseTargetMachineConfig<'_
 }
 
 pub(crate) struct TargetFeatureDisableOrEnable<'a> {
-    pub features: &'a [&'a str],
+    pub features: &'a [Symbol],
     pub span: Option<Span>,
     pub missing_features: Option<MissingFeatures>,
 }
@@ -128,7 +129,7 @@ impl<G: EmissionGuarantee> IntoDiagnostic<'_, G> for TargetFeatureDisableOrEnabl
         if let Some(missing_features) = self.missing_features {
             diag.subdiagnostic(dcx, missing_features);
         }
-        diag.arg("features", self.features.join(", "));
+        diag.arg("features", self.features.iter().map(Symbol::as_str).join(", "));
         diag
     }
 }

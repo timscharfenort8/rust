@@ -12,6 +12,7 @@ use rustc_fs_util::path_to_c_string;
 use rustc_middle::bug;
 use rustc_session::config::{PrintKind, PrintRequest};
 use rustc_session::Session;
+use rustc_span::sym;
 use rustc_span::symbol::Symbol;
 use rustc_target::spec::{MergeFunctions, PanicStrategy};
 use rustc_target::target_features::RUSTC_SPECIFIC_FEATURES;
@@ -168,7 +169,8 @@ impl<'a> LLVMFeature<'a> {
         Self { llvm_feature_name, dependency: Some(dependency) }
     }
 
-    pub fn contains(&self, feat: &str) -> bool {
+    pub fn contains(&self, feat: Symbol) -> bool {
+        let feat = feat.as_str();
         self.iter().any(|dep| dep == feat)
     }
 
@@ -200,74 +202,81 @@ impl<'a> IntoIterator for LLVMFeature<'a> {
 // Though note that Rust can also be build with an external precompiled version of LLVM
 // which might lead to failures if the oldest tested / supported LLVM version
 // doesn't yet support the relevant intrinsics
-pub fn to_llvm_features<'a>(sess: &Session, s: &'a str) -> LLVMFeature<'a> {
+pub fn to_llvm_features<'a>(sess: &'a Session, feature: Symbol) -> LLVMFeature<'a> {
+    // SAFETY: `Symbol::as_str` lifetime is a lie, the return type as long as the interner
+    // which should be at least as long as the Session.
+    let sym_to_str = |s: Symbol| unsafe { &*(s.as_str() as *const _) };
+
     let arch = if sess.target.arch == "x86_64" { "x86" } else { &*sess.target.arch };
-    match (arch, s) {
-        ("x86", "sse4.2") => {
+    match (arch, feature) {
+        ("x86", sym::sse4_2) => {
             LLVMFeature::with_dependency("sse4.2", TargetFeatureFoldStrength::EnableOnly("crc32"))
         }
-        ("x86", "pclmulqdq") => LLVMFeature::new("pclmul"),
-        ("x86", "rdrand") => LLVMFeature::new("rdrnd"),
-        ("x86", "bmi1") => LLVMFeature::new("bmi"),
-        ("x86", "cmpxchg16b") => LLVMFeature::new("cx16"),
-        ("x86", "lahfsahf") => LLVMFeature::new("sahf"),
-        ("aarch64", "rcpc2") => LLVMFeature::new("rcpc-immo"),
-        ("aarch64", "dpb") => LLVMFeature::new("ccpp"),
-        ("aarch64", "dpb2") => LLVMFeature::new("ccdp"),
-        ("aarch64", "frintts") => LLVMFeature::new("fptoint"),
-        ("aarch64", "fcma") => LLVMFeature::new("complxnum"),
-        ("aarch64", "pmuv3") => LLVMFeature::new("perfmon"),
-        ("aarch64", "paca") => LLVMFeature::new("pauth"),
-        ("aarch64", "pacg") => LLVMFeature::new("pauth"),
+        ("x86", sym::pclmulqdq) => LLVMFeature::new("pclmul"),
+        ("x86", sym::rdrand) => LLVMFeature::new("rdrnd"),
+        ("x86", sym::bmi1) => LLVMFeature::new("bmi"),
+        ("x86", sym::cmpxchg16b) => LLVMFeature::new("cx16"),
+        ("x86", sym::lahfsahf) => LLVMFeature::new("sahf"),
+        ("aarch64", sym::rcpc2) => LLVMFeature::new("rcpc-immo"),
+        ("aarch64", sym::dpb) => LLVMFeature::new("ccpp"),
+        ("aarch64", sym::dpb2) => LLVMFeature::new("ccdp"),
+        ("aarch64", sym::frintts) => LLVMFeature::new("fptoint"),
+        ("aarch64", sym::fcma) => LLVMFeature::new("complxnum"),
+        ("aarch64", sym::pmuv3) => LLVMFeature::new("perfmon"),
+        ("aarch64", sym::paca) => LLVMFeature::new("pauth"),
+        ("aarch64", sym::pacg) => LLVMFeature::new("pauth"),
         // Rust ties fp and neon together.
-        ("aarch64", "neon") => {
+        ("aarch64", sym::neon) => {
             LLVMFeature::with_dependency("neon", TargetFeatureFoldStrength::Both("fp-armv8"))
         }
         // In LLVM neon implicitly enables fp, but we manually enable
         // neon when a feature only implicitly enables fp
-        ("aarch64", "f32mm") => {
+        ("aarch64", sym::f32mm) => {
             LLVMFeature::with_dependency("f32mm", TargetFeatureFoldStrength::EnableOnly("neon"))
         }
-        ("aarch64", "f64mm") => {
+        ("aarch64", sym::f64mm) => {
             LLVMFeature::with_dependency("f64mm", TargetFeatureFoldStrength::EnableOnly("neon"))
         }
-        ("aarch64", "fhm") => {
+        ("aarch64", sym::fhm) => {
             LLVMFeature::with_dependency("fp16fml", TargetFeatureFoldStrength::EnableOnly("neon"))
         }
-        ("aarch64", "fp16") => {
+        ("aarch64", sym::fp16) => {
             LLVMFeature::with_dependency("fullfp16", TargetFeatureFoldStrength::EnableOnly("neon"))
         }
-        ("aarch64", "jsconv") => {
+        ("aarch64", sym::jsconv) => {
             LLVMFeature::with_dependency("jsconv", TargetFeatureFoldStrength::EnableOnly("neon"))
         }
-        ("aarch64", "sve") => {
+        ("aarch64", sym::sve) => {
             LLVMFeature::with_dependency("sve", TargetFeatureFoldStrength::EnableOnly("neon"))
         }
-        ("aarch64", "sve2") => {
+        ("aarch64", sym::sve2) => {
             LLVMFeature::with_dependency("sve2", TargetFeatureFoldStrength::EnableOnly("neon"))
         }
-        ("aarch64", "sve2-aes") => {
+        ("aarch64", sym::sve2_aes) => {
             LLVMFeature::with_dependency("sve2-aes", TargetFeatureFoldStrength::EnableOnly("neon"))
         }
-        ("aarch64", "sve2-sm4") => {
+        ("aarch64", sym::sve2_sm4) => {
             LLVMFeature::with_dependency("sve2-sm4", TargetFeatureFoldStrength::EnableOnly("neon"))
         }
-        ("aarch64", "sve2-sha3") => {
+        ("aarch64", sym::sve2_sha3) => {
             LLVMFeature::with_dependency("sve2-sha3", TargetFeatureFoldStrength::EnableOnly("neon"))
         }
-        ("aarch64", "sve2-bitperm") => LLVMFeature::with_dependency(
+        ("aarch64", sym::sve2_bitperm) => LLVMFeature::with_dependency(
             "sve2-bitperm",
             TargetFeatureFoldStrength::EnableOnly("neon"),
         ),
         // The unaligned-scalar-mem feature was renamed to fast-unaligned-access.
-        ("riscv32" | "riscv64", "fast-unaligned-access") if get_version().0 <= 17 => {
+        ("riscv32" | "riscv64", sym::fast_unaligned_access) if get_version().0 <= 17 => {
             LLVMFeature::new("unaligned-scalar-mem")
         }
         // For LLVM 18, enable the evex512 target feature if a avx512 target feature is enabled.
-        ("x86", s) if get_version().0 >= 18 && s.starts_with("avx512") => {
-            LLVMFeature::with_dependency(s, TargetFeatureFoldStrength::EnableOnly("evex512"))
+        ("x86", s) if get_version().0 >= 18 && s.as_str().starts_with("avx512") => {
+            LLVMFeature::with_dependency(
+                sym_to_str(s),
+                TargetFeatureFoldStrength::EnableOnly("evex512"),
+            )
         }
-        (_, s) => LLVMFeature::new(s),
+        (_, s) => LLVMFeature::new(sym_to_str(s)),
     }
 }
 
@@ -275,8 +284,8 @@ pub fn to_llvm_features<'a>(sess: &Session, s: &'a str) -> LLVMFeature<'a> {
 /// ensure only valid combinations are allowed.
 pub fn check_tied_features(
     sess: &Session,
-    features: &FxHashMap<&str, bool>,
-) -> Option<&'static [&'static str]> {
+    features: &FxHashMap<Symbol, bool>,
+) -> Option<&'static [Symbol]> {
     if !features.is_empty() {
         for tied in sess.target.tied_target_features() {
             // Tied features must be set to the same value, or not set at all
@@ -287,7 +296,7 @@ pub fn check_tied_features(
             }
         }
     }
-    return None;
+    None
 }
 
 /// Used to generate cfg variables and apply features
@@ -306,7 +315,7 @@ pub fn target_features(sess: &Session, allow_unstable: bool) -> Vec<Symbol> {
         })
         .filter(|feature| {
             // check that all features in a given smallvec are enabled
-            for llvm_feature in to_llvm_features(sess, feature) {
+            for llvm_feature in to_llvm_features(sess, *feature) {
                 let cstr = SmallCStr::new(llvm_feature);
                 if !unsafe { llvm::LLVMRustHasFeature(&target_machine, cstr.as_ptr()) } {
                     return false;
@@ -314,7 +323,6 @@ pub fn target_features(sess: &Session, allow_unstable: bool) -> Vec<Symbol> {
             }
             true
         })
-        .map(|feature| Symbol::intern(feature))
         .collect()
 }
 
@@ -383,15 +391,15 @@ fn print_target_features(out: &mut dyn PrintBackendInfo, sess: &Session, tm: &ll
         })
         .collect::<Vec<_>>();
     rustc_target_features.extend_from_slice(&[(
-        "crt-static",
+        sym::crt_dash_static,
         "Enables C Run-time Libraries to be statically linked",
     )]);
     llvm_target_features.retain(|(f, _d)| !known_llvm_target_features.contains(f));
 
     let max_feature_len = llvm_target_features
         .iter()
-        .chain(rustc_target_features.iter())
         .map(|(feature, _desc)| feature.len())
+        .chain(rustc_target_features.iter().map(|(s, _desc)| s.as_str().len()))
         .max()
         .unwrap_or(0);
 
@@ -613,17 +621,17 @@ pub(crate) fn global_llvm_features(sess: &Session, diagnostics: bool) -> Vec<Str
 /// Returns a feature name for the given `+feature` or `-feature` string.
 ///
 /// Only allows features that are backend specific (i.e. not [`RUSTC_SPECIFIC_FEATURES`].)
-fn backend_feature_name<'a>(sess: &Session, s: &'a str) -> Option<&'a str> {
+fn backend_feature_name<'a>(sess: &Session, s: &'a str) -> Option<Symbol> {
     // features must start with a `+` or `-`.
     let feature = s
         .strip_prefix(&['+', '-'][..])
         .unwrap_or_else(|| sess.dcx().emit_fatal(InvalidTargetFeaturePrefix { feature: s }));
     // Rustc-specific feature requests like `+crt-static` or `-crt-static`
     // are not passed down to LLVM.
-    if RUSTC_SPECIFIC_FEATURES.contains(&feature) {
+    if RUSTC_SPECIFIC_FEATURES.iter().any(|f| f.as_str() == feature) {
         return None;
     }
-    Some(feature)
+    Some(Symbol::intern(feature))
 }
 
 pub fn tune_cpu(sess: &Session) -> Option<&str> {
