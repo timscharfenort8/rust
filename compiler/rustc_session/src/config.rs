@@ -1470,8 +1470,7 @@ impl CheckCfg {
         ins!(sym::target_feature, empty_values).extend(
             rustc_target::target_features::all_known_features()
                 .map(|(f, _sb)| f)
-                .chain(rustc_target::target_features::RUSTC_SPECIFIC_FEATURES.iter().cloned())
-                .map(Symbol::intern),
+                .chain(rustc_target::target_features::RUSTC_SPECIFIC_FEATURES.iter().copied()),
         );
 
         // sym::target_*
