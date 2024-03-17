@@ -13,6 +13,7 @@
 #![doc(rust_logo)]
 #![feature(assert_matches)]
 #![feature(iter_intersperse)]
+#![feature(lazy_cell)]
 #![feature(let_chains)]
 #![feature(min_exhaustive_patterns)]
 #![feature(rustc_attrs)]
