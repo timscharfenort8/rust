@@ -228,6 +228,7 @@ impl<'tcx> LateLintPass<'tcx> for NonLocalDefinitions {
                             .unwrap_or_else(|| "<unnameable>".to_string()),
                         cargo_update: cargo_update(),
                         const_anon,
+                        bounds: impl_.of_trait.map(|_| ()),
                     },
                 )
             }
