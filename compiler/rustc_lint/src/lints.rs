@@ -1339,7 +1339,7 @@ pub enum NonLocalDefinitionsDiag {
         body_kind_descr: &'static str,
         body_name: String,
         cargo_update: Option<NonLocalDefinitionsCargoUpdateNote>,
-        const_anon: Option<Span>,
+        const_anon: Option<Option<Span>>,
     },
     MacroRules {
         depth: u32,
@@ -1367,20 +1367,23 @@ impl<'a> LintDiagnostic<'a, ()> for NonLocalDefinitionsDiag {
 
                 diag.help(fluent::lint_help);
                 diag.note(fluent::lint_non_local);
-                diag.note(fluent::lint_exception);
-                diag.note(fluent::lint_non_local_definitions_deprecation);
 
                 if let Some(cargo_update) = cargo_update {
                     diag.subdiagnostic(&diag.dcx, cargo_update);
                 }
                 if let Some(const_anon) = const_anon {
-                    diag.span_suggestion(
-                        const_anon,
-                        fluent::lint_const_anon,
-                        "_",
-                        Applicability::MachineApplicable,
-                    );
+                    diag.note(fluent::lint_exception);
+                    if let Some(const_anon) = const_anon {
+                        diag.span_suggestion(
+                            const_anon,
+                            fluent::lint_const_anon,
+                            "_",
+                            Applicability::MachineApplicable,
+                        );
+                    }
                 }
+
+                diag.note(fluent::lint_non_local_definitions_deprecation);
             }
             NonLocalDefinitionsDiag::MacroRules {
                 depth,
