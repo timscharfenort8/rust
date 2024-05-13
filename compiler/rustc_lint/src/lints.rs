@@ -1340,7 +1340,7 @@ pub enum NonLocalDefinitionsDiag {
         body_name: String,
         cargo_update: Option<NonLocalDefinitionsCargoUpdateNote>,
         const_anon: Option<Option<Span>>,
-        bounds: Option<()>,
+        has_trait: bool,
     },
     MacroRules {
         depth: u32,
@@ -1361,17 +1361,19 @@ impl<'a> LintDiagnostic<'a, ()> for NonLocalDefinitionsDiag {
                 body_name,
                 cargo_update,
                 const_anon,
-                bounds,
+                has_trait,
             } => {
                 diag.arg("depth", depth);
                 diag.arg("body_kind_descr", body_kind_descr);
                 diag.arg("body_name", body_name);
 
                 diag.help(fluent::lint_help);
-                if let Some(()) = bounds {
+                if has_trait {
                     diag.note(fluent::lint_bounds);
+                    diag.note(fluent::lint_with_trait);
+                } else {
+                    diag.note(fluent::lint_without_trait);
                 }
-                diag.note(fluent::lint_non_local);
 
                 if let Some(cargo_update) = cargo_update {
                     diag.subdiagnostic(&diag.dcx, cargo_update);
