@@ -6,11 +6,14 @@ LL |     impl<T: Local> Global for Vec<T> { }
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `main`
+help: move this `impl` block outside of the current function `main`
   --> $DIR/generics.rs:9:5
    |
 LL |     impl<T: Local> Global for Vec<T> { }
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |     ^^^^^^^^^^^^^^^------^^^^^------^^^^
+   |                    |          |
+   |                    |          may need to be moved as well
+   |                    may need to be moved as well
    = note: this lint may become deny-by-default in the edition 2024 and higher, see the tracking issue <https://github.com/rust-lang/rust/issues/120363>
    = note: `#[warn(non_local_definitions)]` on by default
 
@@ -22,11 +25,14 @@ LL |     impl Uto7 for Test where Local: std::any::Any {}
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `bad`
+help: move this `impl` block outside of the current function `bad`
   --> $DIR/generics.rs:20:5
    |
 LL |     impl Uto7 for Test where Local: std::any::Any {}
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |     ^^^^^----^^^^^----^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |          |        |
+   |          |        may need to be moved as well
+   |          may need to be moved as well
    = note: this lint may become deny-by-default in the edition 2024 and higher, see the tracking issue <https://github.com/rust-lang/rust/issues/120363>
 
 warning: non-local `impl` definition, `impl` blocks should be written at the same level as their item
@@ -37,11 +43,14 @@ LL |     impl<T> Uto8 for T {}
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `bad`
+help: move this `impl` block outside of the current function `bad`
   --> $DIR/generics.rs:23:5
    |
 LL |     impl<T> Uto8 for T {}
-   |     ^^^^^^^^^^^^^^^^^^^^^
+   |     ^^^^^^^^----^^^^^-^^^
+   |             |        |
+   |             |        may need to be moved as well
+   |             may need to be moved as well
    = note: this lint may become deny-by-default in the edition 2024 and higher, see the tracking issue <https://github.com/rust-lang/rust/issues/120363>
 
 warning: non-local `impl` definition, `impl` blocks should be written at the same level as their item
@@ -52,10 +61,14 @@ LL |     impl Default for UwU<OwO> {
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `fun`
+help: move this `impl` block outside of the current function `fun`
   --> $DIR/generics.rs:32:5
    |
-LL | /     impl Default for UwU<OwO> {
+LL |       impl Default for UwU<OwO> {
+   |       ^    -------     -------- may need to be moved as well
+   |       |    |
+   |  _____|    may need to be moved as well
+   | |
 LL | |
 LL | |         fn default() -> Self {
 LL | |             UwU(OwO)
@@ -72,10 +85,14 @@ LL |     impl AsRef<Cat> for () {
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `meow`
+help: move this `impl` block outside of the current function `meow`
   --> $DIR/generics.rs:43:5
    |
-LL | /     impl AsRef<Cat> for () {
+LL |       impl AsRef<Cat> for () {
+   |       ^    ----------     -- may need to be moved as well
+   |       |    |
+   |  _____|    may need to be moved as well
+   | |
 LL | |
 LL | |         fn as_ref(&self) -> &Cat { &Cat }
 LL | |     }
@@ -90,10 +107,14 @@ LL |     impl PartialEq<B> for G {
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `fun2`
+help: move this `impl` block outside of the current function `fun2`
   --> $DIR/generics.rs:54:5
    |
-LL | /     impl PartialEq<B> for G {
+LL |       impl PartialEq<B> for G {
+   |       ^    ------------     - may need to be moved as well
+   |       |    |
+   |  _____|    may need to be moved as well
+   | |
 LL | |
 LL | |         fn eq(&self, _: &B) -> bool {
 LL | |             true
@@ -110,10 +131,14 @@ LL |     impl From<Wrap<Wrap<Lion>>> for () {
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `rawr`
+help: move this `impl` block outside of the current function `rawr`
   --> $DIR/generics.rs:69:5
    |
-LL | /     impl From<Wrap<Wrap<Lion>>> for () {
+LL |       impl From<Wrap<Wrap<Lion>>> for () {
+   |       ^    ----------------------     -- may need to be moved as well
+   |       |    |
+   |  _____|    may need to be moved as well
+   | |
 LL | |
 LL | |         fn from(_: Wrap<Wrap<Lion>>) -> Self {
 LL | |             todo!()
@@ -130,10 +155,14 @@ LL |     impl From<()> for Wrap<Lion> {
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `rawr`
+help: move this `impl` block outside of the current function `rawr`
   --> $DIR/generics.rs:76:5
    |
-LL | /     impl From<()> for Wrap<Lion> {
+LL |       impl From<()> for Wrap<Lion> {
+   |       ^    --------     ---------- may need to be moved as well
+   |       |    |
+   |  _____|    may need to be moved as well
+   | |
 LL | |
 LL | |         fn from(_: ()) -> Self {
 LL | |             todo!()

@@ -6,10 +6,14 @@ LL |     impl PartialEq<()> for Dog {
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `main`
+help: move this `impl` block outside of the current function `main`
   --> $DIR/exhaustive-trait.rs:7:5
    |
-LL | /     impl PartialEq<()> for Dog {
+LL |       impl PartialEq<()> for Dog {
+   |       ^    -------------     --- may need to be moved as well
+   |       |    |
+   |  _____|    may need to be moved as well
+   | |
 LL | |
 LL | |         fn eq(&self, _: &()) -> bool {
 LL | |             todo!()
@@ -27,10 +31,14 @@ LL |     impl PartialEq<()> for &Dog {
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `main`
+help: move this `impl` block outside of the current function `main`
   --> $DIR/exhaustive-trait.rs:14:5
    |
-LL | /     impl PartialEq<()> for &Dog {
+LL |       impl PartialEq<()> for &Dog {
+   |       ^    -------------     ---- may need to be moved as well
+   |       |    |
+   |  _____|    may need to be moved as well
+   | |
 LL | |
 LL | |         fn eq(&self, _: &()) -> bool {
 LL | |             todo!()
@@ -47,10 +55,14 @@ LL |     impl PartialEq<Dog> for () {
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `main`
+help: move this `impl` block outside of the current function `main`
   --> $DIR/exhaustive-trait.rs:21:5
    |
-LL | /     impl PartialEq<Dog> for () {
+LL |       impl PartialEq<Dog> for () {
+   |       ^    --------------     -- may need to be moved as well
+   |       |    |
+   |  _____|    may need to be moved as well
+   | |
 LL | |
 LL | |         fn eq(&self, _: &Dog) -> bool {
 LL | |             todo!()
@@ -67,10 +79,14 @@ LL |     impl PartialEq<&Dog> for () {
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `main`
+help: move this `impl` block outside of the current function `main`
   --> $DIR/exhaustive-trait.rs:28:5
    |
-LL | /     impl PartialEq<&Dog> for () {
+LL |       impl PartialEq<&Dog> for () {
+   |       ^    ---------------     -- may need to be moved as well
+   |       |    |
+   |  _____|    may need to be moved as well
+   | |
 LL | |
 LL | |         fn eq(&self, _: &&Dog) -> bool {
 LL | |             todo!()
@@ -87,10 +103,14 @@ LL |     impl PartialEq<Dog> for &Dog {
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `main`
+help: move this `impl` block outside of the current function `main`
   --> $DIR/exhaustive-trait.rs:35:5
    |
-LL | /     impl PartialEq<Dog> for &Dog {
+LL |       impl PartialEq<Dog> for &Dog {
+   |       ^    --------------     ---- may need to be moved as well
+   |       |    |
+   |  _____|    may need to be moved as well
+   | |
 LL | |
 LL | |         fn eq(&self, _: &Dog) -> bool {
 LL | |             todo!()
@@ -107,10 +127,14 @@ LL |     impl PartialEq<&Dog> for &Dog {
    |
    = note: `impl` may be usable in bounds, etc. from outside the expression, which might e.g. make something constructible that previously wasn't, because it's still on a publicly-visible type
    = note: an `impl` is never scoped, even when it is nested inside an item, as it may impact type checking outside of that item, which can be the case if neither the trait or the self type are at the same nesting level as the `impl`
-help: move this `impl` block and all the necessary types/traits outside the of the current function `main`
+help: move this `impl` block outside of the current function `main`
   --> $DIR/exhaustive-trait.rs:42:5
    |
-LL | /     impl PartialEq<&Dog> for &Dog {
+LL |       impl PartialEq<&Dog> for &Dog {
+   |       ^    ---------------     ---- may need to be moved as well
+   |       |    |
+   |  _____|    may need to be moved as well
+   | |
 LL | |
 LL | |         fn eq(&self, _: &&Dog) -> bool {
 LL | |             todo!()
