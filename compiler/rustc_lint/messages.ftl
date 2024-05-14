@@ -453,7 +453,7 @@ lint_non_local_definitions_deprecation = this lint may become deny-by-default in
 
 lint_non_local_definitions_impl = non-local `impl` definition, `impl` blocks should be written at the same level as their item
     .help =
-        move this `impl` block outside the of the current {$body_kind_descr} {$depth ->
+        move this `impl` block and all the necessary types/traits outside the of the current {$body_kind_descr} {$depth ->
             [one] `{$body_name}`
            *[other] `{$body_name}` and up {$depth} bodies
         }
