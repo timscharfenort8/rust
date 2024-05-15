@@ -7,7 +7,11 @@ fn main() {
         pub struct Type<T>(T);
     }
     struct InsideMain;
+    trait HasFoo {}
 
-    impl Trait<InsideMain> for &Vec<below::Type<InsideMain>> {}
+    impl<T> Trait<InsideMain> for &Vec<below::Type<(InsideMain, T)>>
     //~^ WARN non-local `impl` definition
+    where
+        T: HasFoo
+    {}
 }

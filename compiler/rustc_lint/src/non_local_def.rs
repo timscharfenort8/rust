@@ -221,6 +221,7 @@ impl<'tcx> LateLintPass<'tcx> for NonLocalDefinitions {
                 if let Some(of_trait) = &impl_.of_trait {
                     collector.visit_trait_ref(of_trait);
                 }
+                collector.visit_generics(&impl_.generics);
 
                 let may_move: Vec<Span> = collector
                     .paths
