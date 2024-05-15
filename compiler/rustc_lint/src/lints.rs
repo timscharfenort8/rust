@@ -1342,6 +1342,7 @@ pub enum NonLocalDefinitionsDiag {
         const_anon: Option<Option<Span>>,
         move_help: Span,
         may_move: Vec<Span>,
+        may_remove: Option<(Span, String)>,
         has_trait: bool,
     },
     MacroRules {
@@ -1365,6 +1366,7 @@ impl<'a> LintDiagnostic<'a, ()> for NonLocalDefinitionsDiag {
                 const_anon,
                 move_help,
                 may_move,
+                may_remove,
                 has_trait,
             } => {
                 diag.arg("depth", depth);
@@ -1382,7 +1384,17 @@ impl<'a> LintDiagnostic<'a, ()> for NonLocalDefinitionsDiag {
                 for sp in may_move {
                     ms.push_span_label(sp, fluent::lint_non_local_definitions_may_move);
                 }
-                diag.span_help(ms, fluent::lint_help);
+                diag.span_help(ms, fluent::lint_move_help);
+
+                if let Some((span, part)) = may_remove {
+                    diag.arg("may_remove_part", part);
+                    diag.span_suggestion(
+                        span,
+                        fluent::lint_remove_help,
+                        "",
+                        Applicability::MaybeIncorrect,
+                    );
+                }
 
                 if let Some(cargo_update) = cargo_update {
                     diag.subdiagnostic(&diag.dcx, cargo_update);
