@@ -472,7 +472,6 @@ lint_non_local_definitions_macro_rules = non-local `macro_rules!` definition, `#
     .help_doctest =
         remove the `#[macro_export]` or make this doc-test a standalone test with its own `fn main() {"{"} ... {"}"}`
     .non_local = a `macro_rules!` definition is non-local if it is nested inside an item and has a `#[macro_export]` attribute
-    .exception = one exception to the rule are anon-const (`const _: () = {"{"} ... {"}"}`) at top-level module
 
 lint_non_local_definitions_may_move = may need to be moved as well
 
